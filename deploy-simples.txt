@@ -1,0 +1,49 @@
+========================================
+    UMADCAMP - Comandos de Deploy
+========================================
+
+Para fazer deploy no Firebase, execute estes comandos:
+
+1. Verificar se está logado:
+   firebase projects:list
+
+2. Se não estiver logado:
+   firebase login
+
+3. Fazer o deploy:
+   firebase deploy
+
+4. Acessar o site:
+   https://umadcamp-patu.web.app
+
+========================================
+    Arquivos que serão publicados:
+========================================
+
+✅ index.html (sistema principal)
+✅ README-FIREBASE.md (documentação)
+
+❌ Arquivos excluídos (não permitidos no plano gratuito):
+   - *.bat, *.sh (scripts executáveis)
+   - import-csv.html (ferramenta de importação)
+   - import-csv.js (script Node.js)
+   - package.json (dependências)
+   - patu-censo - Página1.csv (dados)
+
+========================================
+    Solução de Problemas:
+========================================
+
+Se der erro de arquivos executáveis:
+1. Verifique se o .firebaseignore existe
+2. Verifique se o firebase.json está correto
+3. Execute: firebase deploy --only hosting
+
+Se der erro de permissão:
+1. Execute: firebase logout
+2. Execute: firebase login
+3. Execute: firebase deploy
+
+========================================
+
+firebase deploy --only hosting

@@ -1,0 +1,46 @@
+# Arquivos executáveis (não permitidos no plano Spark)
+*.bat
+*.sh
+*.exe
+*.app
+*.dmg
+*.pkg
+*.deb
+*.rpm
+
+# Arquivos de desenvolvimento
+node_modules/
+.git/
+.gitignore
+*.log
+*.tmp
+*.temp
+
+# Arquivos de configuração local
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Arquivos de backup
+*.bak
+*.backup
+*~
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Arquivos de documentação (opcional - remover se quiser incluir)
+README*.md
+GUIA*.md
+INSTRUCOES*.md
+*.md
+
+# Arquivos de importação (opcional - remover se quiser incluir)
+import-csv.html
+import-csv.js
+package.json
+

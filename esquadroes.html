@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/cadetes.css">
+    <title>Esquadrões - Cadetes a Jato</title>
+</head>
+
+<body>
+    <nav>
+        <div class="pixel-font" style="color: white;">CADETES<span style="color: var(--primary-cyan);">A</span>JATO
+        </div>
+        <div class="nav-links">
+            <a href="/cadetes.html">INÍCIO</a>
+            <a href="/esquadroes.html" class="active">ESQUADRÕES</a>
+            <a href="/missoes.html">MISSÕES</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header style="text-align: center; margin-bottom: 40px;">
+            <h1 class="pixel-font" style="color: white; font-size: 1.5rem;">Frotas da Aliança</h1>
+            <p style="color: var(--accent-silver);">Escolha seu esquadrão e veja a classificação.</p>
+        </header>
+
+        <div class="squad-grid"
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+
+            <!-- 1. ÁGUIAS (Nobreza) -->
+            <div class="card squad-card theme-aguias" onclick="window.location.href='/dossie.html?squad=aguias'">
+                <span class="squad-icon-large">🛡️</span>
+                <h3 class="pixel-font">Águias da Aliança</h3>
+                <p
+                    style="text-transform: uppercase; font-size: 10px; letter-spacing: 2px; margin-bottom: 20px; color: #fff;">
+                    A Nobreza</p>
+
+                <div class="profile-stats" style="margin: 0 auto 20px; max-width: 90%; background: rgba(0,0,0,0.5);">
+                    <div class="stat-item" style="color: var(--aguias-color);">
+                        <span class="stat-icon">🏆</span> 1º Lugar
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">👥</span> 32
+                    </div>
+                </div>
+
+                <span class="btn-access">VER DOSSIÊ</span>
+            </div>
+
+            <!-- 2. FALCÕES (Autoridade) -->
+            <div class="card squad-card theme-falcoes" onclick="window.location.href='/dossie.html?squad=falcoes'">
+                <span class="squad-icon-large">👑</span>
+                <h3 class="pixel-font">Falcões do Rei</h3>
+                <p
+                    style="text-transform: uppercase; font-size: 10px; letter-spacing: 2px; margin-bottom: 20px; color: #fff;">
+                    A Autoridade</p>
+
+                <div class="profile-stats" style="margin: 0 auto 20px; max-width: 90%; background: rgba(0,0,0,0.5);">
+                    <div class="stat-item" style="color: var(--accent-silver);">
+                        <span class="stat-icon">⚓</span> 2º Lugar
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">👥</span> 28
+                    </div>
+                </div>
+
+                <span class="btn-access">VER DOSSIÊ</span>
+            </div>
+
+            <!-- 3. HARPIAS (Força) -->
+            <div class="card squad-card theme-harpias" onclick="window.location.href='/dossie.html?squad=harpias'">
+                <span class="squad-icon-large">⚡</span>
+                <h3 class="pixel-font">Harpias Celestiais</h3>
+                <p
+                    style="text-transform: uppercase; font-size: 10px; letter-spacing: 2px; margin-bottom: 20px; color: #fff;">
+                    A Força</p>
+
+                <div class="profile-stats" style="margin: 0 auto 20px; max-width: 90%; background: rgba(0,0,0,0.5);">
+                    <div class="stat-item" style="color: var(--accent-silver);">
+                        <span class="stat-icon">⚓</span> 3º Lugar
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">👥</span> 30
+                    </div>
+                </div>
+
+                <span class="btn-access">VER DOSSIÊ</span>
+            </div>
+
+            <!-- 4. CONDORES (Altitude) -->
+            <div class="card squad-card theme-condores" onclick="window.location.href='/dossie.html?squad=condores'">
+                <span class="squad-icon-large">🏔️</span>
+                <h3 class="pixel-font">Condores do Reino</h3>
+                <p
+                    style="text-transform: uppercase; font-size: 10px; letter-spacing: 2px; margin-bottom: 20px; color: #fff;">
+                    A Altitude</p>
+
+                <div class="profile-stats" style="margin: 0 auto 20px; max-width: 90%; background: rgba(0,0,0,0.5);">
+                    <div class="stat-item" style="color: var(--accent-silver);">
+                        <span class="stat-icon">⚓</span> 4º Lugar
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">👥</span> 25
+                    </div>
+                </div>
+
+                <span class="btn-access">VER DOSSIÊ</span>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>

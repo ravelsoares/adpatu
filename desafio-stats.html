@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Estatísticas · Desafio 1 Coríntios — UMADCAMP</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="icon" href="/images/logo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --ink-0: #050505;
+            --ink-1: #0b0a09;
+            --surface: rgba(255, 255, 255, 0.035);
+            --surface-2: rgba(255, 255, 255, 0.06);
+            --line: rgba(255, 255, 255, 0.09);
+            --line-2: rgba(255, 255, 255, 0.16);
+            --text: #f4efe7;
+            --text-dim: #b9ada0;
+            --text-mute: #7e7468;
+            --orange: #ff6a1a;
+            --orange-2: #ff8a3d;
+            --ember: #e0481a;
+            --ok: #56d28a;
+            --orange-soft: rgba(255, 106, 26, 0.14);
+            --shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+        }
+
+        * { box-sizing: border-box; }
+        html, body { padding: 0; margin: 0; }
+
+        body {
+            color: var(--text);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            font-size: 16px; line-height: 1.5; min-height: 100vh;
+            background:
+                radial-gradient(1100px 620px at 8% -8%, rgba(255, 106, 26, 0.18), transparent 60%),
+                radial-gradient(820px 560px at 104% 4%, rgba(74, 4, 4, 0.5), transparent 58%),
+                linear-gradient(180deg, var(--ink-0) 0%, var(--ink-1) 55%, var(--ink-0) 100%);
+            background-attachment: fixed;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { color: var(--orange); text-decoration: none; }
+
+        /* ===== Nav ===== */
+        nav {
+            position: sticky; top: 0; z-index: 50;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 5%; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            background: rgba(5, 5, 5, 0.62); border-bottom: 1px solid var(--line);
+        }
+        .brand { display: flex; align-items: center; gap: 11px; color: inherit; }
+        .brand img { width: 38px; height: 38px; object-fit: contain; }
+        .brand .bt b { font-family: 'Anton', sans-serif; font-weight: 400; font-size: 17px; letter-spacing: 0.5px; text-transform: uppercase; line-height: 1.05; display: block; }
+        .brand .bt small { display: block; font-size: 10px; color: var(--text-mute); letter-spacing: 2px; text-transform: uppercase; margin-top: 1px; }
+
+        .nav-right { display: flex; align-items: center; gap: 10px; }
+        .nav-link {
+            color: var(--text-dim); font-size: 12.5px; font-weight: 600;
+            padding: 8px 15px; border: 1px solid var(--line-2); border-radius: 999px; transition: 0.2s; white-space: nowrap;
+        }
+        .nav-link:hover { color: #fff; border-color: var(--orange); background: var(--orange-soft); }
+
+        .userchip {
+            display: inline-flex; align-items: center; gap: 8px; background: var(--surface-2);
+            border: 1px solid var(--line-2); padding: 5px 6px 5px 5px; border-radius: 999px; color: var(--text); font-size: 13px;
+        }
+        .userchip[hidden] { display: none; }
+        .userchip img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: var(--surface); }
+        .userchip .uc-name { font-weight: 600; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .userchip button { background: none; border: none; color: var(--text-mute); font: inherit; font-size: 11px; cursor: pointer; text-decoration: underline; padding: 0 4px; }
+        .userchip button:hover { color: var(--orange-2); }
+
+        /* ===== Botão Google ===== */
+        .btn-google {
+            display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+            padding: 13px 24px; border-radius: 999px; background: #fff; color: #3c4043; border: 1px solid #dadce0;
+            font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s;
+        }
+        .btn-google:hover { box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3); transform: translateY(-1px); }
+        .btn-google svg { width: 19px; height: 19px; flex-shrink: 0; }
+
+        /* ===== Telas de gate ===== */
+        .gate { min-height: calc(100vh - 64px); display: grid; place-items: center; padding: 30px 18px; }
+        .gate-card {
+            max-width: 440px; width: 100%; text-align: center; background: var(--surface);
+            border: 1px solid var(--line-2); border-radius: 22px; padding: 34px 26px; box-shadow: var(--shadow);
+        }
+        .gate-card .big { font-size: 3rem; margin-bottom: 8px; }
+        .gate-card h1 { font-family: 'Anton', sans-serif; font-weight: 400; font-size: 1.9rem; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 8px; }
+        .gate-card p { color: var(--text-dim); font-size: 14.5px; margin: 0 0 22px; line-height: 1.55; }
+        .gate-card .btn-google { margin: 0 auto; }
+        .gate-card .who { color: var(--text-mute); font-size: 12.5px; margin-top: 18px; word-break: break-all; }
+        .gate-card .ghost-link { display: inline-block; margin-top: 16px; color: var(--text-dim); font-size: 13px; text-decoration: underline; }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        /* ===== Dashboard ===== */
+        .container { width: min(1180px, 94%); margin: 0 auto; padding: 26px 0 80px; }
+        .dash-head { margin-bottom: 22px; }
+        .dash-head h1 { font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(1.8rem, 6vw, 2.6rem); text-transform: uppercase; letter-spacing: 0.5px; margin: 0; color: #fff; }
+        .dash-head .sub { color: var(--text-dim); font-size: 14px; margin-top: 4px; }
+        .dash-head .sub b { color: var(--orange-2); }
+
+        .section-title {
+            display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 30px 0 14px;
+            font-family: 'Anton', sans-serif; font-weight: 400; font-size: 1.3rem; letter-spacing: 0.5px; text-transform: uppercase; color: #fff;
+        }
+        .section-title .pill {
+            font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; color: var(--orange-2);
+            letter-spacing: 1px; text-transform: uppercase; padding: 4px 11px; border-radius: 999px;
+            background: var(--orange-soft); border: 1px solid rgba(255, 106, 26, 0.28);
+        }
+
+        .glass { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+
+        /* KPIs */
+        .kpis { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        @media (min-width: 720px) { .kpis { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 1000px) { .kpis { grid-template-columns: repeat(6, 1fr); } }
+        .kpi { padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; position: relative; overflow: hidden; }
+        .kpi::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, var(--orange), var(--ember)); }
+        .kpi .ic { font-size: 20px; margin-bottom: 8px; }
+        .kpi .num { font-family: 'Anton', sans-serif; font-weight: 400; font-size: 1.8rem; line-height: 1; color: #fff; }
+        .kpi .lbl { font-size: 10.5px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 1px; margin-top: 6px; }
+
+        /* Barras (capítulos / dias) */
+        .bars { display: flex; flex-direction: column; gap: 9px; }
+        .bar-row { display: grid; grid-template-columns: 96px 1fr 46px; gap: 10px; align-items: center; }
+        .bar-row .bl { font-size: 12.5px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .bar-row .bl b { color: var(--text); }
+        .bar-track { height: 14px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 99px; overflow: hidden; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--ember), var(--orange-2)); border-radius: 99px; min-width: 2px; transition: width 0.5s cubic-bezier(.2,.8,.2,1); }
+        .bar-row .bv { text-align: right; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 13px; color: var(--orange); }
+        .bar-row.today .bl b { color: var(--orange-2); }
+        .bar-row.today .bar-track { border-color: var(--orange); }
+
+        /* Tabelas (ranking / cidades) */
+        .tbl { width: 100%; border-collapse: collapse; }
+        .tbl th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-mute); font-weight: 700; padding: 6px 10px; border-bottom: 1px solid var(--line-2); }
+        .tbl th.r, .tbl td.r { text-align: right; }
+        .tbl td { padding: 9px 10px; border-bottom: 1px solid var(--line); font-size: 14px; }
+        .tbl tr:hover td { background: var(--surface-2); }
+        .tbl .pos { font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: var(--text-mute); width: 34px; }
+        .tbl tr.gold .pos { color: var(--orange); }
+        .tbl .who { display: flex; align-items: center; gap: 10px; min-width: 0; }
+        .tbl .who img, .tbl .who .ini {
+            width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+            display: grid; place-items: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 12px; color: #1a0a02; border: 1.5px solid rgba(255,255,255,0.16);
+        }
+        .tbl .who .nm { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tbl .who .ct { font-size: 11.5px; color: var(--text-mute); }
+        .tbl .val { font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: var(--orange); }
+        .scroll-x { overflow-x: auto; }
+
+        .two-col { display: grid; grid-template-columns: 1fr; gap: 22px; align-items: start; }
+        @media (min-width: 920px) { .two-col { grid-template-columns: 1fr 1fr; } }
+
+        .empty { text-align: center; color: var(--text-mute); padding: 24px 12px; font-size: 14px; }
+        .loading { text-align: center; color: var(--text-dim); padding: 40px 12px; }
+
+        footer { text-align: center; padding: 30px 20px 40px; color: var(--text-mute); font-size: 12.5px; }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="/umadcamp" class="brand">
+            <img src="/images/logo.png" alt="UMADCAMP">
+            <div class="bt">
+                <b>Stats · Desafio 1Co</b>
+                <small>UMADCAMP · CRJ 2026</small>
+            </div>
+        </a>
+        <div class="nav-right">
+            <div class="userchip" id="userchip" hidden>
+                <img id="ucPhoto" src="" alt="">
+                <span class="uc-name" id="ucName"></span>
+                <button id="logoutBtn">sair</button>
+            </div>
+            <a class="nav-link" href="/umadcamp/desafio">← Ir pro desafio</a>
+        </div>
+    </nav>
+
+    <!-- TELA: LOGIN -->
+    <section id="screenLogin" class="screen gate">
+        <div class="gate-card">
+            <div class="big">📊</div>
+            <h1>Painel de estatísticas</h1>
+            <p>Área restrita da liderança. Entre com sua conta Google autorizada pra ver os números do Desafio 1 Coríntios.</p>
+            <button class="btn-google" id="loginBtn">
+                <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                Entrar com Google
+            </button>
+        </div>
+    </section>
+
+    <!-- TELA: SEM PERMISSÃO -->
+    <section id="screenDenied" class="screen gate">
+        <div class="gate-card">
+            <div class="big">🔒</div>
+            <h1>Sem permissão</h1>
+            <p>Esta conta não está autorizada a ver o painel. Fale com a coordenação pra liberar o seu email.</p>
+            <div class="who" id="deniedEmail"></div>
+            <a class="ghost-link" id="deniedLogout">Entrar com outra conta</a>
+        </div>
+    </section>
+
+    <!-- TELA: DASHBOARD -->
+    <section id="screenDash" class="screen">
+        <div class="container">
+            <div class="dash-head">
+                <h1>Desafio 1 Coríntios</h1>
+                <div class="sub" id="dashSub">Carregando…</div>
+            </div>
+
+            <div class="loading" id="dashLoading">Carregando estatísticas…</div>
+
+            <div id="dashContent" hidden>
+                <div class="kpis" id="kpis"></div>
+
+                <div class="two-col">
+                    <div>
+                        <h3 class="section-title">📖 Leituras por capítulo</h3>
+                        <div class="glass"><div class="bars" id="barsChapters"></div></div>
+                    </div>
+                    <div>
+                        <h3 class="section-title">📅 Leituras por dia</h3>
+                        <div class="glass"><div class="bars" id="barsDays"></div></div>
+                    </div>
+                </div>
+
+                <h3 class="section-title">🏙️ Cidades <span class="pill" id="citiesPill">0</span></h3>
+                <div class="glass scroll-x">
+                    <table class="tbl" id="citiesTbl">
+                        <thead><tr><th>#</th><th>Cidade</th><th class="r">Jovens</th><th class="r">Leituras</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <h3 class="section-title">🏆 Ranking completo <span class="pill" id="rankPill">0</span></h3>
+                <div class="glass scroll-x">
+                    <table class="tbl" id="rankTbl">
+                        <thead><tr><th>#</th><th>Jovem</th><th class="r">Caps</th><th class="r">Seq.</th><th class="r">❤️</th><th class="r">💬</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <footer>Painel interno · UMADCAMP · Desafio 1 Coríntios · 15 a 30 de junho de 2026</footer>
+    </section>
+
+    <!-- ===== Firebase ===== -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // ============================================================
+        //   CONFIG
+        // ============================================================
+        // ⬇️ EMAILS AUTORIZADOS A VER O PAINEL (adicione os da liderança aqui)
+        const AUTHORIZED_EMAILS = [
+            'ravelsoares64@gmail.com',
+            'miriaqueziaoli@gmail.com',
+            'jonnasazevedo201819@gmail.com',
+            // adicione aqui outros e-mails autorizados…
+            // '*'  // <- descomente para liberar a QUALQUER pessoa logada
+        ];
+
+        const CHALLENGE_START = new Date('2026-06-15T00:00:00');
+        const CHALLENGE_END   = new Date('2026-06-30T23:59:59');
+        const CHAPTERS_TOTAL  = 16;
+        const COLLECTION      = 'desafio-1corintios';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+            authDomain: "umadcamp-patu.firebaseapp.com",
+            projectId: "umadcamp-patu",
+            storageBucket: "umadcamp-patu.firebasestorage.app",
+            messagingSenderId: "1043102355965",
+            appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+            measurementId: "G-S6N9R4F8Z8"
+        };
+
+        let db = null, auth = null, user = null, unsub = null;
+
+        // ============================================================
+        //   UTILS
+        // ============================================================
+        function $(id) { return document.getElementById(id); }
+        function escapeHtml(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+        function pad(n) { return n < 10 ? '0' + n : '' + n; }
+        function isAuthorized(email) {
+            const list = AUTHORIZED_EMAILS.map(e => e.toLowerCase());
+            return list.includes('*') || (!!email && list.includes(email.toLowerCase()));
+        }
+        function initials(name) {
+            const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+            if (!parts.length) return '?';
+            if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+        function avatarBg(name) {
+            const palettes = [['#ff8a3d', '#e0481a'], ['#ff6a1a', '#b3320a'], ['#ffb347', '#e0481a'], ['#f97316', '#7c2d12'], ['#fb923c', '#9a3412'], ['#ffa94d', '#c2410c']];
+            let h = 0; for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+            const [a, b] = palettes[h % palettes.length];
+            return `linear-gradient(135deg, ${a}, ${b})`;
+        }
+        function avatarCell(name, photo) {
+            return photo
+                ? `<img src="${escapeHtml(photo)}" alt="" loading="lazy" referrerpolicy="no-referrer">`
+                : `<span class="ini" style="background:${avatarBg(name)}">${initials(name)}</span>`;
+        }
+        function cityKey(raw) { return raw.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); }
+        function dayKey(ts) { const d = new Date(ts); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+        function currentChapter() {
+            const diff = Math.floor((new Date() - CHALLENGE_START) / 86400000) + 1;
+            return Math.min(Math.max(diff, 0), CHAPTERS_TOTAL);
+        }
+        function computeStreak(chapsSet) {
+            const ch = currentChapter(); let s = 0;
+            let cursor = chapsSet.has(ch) ? ch : ch - 1;
+            while (cursor >= 1 && chapsSet.has(cursor)) { s++; cursor--; }
+            return s;
+        }
+
+        // ============================================================
+        //   NAVEGAÇÃO ENTRE TELAS
+        // ============================================================
+        function show(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            $(id).classList.add('active');
+        }
+
+        // ============================================================
+        //   AUTENTICAÇÃO
+        // ============================================================
+        function entrarComGoogle() {
+            if (!auth) return;
+            const provider = new firebase.auth.GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account' });
+            auth.signInWithPopup(provider).catch(err => {
+                console.warn('popup falhou, tentando redirect', err);
+                if (err && (err.code === 'auth/popup-blocked' || err.code === 'auth/cancelled-popup-request' || err.code === 'auth/popup-closed-by-user')) {
+                    auth.signInWithRedirect(provider);
+                }
+            });
+        }
+        function sair() { if (unsub) { unsub(); unsub = null; } if (auth) auth.signOut(); }
+
+        function onAuthChanged(u) {
+            user = u || null;
+            const uc = $('userchip');
+            if (!u) {
+                uc.hidden = true;
+                if (unsub) { unsub(); unsub = null; }
+                show('screenLogin');
+                return;
+            }
+            if (!isAuthorized(u.email)) {
+                uc.hidden = true;
+                $('deniedEmail').textContent = u.email || '';
+                show('screenDenied');
+                return;
+            }
+            // autorizado
+            uc.hidden = false;
+            $('ucPhoto').src = u.photoURL || '';
+            $('ucName').textContent = (u.displayName || '').split(' ')[0] || 'você';
+            show('screenDash');
+            carregarDados();
+        }
+
+        // ============================================================
+        //   DADOS + RENDER
+        // ============================================================
+        function carregarDados() {
+            if (unsub) return; // já assinado
+            $('dashLoading').hidden = false;
+            $('dashContent').hidden = true;
+            unsub = db.collection(COLLECTION).onSnapshot(snap => {
+                const posts = [];
+                snap.forEach(d => posts.push({ id: d.id, ...d.data() }));
+                render(posts);
+            }, err => {
+                console.error(err);
+                $('dashLoading').textContent = 'Não consegui carregar os dados. Recarregue a página.';
+            });
+        }
+
+        function render(posts) {
+            $('dashLoading').hidden = true;
+            $('dashContent').hidden = false;
+
+            const ch = currentChapter();
+            $('dashSub').innerHTML = ch >= 1 && ch <= CHAPTERS_TOTAL
+                ? `Hoje é dia <b>${ch}</b> · capítulo <b>${ch}</b> de ${CHAPTERS_TOTAL}`
+                : (new Date() < CHALLENGE_START ? 'O desafio ainda não começou.' : 'Desafio encerrado.');
+
+            // ---- agregações ----
+            const byUser = new Map();
+            const byChapter = new Array(CHAPTERS_TOTAL + 1).fill(0);
+            const byCity = new Map();
+            const byDay = new Map();
+            let totalLikes = 0, totalComments = 0;
+
+            posts.forEach(p => {
+                // identidade = conta Google (uid); cai p/ slug em posts antigos sem uid
+                const key = p.uid ? ('uid:' + p.uid) : ('slug:' + (p.userSlug || p.user || p.id));
+                if (!byUser.has(key)) byUser.set(key, { name: p.user || '—', city: p.city || '', photo: '', chaps: new Set(), likes: 0, comments: 0, lastTs: 0 });
+                const u = byUser.get(key);
+                u.chaps.add(p.chapter); u.name = p.user || u.name; u.city = p.city || u.city;
+                if (p.authorPhoto) u.photo = p.authorPhoto;
+                const pl = Math.max(0, p.likes || 0);
+                const pc = (p.comments || []).length;
+                u.likes += pl; u.comments += pc;
+                if ((p.createdAt || 0) > u.lastTs) u.lastTs = p.createdAt || 0;
+
+                if (p.chapter >= 1 && p.chapter <= CHAPTERS_TOTAL) byChapter[p.chapter]++;
+                totalLikes += pl; totalComments += pc;
+
+                const raw = (p.city || '').trim();
+                if (raw) {
+                    const k = cityKey(raw);
+                    if (!byCity.has(k)) byCity.set(k, { name: raw, users: new Set(), reads: 0 });
+                    const c = byCity.get(k); c.users.add(key); c.reads++;
+                }
+                if (p.createdAt) { const dk = dayKey(p.createdAt); byDay.set(dk, (byDay.get(dk) || 0) + 1); }
+            });
+
+            // ---- KPIs ----
+            const chaptersCovered = byChapter.filter((v, i) => i >= 1 && v > 0).length;
+            const kpis = [
+                { ic: '👥', num: byUser.size, lbl: 'Jovens' },
+                { ic: '📖', num: posts.length, lbl: 'Leituras' },
+                { ic: '🏙️', num: byCity.size, lbl: 'Cidades' },
+                { ic: '📚', num: `${chaptersCovered}/${CHAPTERS_TOTAL}`, lbl: 'Caps c/ leitura' },
+                { ic: '❤️', num: totalLikes, lbl: 'Curtidas' },
+                { ic: '💬', num: totalComments, lbl: 'Comentários' },
+            ];
+            $('kpis').innerHTML = kpis.map(k => `
+                <div class="kpi"><div class="ic">${k.ic}</div><div class="num">${k.num}</div><div class="lbl">${k.lbl}</div></div>`).join('');
+
+            // ---- Barras por capítulo ----
+            const maxChap = Math.max(1, ...byChapter.slice(1));
+            const chapHtml = [];
+            for (let i = 1; i <= CHAPTERS_TOTAL; i++) {
+                const v = byChapter[i];
+                chapHtml.push(`
+                    <div class="bar-row${i === ch ? ' today' : ''}">
+                        <span class="bl">1 Co <b>${i}</b></span>
+                        <div class="bar-track"><div class="bar-fill" style="width:${(v / maxChap) * 100}%"></div></div>
+                        <span class="bv">${v}</span>
+                    </div>`);
+            }
+            $('barsChapters').innerHTML = chapHtml.join('');
+
+            // ---- Barras por dia (15 a 30/06) ----
+            const dayHtml = [];
+            const totalDays = Math.round((CHALLENGE_END - CHALLENGE_START) / 86400000) + 1;
+            const counts = [];
+            for (let i = 0; i < totalDays; i++) {
+                const d = new Date(CHALLENGE_START); d.setDate(d.getDate() + i);
+                counts.push(byDay.get(dayKey(d.getTime())) || 0);
+            }
+            const maxDay = Math.max(1, ...counts);
+            const todayK = dayKey(new Date().getTime());
+            for (let i = 0; i < totalDays; i++) {
+                const d = new Date(CHALLENGE_START); d.setDate(d.getDate() + i);
+                const isToday = dayKey(d.getTime()) === todayK;
+                const v = counts[i];
+                dayHtml.push(`
+                    <div class="bar-row${isToday ? ' today' : ''}">
+                        <span class="bl"><b>${pad(d.getDate())}/${pad(d.getMonth() + 1)}</b></span>
+                        <div class="bar-track"><div class="bar-fill" style="width:${(v / maxDay) * 100}%"></div></div>
+                        <span class="bv">${v}</span>
+                    </div>`);
+            }
+            $('barsDays').innerHTML = dayHtml.join('');
+
+            // ---- Cidades ----
+            const cities = [...byCity.values()].map(v => ({ name: v.name, jovens: v.users.size, reads: v.reads }));
+            cities.sort((a, b) => b.reads - a.reads || b.jovens - a.jovens || a.name.localeCompare(b.name));
+            $('citiesPill').textContent = cities.length;
+            const cBody = $('citiesTbl').querySelector('tbody');
+            cBody.innerHTML = cities.length
+                ? cities.map((c, i) => `<tr class="${i === 0 ? 'gold' : ''}"><td class="pos">${i + 1}</td><td>${escapeHtml(c.name)}</td><td class="r">${c.jovens}</td><td class="r val">${c.reads}</td></tr>`).join('')
+                : '<tr><td colspan="4" class="empty">Sem cidades ainda.</td></tr>';
+
+            // ---- Ranking completo (mesmo desempate do desafio: caps → likes → streak → último → nome) ----
+            const rows = [];
+            byUser.forEach(v => rows.push({ name: v.name, city: v.city, photo: v.photo, points: v.chaps.size, likes: v.likes, comments: v.comments, streak: computeStreak(v.chaps), lastTs: v.lastTs }));
+            rows.sort((a, b) => b.points - a.points || b.likes - a.likes || b.streak - a.streak || b.lastTs - a.lastTs || a.name.localeCompare(b.name));
+            $('rankPill').textContent = rows.length;
+            const rBody = $('rankTbl').querySelector('tbody');
+            rBody.innerHTML = rows.length
+                ? rows.map((r, i) => `
+                    <tr class="${i === 0 ? 'gold' : ''}">
+                        <td class="pos">${i + 1}</td>
+                        <td><div class="who">${avatarCell(r.name, r.photo)}<div style="min-width:0"><div class="nm">${escapeHtml(r.name)}</div><div class="ct">${escapeHtml(r.city || '—')}</div></div></div></td>
+                        <td class="r val">${r.points}</td>
+                        <td class="r">${r.streak > 1 ? '🔥 ' + r.streak : '—'}</td>
+                        <td class="r">${r.likes}</td>
+                        <td class="r">${r.comments}</td>
+                    </tr>`).join('')
+                : '<tr><td colspan="6" class="empty">Ninguém postou ainda.</td></tr>';
+        }
+
+        // ============================================================
+        //   BOOT
+        // ============================================================
+        $('loginBtn').addEventListener('click', entrarComGoogle);
+        $('logoutBtn').addEventListener('click', sair);
+        $('deniedLogout').addEventListener('click', e => { e.preventDefault(); sair(); });
+
+        (function boot() {
+            if (typeof firebase === 'undefined') {
+                $('dashLoading').textContent = 'Falha ao carregar o Firebase. Recarregue a página.';
+                return;
+            }
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            try { db.settings({ experimentalAutoDetectLongPolling: true, merge: true }); } catch (e) {}
+            auth = firebase.auth();
+            auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+            auth.getRedirectResult().catch(err => console.warn('redirect', err));
+            auth.onAuthStateChanged(onAuthChanged);
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/cadetes.css">
+    <title>Ranking dos Cadetes - DJAD</title>
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;700&display=swap');
+:root {
+  --bg-color: #0a0a0a; --card-bg: #111111; --primary-gold: #d4af37;
+  --gold: #ffd700; --gold-light: #f0d060; --gold-dark: #b8960c;
+  --text-primary: #ffffff; --text-secondary: #888888;
+  --border-color: rgba(212, 175, 55, 0.3); --glow-gold: 0 0 20px rgba(212, 175, 55, 0.4);
+  --team-red: #c41e3a; --team-red-glow: rgba(196, 30, 58, 0.4);
+  --team-green: #228b22; --team-green-glow: rgba(34, 139, 34, 0.4);
+  --team-blue: #1e90ff; --team-blue-glow: rgba(30, 144, 255, 0.4);
+}
+* { box-sizing: border-box; }
+body { background-color: var(--bg-color); color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin: 0; padding: 0; background-image: linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px); background-size: 40px 40px; font-size: 16px; line-height: 1.6; }
+.container { width: 90%; max-width: 900px; margin: 0 auto; padding: 20px 0; }
+nav { display: flex; flex-direction: column; align-items: center; padding: 20px 5%; background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%); border-bottom: 3px solid var(--primary-gold); gap: 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), var(--glow-gold); position: sticky; top: 0; z-index: 100; }
+nav .logo { font-family: 'Press Start 2P', cursive; font-size: 14px; color: var(--text-primary); text-shadow: 0 0 10px var(--primary-gold); }
+nav .logo span { color: var(--primary-gold); }
+.nav-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
+.nav-links a { color: var(--text-secondary); text-decoration: none; font-family: 'Press Start 2P', cursive; font-size: 9px; padding: 8px 14px; border: 1px solid transparent; transition: all 0.3s ease; text-transform: uppercase; }
+.nav-links a:hover, .nav-links a.active { color: var(--primary-gold); border: 1px solid var(--primary-gold); background: rgba(212, 175, 55, 0.1); text-shadow: 0 0 5px var(--primary-gold); }
+.hero { text-align: center; padding: 50px 20px; position: relative; background: radial-gradient(ellipse at center top, rgba(212, 175, 55, 0.15) 0%, transparent 50%), linear-gradient(180deg, #0d0d0d 0%, #0a0a0a 100%); border-bottom: 1px solid var(--border-color); margin-bottom: 30px; }
+.hero-icon { font-size: 5rem; margin-bottom: 20px; display: inline-block; filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.6)); }
+.hero h1 { font-family: 'Press Start 2P', cursive; font-size: 1.5rem; color: var(--primary-gold); margin: 0 0 10px; text-shadow: 0 0 20px rgba(212, 175, 55, 0.5); line-height: 1.6; }
+.hero .subtitle { color: var(--text-secondary); font-size: 0.95rem; max-width: 500px; margin: 0 auto; }
+.round-indicator { display: inline-block; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--primary-gold); color: var(--gold); padding: 8px 20px; font-family: 'Press Start 2P', cursive; font-size: 10px; letter-spacing: 2px; margin-top: 15px; border-radius: 4px; }
+footer { text-align: center; padding: 40px 20px; margin-top: 50px; border-top: 1px solid var(--border-color); color: var(--text-secondary); font-size: 0.8rem; }
+footer .cross { font-size: 1.5rem; margin-bottom: 15px; opacity: 0.5; }
+@media (min-width: 768px) {
+  nav { flex-direction: row; justify-content: space-between; padding: 20px 5%; }
+  .nav-links a { font-size: 10px; }
+  .hero h1 { font-size: 1.8rem; }
+  .container { padding: 40px 0; }
+}
+.ranking-hero { padding: 30px 20px 20px; }
+.ranking-hero h1 { font-size: 1.3rem; }
+.section-title { font-family: 'Press Start 2P', cursive; color: var(--gold); font-size: 0.95rem; text-align: center; letter-spacing: 1.5px; margin: 40px 0 20px; text-shadow: 0 0 10px rgba(212, 175, 55, 0.4); }
+.state-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 30px; text-align: center; color: var(--text-secondary); margin: 30px auto; max-width: 500px; }
+.state-card h3 { color: var(--gold); margin-bottom: 12px; font-family: 'Press Start 2P', cursive; font-size: 0.85rem; }
+.link-btn { display: inline-block; margin-top: 10px; padding: 10px 20px; background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%); color: #000; text-decoration: none; border-radius: 4px; font-family: 'Press Start 2P', cursive; font-size: 9px; letter-spacing: 1px; transition: all 0.2s ease; }
+.link-btn:hover { transform: translateY(-2px); box-shadow: 0 0 14px var(--primary-gold); }
+.podium-section { margin-bottom: 50px; }
+.podium { display: grid; grid-template-columns: 1fr 1.1fr 1fr; gap: 12px; align-items: end; max-width: 700px; margin: 0 auto; }
+.podium-card { background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 10px; padding: 18px 12px; text-align: center; position: relative; transition: transform 0.2s ease; }
+.podium-card.first { border-color: var(--gold); box-shadow: 0 0 24px rgba(212, 175, 55, 0.45); transform: scale(1.06); padding-top: 22px; padding-bottom: 22px; }
+.podium-card.second { border-color: rgba(192, 192, 192, 0.6); }
+.podium-card.third { border-color: rgba(205, 127, 50, 0.6); }
+.podium-card.red { border-top: 4px solid var(--team-red); }
+.podium-card.green { border-top: 4px solid var(--team-green); }
+.podium-card.blue { border-top: 4px solid var(--team-blue); }
+.podium-medal { font-size: 2.5rem; line-height: 1; margin-bottom: 8px; }
+.podium-logo { width: 60px; height: 60px; object-fit: contain; margin-bottom: 8px; }
+.podium-card.first .podium-logo { width: 75px; height: 75px; }
+.podium-name { font-family: 'Press Start 2P', cursive; font-size: 0.55rem; color: var(--text-primary); line-height: 1.4; min-height: 28px; margin-bottom: 8px; }
+.podium-points { font-family: 'Press Start 2P', cursive; font-size: 1.4rem; color: var(--gold); text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+.podium-card.first .podium-points { font-size: 1.7rem; }
+.podium-points .pts-label { font-size: 0.55rem; color: var(--text-secondary); margin-left: 4px; }
+.podium-rank-num { margin-top: 6px; color: var(--text-secondary); font-family: 'Press Start 2P', cursive; font-size: 0.6rem; }
+.teams-detail { display: grid; gap: 18px; }
+.team-detail-card { background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 10px; overflow: hidden; position: relative; }
+.team-detail-card.red { border-color: var(--team-red); box-shadow: 0 0 18px var(--team-red-glow); }
+.team-detail-card.green { border-color: var(--team-green); box-shadow: 0 0 18px var(--team-green-glow); }
+.team-detail-card.blue { border-color: var(--team-blue); box-shadow: 0 0 18px var(--team-blue-glow); }
+.team-detail-header { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; padding: 16px 20px; background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid var(--border-color); }
+.team-detail-logo { width: 60px; height: 60px; object-fit: contain; }
+.team-detail-rank { font-family: 'Press Start 2P', cursive; font-size: 0.6rem; color: var(--gold); margin-bottom: 4px; letter-spacing: 1px; }
+.team-detail-name { font-family: 'Press Start 2P', cursive; font-size: 0.75rem; color: var(--text-primary); line-height: 1.3; }
+.team-detail-meta { color: var(--text-secondary); font-size: 0.75rem; margin-top: 6px; }
+.team-detail-total { text-align: right; }
+.team-detail-total .total-num { display: block; font-family: 'Press Start 2P', cursive; font-size: 1.8rem; color: var(--gold); text-shadow: 0 0 10px rgba(212, 175, 55, 0.4); }
+.team-detail-total .total-label { display: block; color: var(--text-secondary); font-size: 0.7rem; margin-top: 4px; }
+.cadetes-list { list-style: none; margin: 0; padding: 8px 0; }
+.cadete-row { display: grid; grid-template-columns: 32px 24px 1fr auto; gap: 12px; align-items: center; padding: 10px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); transition: background 0.15s ease; }
+.cadete-row:last-child { border-bottom: none; }
+.cadete-row:hover { background: rgba(212, 175, 55, 0.04); }
+.cadete-row.empty { grid-template-columns: 1fr; text-align: center; color: var(--text-secondary); padding: 18px; }
+.cadete-rank { font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: var(--text-secondary); text-align: center; }
+.cadete-row:nth-child(1) .cadete-rank { color: #ffd700; }
+.cadete-row:nth-child(2) .cadete-rank { color: #c0c0c0; }
+.cadete-row:nth-child(3) .cadete-rank { color: #cd7f32; }
+.cadete-gender { color: var(--gold); text-align: center; font-size: 1rem; }
+.cadete-name { color: var(--text-primary); font-size: 0.95rem; }
+.cadete-points { font-family: 'Press Start 2P', cursive; color: var(--gold); font-size: 0.85rem; }
+.cadete-points .pts-suffix { margin-left: 4px; font-size: 0.55rem; color: var(--text-secondary); }
+.cadete-row.captain { background: linear-gradient(90deg, rgba(212, 175, 55, 0.18) 0%, rgba(212, 175, 55, 0.04) 100%); border-left: 3px solid var(--gold); }
+.cadete-row.captain .cadete-rank { font-size: 1.1rem; }
+.cadete-row.captain .cadete-name { color: var(--gold); font-weight: 700; }
+.captain-badge { display: inline-block; margin-left: 6px; padding: 2px 6px; background: var(--gold); color: #000; font-family: 'Press Start 2P', cursive; font-size: 0.45rem; letter-spacing: 1px; border-radius: 3px; vertical-align: middle; }
+.overall-list { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; max-width: 700px; margin: 0 auto; }
+.overall-row { display: grid; grid-template-columns: 36px 24px 1fr auto auto; gap: 12px; align-items: center; padding: 12px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); border-left: 4px solid transparent; }
+.overall-row:last-child { border-bottom: none; }
+.overall-row.red { border-left-color: var(--team-red); }
+.overall-row.green { border-left-color: var(--team-green); }
+.overall-row.blue { border-left-color: var(--team-blue); }
+.overall-rank { font-family: 'Press Start 2P', cursive; font-size: 0.85rem; color: var(--gold); text-align: center; }
+.overall-row:nth-child(1) .overall-rank { font-size: 1rem; }
+.overall-gender { color: var(--gold); text-align: center; }
+.overall-name { color: var(--text-primary); font-weight: 700; }
+.overall-team { color: var(--text-secondary); font-size: 0.75rem; text-align: right; }
+.overall-points { font-family: 'Press Start 2P', cursive; color: var(--gold); font-size: 0.85rem; }
+.overall-points .pts-suffix { margin-left: 4px; font-size: 0.55rem; color: var(--text-secondary); }
+.overall-row.empty { grid-template-columns: 1fr; text-align: center; color: var(--text-secondary); }
+@media (max-width: 720px) {
+  .podium { grid-template-columns: 1fr; max-width: 360px; }
+  .podium-card.first { transform: none; order: -1; }
+  .team-detail-header { grid-template-columns: auto 1fr; grid-template-rows: auto auto; }
+  .team-detail-total { grid-column: 1 / -1; text-align: center; padding-top: 8px; border-top: 1px solid var(--border-color); }
+  .overall-row { grid-template-columns: 30px 22px 1fr auto; }
+  .overall-team { display: none; }
+  .cadete-row { grid-template-columns: 28px 22px 1fr auto; font-size: 0.85rem; }
+}
+    </style>
+    <meta name="description" content="Ranking oficial das equipes Cadetes de Cristo">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">CADETES<span>DE</span>CRISTO</div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero ranking-hero">
+        <div class="hero-icon">
+            <img src="/images/cadetes/logo-cadetes.png" alt="Cadetes" style="max-height: 130px; width: auto;">
+        </div>
+        <h1>RANKING OFICIAL</h1>
+        <p class="subtitle">Pontuação das equipes e dos cadetes</p>
+        <div class="round-indicator" id="updatedAtIndicator">CARREGANDO...</div>
+    </section>
+
+    <div class="container">
+        <!-- Estado de carregamento -->
+        <div class="state-card" id="loadingCard">
+            <p>⏳ Carregando ranking...</p>
+        </div>
+
+        <!-- Estado vazio -->
+        <div class="state-card" id="emptyCard" hidden>
+            <h3>📋 Nenhuma equipe ainda</h3>
+            <p>O sorteio das equipes ainda não foi salvo.</p>
+        </div>
+
+        <!-- Pódio das equipes -->
+        <div class="podium-section" id="podiumSection" hidden>
+            <h2 class="section-title">🏆 PÓDIO DAS EQUIPES</h2>
+            <div class="podium" id="podium"></div>
+        </div>
+
+        <!-- Detalhes por equipe -->
+        <div class="teams-detail-section" id="teamsDetailSection" hidden>
+            <h2 class="section-title">⚔️ RANKING DOS CADETES POR EQUIPE</h2>
+            <div class="teams-detail" id="teamsDetail"></div>
+        </div>
+
+        <!-- Ranking individual geral -->
+        <div class="overall-section" id="overallSection" hidden>
+            <h2 class="section-title">🌟 TOP 10 CADETES</h2>
+            <div class="overall-list" id="overallList"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="cross">✝️</div>
+        <p>DJAD - Cadetes de Cristo</p>
+        <p style="opacity: 0.5; font-size: 0.7rem; margin-top: 10px;">"E tudo quanto fizerdes, fazei-o de todo o coração, como ao Senhor" — Cl 3:23</p>
+    </footer>
+
+    <script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+        authDomain: "umadcamp-patu.firebaseapp.com",
+        projectId: "umadcamp-patu",
+        storageBucket: "umadcamp-patu.firebasestorage.app",
+        messagingSenderId: "1043102355965",
+        appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+        measurementId: "G-S6N9R4F8Z8"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function teamTotal(team) {
+        const memberSum = (team.members || []).reduce((s, m) => s + (m.points || 0), 0);
+        return memberSum + (team.bonus || 0) + (team.adjust || 0);
+    }
+
+    const CAPTAINS = new Set(['Jonas', 'Suzana', 'Elaine']);
+    function isCaptain(name) { return CAPTAINS.has(name); }
+
+    function formatDate(ts) {
+        if (!ts) return '';
+        const d = ts.toDate ? ts.toDate() : new Date(ts);
+        return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function renderPodium(teams) {
+        const podium = document.getElementById('podium');
+        const sorted = [...teams].sort((a, b) => teamTotal(b) - teamTotal(a));
+        const podiumOrder = [1, 0, 2]; // 2º, 1º, 3º (visual layout)
+        podium.innerHTML = '';
+        podium.className = 'podium';
+
+        podiumOrder.forEach(rankIdx => {
+            const team = sorted[rankIdx];
+            if (!team) return;
+            const total = teamTotal(team);
+            const medal = ['🥇', '🥈', '🥉'][rankIdx];
+            const heightClass = ['first', 'second', 'third'][rankIdx];
+
+            const card = document.createElement('div');
+            card.className = `podium-card ${team.id} ${heightClass}`;
+            card.innerHTML = `
+                <div class="podium-medal">${medal}</div>
+                <img src="${team.logo}" alt="${team.name}" class="podium-logo">
+                <div class="podium-name">${team.name}</div>
+                <div class="podium-points">${total}<span class="pts-label"> pts</span></div>
+                <div class="podium-rank-num">${rankIdx + 1}º</div>
+            `;
+            podium.appendChild(card);
+        });
+    }
+
+    function renderTeamsDetail(teams) {
+        const wrap = document.getElementById('teamsDetail');
+        const sorted = [...teams].sort((a, b) => teamTotal(b) - teamTotal(a));
+        wrap.innerHTML = '';
+
+        sorted.forEach((team, rankIdx) => {
+            const total = teamTotal(team);
+            const sortedMembers = [...(team.members || [])].sort((a, b) => {
+                const ca = isCaptain(a.name) ? 1 : 0;
+                const cb = isCaptain(b.name) ? 1 : 0;
+                if (ca !== cb) return cb - ca;
+                return (b.points || 0) - (a.points || 0);
+            });
+
+            const card = document.createElement('div');
+            card.className = `team-detail-card ${team.id}`;
+            card.innerHTML = `
+                <div class="team-detail-header">
+                    <img src="${team.logo}" alt="${team.name}" class="team-detail-logo">
+                    <div class="team-detail-info">
+                        <div class="team-detail-rank">${rankIdx + 1}º LUGAR</div>
+                        <div class="team-detail-name">${team.name}</div>
+                        <div class="team-detail-meta">
+                            ${(team.members || []).length} cadetes
+                            ${team.bonus ? `· Bônus de equipe: <strong>${team.bonus}</strong>` : ''}
+                        </div>
+                    </div>
+                    <div class="team-detail-total">
+                        <span class="total-num">${total}</span>
+                        <span class="total-label">pontos</span>
+                    </div>
+                </div>
+                <ol class="cadetes-list">
+                    ${sortedMembers.map((m, i) => {
+                        const cap = isCaptain(m.name);
+                        return `
+                        <li class="cadete-row${cap ? ' captain' : ''}">
+                            <span class="cadete-rank">${cap ? '👑' : (i + 1)}</span>
+                            <span class="cadete-gender">${m.gender === 'M' ? '♂' : '♀'}</span>
+                            <span class="cadete-name">${m.name}${cap ? ` <span class="captain-badge">${m.gender === 'F' ? 'CAPITÃ' : 'CAPITÃO'}</span>` : ''}</span>
+                            <span class="cadete-points">${m.points || 0}<span class="pts-suffix">pts</span></span>
+                        </li>
+                        `;
+                    }).join('') || '<li class="cadete-row empty">Nenhum cadete</li>'}
+                </ol>
+            `;
+            wrap.appendChild(card);
+        });
+    }
+
+    function renderOverall(teams) {
+        const list = document.getElementById('overallList');
+        const all = [];
+        teams.forEach(t => (t.members || []).forEach(m => all.push({ ...m, teamId: t.id, teamName: t.name })));
+        all.sort((a, b) => (b.points || 0) - (a.points || 0));
+        const top = all.slice(0, 10);
+        list.innerHTML = top.map((m, i) => `
+            <div class="overall-row ${m.teamId}">
+                <span class="overall-rank">${i + 1}</span>
+                <span class="overall-gender">${m.gender === 'M' ? '♂' : '♀'}</span>
+                <span class="overall-name">${m.name}</span>
+                <span class="overall-team">${m.teamName}</span>
+                <span class="overall-points">${m.points || 0}<span class="pts-suffix">pts</span></span>
+            </div>
+        `).join('') || '<div class="overall-row empty">Sem cadetes ainda</div>';
+    }
+
+    function render(data) {
+        const teams = data.teams || [];
+        if (teams.length === 0) {
+            document.getElementById('emptyCard').hidden = false;
+            return;
+        }
+        document.getElementById('podiumSection').hidden = false;
+        document.getElementById('teamsDetailSection').hidden = false;
+        document.getElementById('overallSection').hidden = false;
+        renderPodium(teams);
+        renderTeamsDetail(teams);
+        renderOverall(teams);
+
+        const ind = document.getElementById('updatedAtIndicator');
+        if (data.updatedAt) ind.textContent = `ATUALIZADO EM ${formatDate(data.updatedAt)}`;
+        else ind.textContent = 'AO VIVO';
+    }
+
+    // Realtime listener
+    db.collection('cadetes_pontuacao').doc('equipes').onSnapshot(doc => {
+        document.getElementById('loadingCard').hidden = true;
+        if (!doc.exists) {
+            document.getElementById('emptyCard').hidden = false;
+            document.getElementById('podiumSection').hidden = true;
+            document.getElementById('teamsDetailSection').hidden = true;
+            document.getElementById('overallSection').hidden = true;
+            document.getElementById('updatedAtIndicator').textContent = 'SEM DADOS';
+            return;
+        }
+        document.getElementById('emptyCard').hidden = true;
+        render(doc.data());
+    }, err => {
+        console.error(err);
+        document.getElementById('loadingCard').innerHTML = '<p>❌ Erro ao carregar: ' + err.message + '</p>';
+    });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/cadetes.css">
+    <title>Admin Álbum — Cadetes</title>
+    <meta name="robots" content="noindex,nofollow">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        :root {
+            --bg-color: #0a0a0a;
+            --card-bg: #111111;
+            --primary-gold: #d4af37;
+            --gold: #ffd700;
+            --gold-dark: #b8960c;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --border-color: rgba(212, 175, 55, 0.3);
+            --danger: #ff6b6b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0;
+            padding: 0;
+            background-image:
+                linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-family: 'Press Start 2P', cursive;
+            color: var(--gold);
+            font-size: 1.1rem;
+            margin: 0 0 10px;
+            text-shadow: 0 0 14px rgba(212, 175, 55, 0.4);
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-family: 'Press Start 2P', cursive;
+            color: var(--gold);
+            font-size: 0.85rem;
+            margin: 0 0 14px;
+            letter-spacing: 1px;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+
+        .danger-card {
+            border-color: var(--danger);
+        }
+
+        .danger-card h2 {
+            color: var(--danger);
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+            color: #000;
+            border: none;
+            padding: 14px 24px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 14px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 16px var(--primary-gold);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        button.danger {
+            background: linear-gradient(135deg, #c41e3a 0%, var(--danger) 100%);
+            color: #fff;
+        }
+        button.danger:hover {
+            box-shadow: 0 0 16px rgba(255, 107, 107, 0.5);
+        }
+
+        .log {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 14px;
+            margin-top: 14px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            max-height: 240px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .log .ok { color: #4ade80; }
+        .log .err { color: var(--danger); }
+        .log .info { color: var(--gold); }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 14px 0;
+        }
+        .stat {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+        }
+        .stat-num {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.1rem;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+        }
+
+        a.back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.82rem;
+        }
+        a.back-link:hover {
+            color: var(--gold);
+        }
+
+        /* ===== Bloqueio ===== */
+        .block-status {
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            margin-bottom: 14px;
+            border: 1px solid var(--border-color);
+        }
+        .block-status.on {
+            background: rgba(255, 107, 107, 0.12);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+        .block-status.scheduled {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+        .block-status.off {
+            background: rgba(74, 222, 128, 0.08);
+            border-color: rgba(74, 222, 128, 0.4);
+            color: #4ade80;
+        }
+        .block-form label {
+            display: block;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.55rem;
+            color: var(--gold);
+            margin: 12px 0 6px;
+            letter-spacing: 0.5px;
+        }
+        .block-form input[type="datetime-local"],
+        .block-form textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            padding: 10px 12px;
+            outline: none;
+            resize: vertical;
+        }
+        .block-form input:focus,
+        .block-form textarea:focus { border-color: var(--gold); }
+        .block-check {
+            display: flex !important;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 0.9rem !important;
+            color: var(--text-primary) !important;
+            text-transform: none;
+            letter-spacing: 0 !important;
+            margin-top: 14px !important;
+            cursor: pointer;
+        }
+        .block-check input { width: 18px; height: 18px; cursor: pointer; }
+        .block-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        button.ghost {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+        button.ghost:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+            background: rgba(255, 107, 107, 0.06);
+            box-shadow: none;
+        }
+        .block-feedback {
+            margin-top: 12px;
+            font-size: 0.82rem;
+            min-height: 18px;
+        }
+        .block-feedback.ok { color: #4ade80; }
+        .block-feedback.err { color: var(--danger); }
+
+        /* ===== Lista de cadetes ===== */
+        .cadete-list {
+            display: grid;
+            gap: 8px;
+            margin-top: 14px;
+        }
+        .cadete-row {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color 0.2s ease;
+        }
+        .cadete-row:hover {
+            border-color: var(--gold);
+        }
+        .cadete-row.inactive {
+            opacity: 0.55;
+        }
+        .cadete-row.inactive .cadete-progress {
+            color: var(--text-secondary);
+        }
+        .inactive-badge {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 3px 6px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.45rem;
+            letter-spacing: 0.5px;
+            border-radius: 3px;
+            margin-left: 8px;
+            white-space: nowrap;
+        }
+        .completed-badge {
+            background: rgba(255, 215, 0, 0.12);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            padding: 3px 6px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.45rem;
+            letter-spacing: 0.5px;
+            border-radius: 3px;
+            margin-left: 8px;
+            white-space: nowrap;
+        }
+        .cadete-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            cursor: pointer;
+            flex-wrap: wrap;
+        }
+        .cadete-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.65rem;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+            flex: 1;
+            min-width: 120px;
+        }
+        .cadete-progress {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            color: var(--gold);
+            min-width: 60px;
+            text-align: right;
+        }
+        .cadete-lendaria {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: var(--gold);
+            background: rgba(255, 215, 0, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+        .cadete-lendaria.zero {
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.02);
+            border-color: var(--border-color);
+        }
+        .cadete-extra {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: #4ade80;
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.4);
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        /* Painel de pacotes extras (dentro dos detalhes) */
+        .extra-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: rgba(74, 222, 128, 0.05);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            border-radius: 6px;
+            padding: 12px 14px;
+            margin-top: 12px;
+        }
+
+        /* Painel de reset individual de cadete */
+        .reset-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: rgba(255, 107, 107, 0.05);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 6px;
+            padding: 12px 14px;
+            margin-top: 10px;
+        }
+        .reset-info {
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            flex: 1;
+            min-width: 200px;
+        }
+        .reset-btn {
+            background: rgba(255, 107, 107, 0.12);
+            border: 1px solid rgba(255, 107, 107, 0.5);
+            color: #ff6b6b;
+            padding: 8px 14px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.55rem;
+            letter-spacing: 0.5px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+        .reset-btn:hover {
+            background: #ff6b6b;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+        .reset-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .extra-info {
+            color: var(--text-primary);
+            font-size: 0.85rem;
+        }
+        .extra-info strong {
+            color: #4ade80;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            margin-left: 4px;
+        }
+        .extra-controls {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .extra-controls button {
+            background: rgba(74, 222, 128, 0.12);
+            border: 1px solid rgba(74, 222, 128, 0.5);
+            color: #4ade80;
+            padding: 8px 12px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.55rem;
+            letter-spacing: 0.5px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0;
+            transition: all 0.15s ease;
+        }
+        .extra-controls button:hover {
+            background: #4ade80;
+            color: #000;
+            box-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+        }
+        .extra-controls button.minus {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: rgba(255, 107, 107, 0.5);
+            color: #ff6b6b;
+        }
+        .extra-controls button.minus:hover {
+            background: #ff6b6b;
+            color: #fff;
+            box-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
+        }
+        .extra-controls button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .cadete-packs {
+            color: var(--text-secondary);
+            font-size: 0.72rem;
+            white-space: nowrap;
+        }
+        .cadete-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .cadete-actions button,
+        .cadete-actions a {
+            background: rgba(255, 215, 0, 0.08);
+            border: 1px solid var(--border-color);
+            color: var(--gold);
+            padding: 6px 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            letter-spacing: 0.8px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.15s ease;
+        }
+        .cadete-actions button:hover,
+        .cadete-actions a:hover {
+            background: var(--gold);
+            color: #000;
+            transform: none;
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+        }
+        .cadete-details {
+            display: none;
+            padding: 0 14px 14px;
+            border-top: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.25);
+        }
+        .cadete-row.expanded .cadete-details {
+            display: block;
+        }
+        .figs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 6px;
+            margin-top: 12px;
+        }
+        .fig-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+        .fig-chip .fig-num {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.55rem;
+            color: var(--gold);
+            min-width: 28px;
+        }
+        .fig-chip .fig-dup {
+            color: var(--text-secondary);
+            font-size: 0.65rem;
+            margin-left: auto;
+        }
+        .cadete-row.expanded .cadete-head::after {
+            transform: rotate(180deg);
+        }
+        .cadete-empty {
+            color: var(--text-secondary);
+            font-style: italic;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+        .filter-bar input {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            padding: 8px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .filter-bar input:focus { border-color: var(--gold); }
+        .filter-bar select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            padding: 8px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        @media (max-width: 600px) {
+            .cadete-head { gap: 8px; }
+            .cadete-actions { margin-left: auto; }
+        }
+
+        /* ====== Login ====== */
+        .login-screen {
+            max-width: 420px;
+            margin: 60px auto;
+        }
+        .login-form label {
+            display: block;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: var(--gold);
+            margin: 14px 0 6px;
+            letter-spacing: 1px;
+        }
+        .login-form input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            padding: 10px 12px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+        .login-form input:focus {
+            border-color: var(--gold);
+        }
+        .login-form input#adminPin {
+            text-align: center;
+            font-size: 1.5rem;
+            letter-spacing: 8px;
+            padding: 14px 12px;
+            font-weight: 700;
+        }
+        .login-form button {
+            width: 100%;
+            margin-top: 18px;
+        }
+        .login-err {
+            color: var(--danger);
+            font-size: 0.82rem;
+            text-align: center;
+            min-height: 18px;
+            margin-top: 12px;
+        }
+        .login-form.shake {
+            animation: form-shake 0.4s ease-in-out;
+        }
+        @keyframes form-shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-6px); }
+            80% { transform: translateX(6px); }
+        }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- LOGIN -->
+        <div id="loginScreen" class="login-screen card" hidden>
+            <h2>🔐 ACESSO RESTRITO</h2>
+            <p>Esta área é restrita. Faça login com sua conta de cadete autorizada.</p>
+            <form class="login-form" id="loginForm" autocomplete="off">
+                <label for="adminName">NOME DE CADETE</label>
+                <input type="text" id="adminName" maxlength="40" required autocomplete="off"
+                    spellcheck="false" placeholder="Digite seu nome">
+
+                <label for="adminPin">PIN (4 dígitos)</label>
+                <input type="text" id="adminPin" inputmode="numeric" maxlength="4"
+                    autocomplete="off" placeholder="0000">
+
+                <button type="submit">ENTRAR</button>
+                <div class="login-err" id="loginErr"></div>
+            </form>
+        </div>
+
+        <!-- ADMIN UI -->
+        <div id="adminUI" hidden>
+            <header>
+                <h1>ADMIN — ÁLBUM DE EFÉSIOS</h1>
+                <p>Logado como <strong id="loggedAs" style="color: var(--gold);">—</strong>.
+                    <a href="#" id="logoutLink" class="back-link" style="margin-left: 10px;">SAIR</a></p>
+            </header>
+
+            <div class="card">
+                <h2>📊 STATUS</h2>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-num" id="statTotal">—</div>
+                        <div class="stat-label">CADETES</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-num" id="statWithCards">—</div>
+                        <div class="stat-label">COM FIGURINHAS</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-num" id="statPacks">—</div>
+                        <div class="stat-label">PACOTES ABERTOS</div>
+                    </div>
+                </div>
+                <button id="refreshStatsBtn">ATUALIZAR</button>
+            </div>
+
+            <div class="card">
+                <h2>🔒 BLOQUEIO DE ABERTURA</h2>
+                <p>Defina um período em que ninguém poderá abrir pacotes (ex.: durante o culto).
+                    A mensagem abaixo aparece pro cadete no lugar do botão de abrir.</p>
+                <div class="block-status" id="blockStatus">Carregando…</div>
+                <div class="block-form">
+                    <label for="blockStart">INÍCIO</label>
+                    <input type="datetime-local" id="blockStart">
+                    <label for="blockEnd">FIM</label>
+                    <input type="datetime-local" id="blockEnd">
+                    <label for="blockMessage">MENSAGEM EXIBIDA</label>
+                    <textarea id="blockMessage" rows="2"
+                        placeholder="Ex.: Estamos em culto 🙏 Volte após as 21h para abrir seus pacotes!"></textarea>
+                    <label class="block-check">
+                        <input type="checkbox" id="blockEnabled"> Ativar bloqueio
+                    </label>
+                    <div class="block-actions">
+                        <button id="saveBlockBtn">SALVAR BLOQUEIO</button>
+                        <button id="clearBlockBtn" class="ghost">REMOVER BLOQUEIO</button>
+                    </div>
+                    <div class="block-feedback" id="blockFeedback"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🏁 TRAVA DE DISPUTA (49/50)</h2>
+                <p>Limita o álbum a X figurinhas únicas — quando o cadete chega no teto,
+                    os pacotes só sorteiam <strong>repetidas</strong>. Use 49 pra impedir
+                    qualquer um de fechar 50/50 e deixar a final em aberto. Pacotes continuam
+                    abrindo normalmente; o cadete só não recebe a última figurinha.
+                    Deixe em branco / desative pra liberar o 50.</p>
+                <div class="block-status" id="capStatus">Carregando…</div>
+                <div class="block-form">
+                    <label for="capValue">TETO DE FIGURINHAS ÚNICAS</label>
+                    <input type="number" id="capValue" min="1" max="49" step="1" placeholder="49">
+                    <label class="block-check">
+                        <input type="checkbox" id="capEnabled"> Ativar trava de disputa
+                    </label>
+                    <div class="block-actions">
+                        <button id="saveCapBtn">SALVAR TRAVA</button>
+                        <button id="clearCapBtn" class="ghost">REMOVER TRAVA</button>
+                    </div>
+                    <div class="block-feedback" id="capFeedback"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🎖️ CADETES</h2>
+                <div class="filter-bar">
+                    <input type="text" id="searchInput" placeholder="🔍 Buscar nome…">
+                    <select id="sortSelect">
+                        <option value="progress-desc">Mais figurinhas →</option>
+                        <option value="progress-asc">Menos figurinhas →</option>
+                        <option value="lendaria-desc">Mais lendárias →</option>
+                        <option value="name">Nome (A–Z)</option>
+                        <option value="packs-desc">Mais pacotes abertos</option>
+                    </select>
+                </div>
+                <div class="cadete-list" id="cadeteList">
+                    <div class="cadete-empty">Carregando…</div>
+                </div>
+            </div>
+
+            <div class="card danger-card">
+                <h2>⚠️ ZERAR FIGURINHAS DE TODOS</h2>
+                <p>
+                    Zera as figurinhas, repetidas, cooldown e contador de pacotes de
+                    <strong>todos os cadetes</strong>. O perfil (nome) é mantido.
+                    <br><br>
+                    <strong>Esta ação não pode ser desfeita.</strong> Use antes do lançamento ou pra
+                    resets manuais.
+                </p>
+                <button id="resetAllBtn" class="danger">ZERAR FIGURINHAS DE TODOS</button>
+                <div class="log" id="log" hidden></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+            authDomain: "umadcamp-patu.firebaseapp.com",
+            projectId: "umadcamp-patu",
+            storageBucket: "umadcamp-patu.firebasestorage.app",
+            messagingSenderId: "1043102355965",
+            appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+            measurementId: "G-S6N9R4F8Z8"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const COLLECTION = 'album-efesios';
+        const STORAGE_KEY = 'album-efesios-uid';
+
+        // Cadetes autorizados a acessar esta página admin.
+        const ADMINS = {
+            'RAVEL': { pin: '6829', display: 'Ravel' }
+        };
+
+        // Lista completa de cadetes (espelha album-efesios.html — mantenha em sincronia).
+        const CADETES = {
+            'ELAINE':         'Elaine',
+            'JONAS':          'Jonas',
+            'SUZANA':         'Suzana',
+            'JONNAS':         'Jonnas',
+            'MIRIA':          'Mirià',
+            'SARA':           'Sara',
+            'ANA JULIA':      'Ana Júlia',
+            'MIKAEL':         'Mikael',
+            'NICOLAS CORTEZ': 'Nicolas Cortez',
+            'NATALIA':        'Natália',
+            'SIMONE':         'Simone',
+            'ELIAS':          'Elias',
+            'RITINHA':        'Ritinha',
+            'RAYSSA':         'Rayssa',
+            'ASAFE':          'Asafe',
+            'SYLLAS':         'Syllas',
+            'MOISES':         'Moisés',
+            'SILVIA':         'Silvia',
+            'OLGA':           'Olga',
+            'ANIELY':         'Aniely',
+            'JUDSON':         'Judson',
+            'SHEMILLA':       'Shemilla',
+            'ALVARO':         'Álvaro',
+            'ISADORA':        'Isadora',
+            'ITALWAN':        'Italwan',
+            'THIAGO':         'Thiago',
+            'VITORIA':        'Vitória',
+            'NICOLAS LEITE':  'Nicolas Leite',
+            'DANIEL':         'Daniel',
+            'RAVEL':          'Ravel',
+            'LUCIANO':        'Luciano',
+            'KEYLLHA':        'Keyllha',
+            'ABINOA':         'Abinoã',
+            'GERLANY':        'Gerlany',
+            'PEDRO LUCAS':    'Pedro Lucas',
+            'TESTE':          'Teste'
+        };
+
+        function normalize(s) {
+            return (s || '')
+                .toString()
+                .normalize('NFD')
+                .replace(new RegExp('[\\u0300-\\u036f]', 'g'), '')
+                .toUpperCase()
+                .replace(/[^A-Z0-9 ]/g, ' ')
+                .trim()
+                .replace(/\s+/g, ' ');
+        }
+
+        const $ = (id) => document.getElementById(id);
+
+        function showLogin() {
+            $('loginScreen').hidden = false;
+            $('adminUI').hidden = true;
+            setTimeout(() => $('adminName').focus(), 50);
+        }
+
+        function showAdmin(displayName) {
+            $('loggedAs').textContent = displayName;
+            $('loginScreen').hidden = true;
+            $('adminUI').hidden = false;
+            refreshStats();
+            loadBlock();
+            loadCap();
+        }
+
+        /* ============================================================
+         * BLOQUEIO DE ABERTURA
+         * Doc Firestore: album-efesios/__block__
+         * { enabled, start, end, message }  (start/end no formato datetime-local)
+         * ============================================================ */
+        const BLOCK_DOC = 'config_block';
+
+        async function loadBlock() {
+            try {
+                const doc = await db.collection(COLLECTION).doc(BLOCK_DOC).get();
+                const data = doc.exists ? doc.data() : {};
+                $('blockStart').value = data.start || '';
+                $('blockEnd').value = data.end || '';
+                $('blockMessage').value = data.message || '';
+                $('blockEnabled').checked = !!data.enabled;
+                updateBlockStatus(data);
+            } catch (e) {
+                console.error('loadBlock', e);
+                $('blockStatus').textContent = 'Erro ao carregar bloqueio.';
+            }
+        }
+
+        function updateBlockStatus(data) {
+            const el = $('blockStatus');
+            el.className = 'block-status';
+            if (!data || !data.enabled) {
+                el.classList.add('off');
+                el.textContent = '✅ Sem bloqueio ativo — cadetes podem abrir normalmente.';
+                return;
+            }
+            const now = new Date();
+            const start = data.start ? new Date(data.start) : null;
+            const end = data.end ? new Date(data.end) : null;
+            const fmt = d => d ? d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
+
+            if (start && now < start) {
+                el.classList.add('scheduled');
+                el.textContent = `🕐 Bloqueio agendado: ${fmt(start)} até ${fmt(end)}.`;
+            } else if (end && now > end) {
+                el.classList.add('off');
+                el.textContent = `⌛ Bloqueio já encerrado (terminou ${fmt(end)}). Desative ou ajuste as datas.`;
+            } else {
+                el.classList.add('on');
+                el.textContent = `🔒 BLOQUEIO ATIVO AGORA — até ${fmt(end)}.`;
+            }
+        }
+
+        async function saveBlock() {
+            const fb = $('blockFeedback');
+            fb.className = 'block-feedback';
+            fb.textContent = '';
+
+            const enabled = $('blockEnabled').checked;
+            const start = $('blockStart').value || null;
+            const end = $('blockEnd').value || null;
+            const message = $('blockMessage').value.trim();
+
+            if (enabled) {
+                if (!start || !end) {
+                    fb.className = 'block-feedback err';
+                    fb.textContent = 'Defina início e fim do bloqueio.';
+                    return;
+                }
+                if (new Date(end) <= new Date(start)) {
+                    fb.className = 'block-feedback err';
+                    fb.textContent = 'O fim precisa ser depois do início.';
+                    return;
+                }
+                if (!message) {
+                    fb.className = 'block-feedback err';
+                    fb.textContent = 'Escreva a mensagem que será exibida.';
+                    return;
+                }
+            }
+
+            const btn = $('saveBlockBtn');
+            btn.disabled = true;
+            btn.textContent = 'SALVANDO…';
+            try {
+                const data = { enabled, start, end, message, updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+                await db.collection(COLLECTION).doc(BLOCK_DOC).set(data, { merge: true });
+                fb.className = 'block-feedback ok';
+                fb.textContent = enabled ? 'Bloqueio salvo e ativado.' : 'Salvo (bloqueio desativado).';
+                updateBlockStatus({ enabled, start, end, message });
+            } catch (e) {
+                console.error('saveBlock', e);
+                fb.className = 'block-feedback err';
+                fb.textContent = 'Erro ao salvar: ' + e.message;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'SALVAR BLOQUEIO';
+            }
+        }
+
+        async function clearBlock() {
+            if (!confirm('Remover o bloqueio? Os cadetes voltam a abrir normalmente.')) return;
+            const fb = $('blockFeedback');
+            try {
+                await db.collection(COLLECTION).doc(BLOCK_DOC).set(
+                    { enabled: false, updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
+                    { merge: true }
+                );
+                $('blockEnabled').checked = false;
+                fb.className = 'block-feedback ok';
+                fb.textContent = 'Bloqueio removido.';
+                updateBlockStatus({ enabled: false });
+            } catch (e) {
+                fb.className = 'block-feedback err';
+                fb.textContent = 'Erro ao remover: ' + e.message;
+            }
+        }
+
+        /* ============================================================
+         * TRAVA DE DISPUTA — uniqueCap em config_block
+         * Quando ativa, ninguém consegue passar de `uniqueCap` figurinhas
+         * únicas. Pacotes continuam abrindo, só caem repetidas.
+         * ============================================================ */
+        function capActive(data) {
+            return !!(data && data.capEnabled && Number.isInteger(data.uniqueCap)
+                && data.uniqueCap >= 1 && data.uniqueCap < 50);
+        }
+
+        function updateCapStatus(data) {
+            const el = $('capStatus');
+            el.className = 'block-status';
+            if (!capActive(data)) {
+                el.classList.add('off');
+                el.textContent = '✅ Trava desativada — cadetes podem fechar 50/50 normalmente.';
+                return;
+            }
+            el.classList.add('on');
+            el.textContent = `🔒 TRAVA ATIVA — ninguém passa de ${data.uniqueCap}/50. Pacotes só liberam repetidas no teto.`;
+        }
+
+        async function loadCap() {
+            try {
+                const doc = await db.collection(COLLECTION).doc(BLOCK_DOC).get();
+                const data = doc.exists ? doc.data() : {};
+                $('capValue').value = Number.isInteger(data.uniqueCap) ? data.uniqueCap : '';
+                $('capEnabled').checked = !!data.capEnabled;
+                updateCapStatus(data);
+            } catch (e) {
+                console.error('loadCap', e);
+                $('capStatus').textContent = 'Erro ao carregar trava.';
+            }
+        }
+
+        async function saveCap() {
+            const fb = $('capFeedback');
+            fb.className = 'block-feedback';
+            fb.textContent = '';
+
+            const enabled = $('capEnabled').checked;
+            const raw = $('capValue').value.trim();
+            const cap = raw === '' ? null : parseInt(raw, 10);
+
+            if (enabled) {
+                if (!Number.isInteger(cap) || cap < 1 || cap > 49) {
+                    fb.className = 'block-feedback err';
+                    fb.textContent = 'Defina um teto entre 1 e 49.';
+                    return;
+                }
+            }
+
+            const btn = $('saveCapBtn');
+            btn.disabled = true;
+            btn.textContent = 'SALVANDO…';
+            try {
+                const data = {
+                    capEnabled: enabled,
+                    uniqueCap: Number.isInteger(cap) ? cap : null,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                await db.collection(COLLECTION).doc(BLOCK_DOC).set(data, { merge: true });
+                fb.className = 'block-feedback ok';
+                fb.textContent = enabled ? `Trava ativada em ${cap}/50.` : 'Salvo (trava desativada).';
+                updateCapStatus(data);
+            } catch (e) {
+                console.error('saveCap', e);
+                fb.className = 'block-feedback err';
+                fb.textContent = 'Erro ao salvar: ' + e.message;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'SALVAR TRAVA';
+            }
+        }
+
+        async function clearCap() {
+            if (!confirm('Remover a trava? Cadetes voltam a poder fechar 50/50.')) return;
+            const fb = $('capFeedback');
+            try {
+                await db.collection(COLLECTION).doc(BLOCK_DOC).set(
+                    { capEnabled: false, updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
+                    { merge: true }
+                );
+                $('capEnabled').checked = false;
+                fb.className = 'block-feedback ok';
+                fb.textContent = 'Trava removida.';
+                updateCapStatus({ capEnabled: false });
+            } catch (e) {
+                fb.className = 'block-feedback err';
+                fb.textContent = 'Erro ao remover: ' + e.message;
+            }
+        }
+
+        // === LOGIN ===
+        $('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = normalize($('adminName').value);
+            const pin = $('adminPin').value;
+            const err = $('loginErr');
+            const form = $('loginForm');
+
+            const admin = ADMINS[name];
+            const pinOk = admin && pin === admin.pin;
+            const userOk = !!admin;
+            const pinExistsAnywhere = Object.values(ADMINS).some(a => a.pin === pin);
+
+            err.textContent = '';
+            if (userOk && pinOk) {
+                localStorage.setItem(STORAGE_KEY, name);
+                showAdmin(admin.display);
+                return;
+            }
+
+            if (userOk) {
+                err.textContent = 'Senha inválida.';
+            } else if (pinExistsAnywhere) {
+                err.textContent = 'Usuário inválido.';
+            } else {
+                err.textContent = 'Senha e usuário inválidos.';
+            }
+            form.classList.remove('shake');
+            void form.offsetWidth;
+            form.classList.add('shake');
+            $('adminPin').value = '';
+            $('adminPin').focus();
+        });
+
+        $('adminPin').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+        });
+
+        // Logout
+        $('logoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!confirm('Sair?')) return;
+            localStorage.removeItem(STORAGE_KEY);
+            $('adminName').value = '';
+            $('adminPin').value = '';
+            $('loginErr').textContent = '';
+            showLogin();
+        });
+
+        // === ADMIN ACTIONS ===
+        const logEl = $('log');
+        function log(msg, cls = '') {
+            logEl.hidden = false;
+            const span = document.createElement('div');
+            if (cls) span.className = cls;
+            span.textContent = msg;
+            logEl.appendChild(span);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        // Cache de cadetes pra evitar re-fetch
+        let _cadetes = []; // [{ uid, nome, figurinhas, repeats, lastPackDate, packsAbertos }]
+
+        // IDs das figurinhas lendárias (mantém pareado com album-efesios.html).
+        // Total: 3 lendárias no álbum.
+        const LENDARIAS = new Set([1, 23, 50]);
+
+        // Títulos das figurinhas (mantém pareado com album-efesios.html FIGURINHAS).
+        // Atualize se mudar a ordem/título de alguma figurinha lá.
+        const FIG_TITLES = {
+            1: 'Paulo, o Apóstolo', 2: 'Tíquico', 3: 'Onésimo', 4: 'Timóteo',
+            5: 'Áquila', 6: 'Priscila', 7: 'Apolo', 8: 'João, o Apóstolo',
+            9: 'Cidade de Éfeso', 10: 'Templo de Ártemis', 11: 'Teatro de Éfeso',
+            12: 'Biblioteca de Celso', 13: 'Escola de Tirano', 14: 'Porto de Éfeso',
+            15: 'Roma — Paulo Preso', 16: 'Ásia Menor',
+            17: 'Eleitos em Cristo', 18: 'Predestinados à Adoção', 19: 'Redenção pelo Sangue',
+            20: 'Mistério Revelado', 21: 'Selo do Espírito', 22: 'Mortos em Delitos',
+            23: 'Salvos pela Graça', 24: 'Feitura de Deus (Poiema)', 25: 'Cidadãos do Céu',
+            26: 'Templo Santo no Senhor', 27: 'Mistério dos Gentios',
+            28: 'Poder para Compreender', 29: 'Plenitude de Deus',
+            30: 'Unidade do Espírito', 31: 'Cinco Dons Ministeriais',
+            32: 'Edificação do Corpo', 33: 'Novo Homem', 34: 'Não Entristecer o Espírito',
+            35: 'Imitadores de Deus', 36: 'Filhos da Luz', 37: 'Remir o Tempo',
+            38: 'Cheios do Espírito', 39: 'Casamento — Cristo e Igreja',
+            40: 'Filhos e Pais', 41: 'Servos e Senhores', 42: 'Oração no Espírito',
+            43: 'Embaixador em Cadeias',
+            44: 'Cinturão da Verdade', 45: 'Couraça da Justiça', 46: 'Sapatos do Evangelho',
+            47: 'Escudo da Fé', 48: 'Capacete da Salvação', 49: 'Espada do Espírito',
+            50: 'Soldado de Cristo'
+        };
+
+        async function refreshStats() {
+            try {
+                const snap = await db.collection(COLLECTION).get();
+                // Indexa os docs do Firestore por uid pra fundir com a lista de CADETES
+                const byUid = {};
+                snap.forEach(doc => { byUid[doc.id] = doc.data() || {}; });
+
+                _cadetes = [];
+                let withCards = 0;
+                let totalPacks = 0;
+                let active = 0;
+
+                // Itera sobre TODOS os cadetes da lista, mesmo os que nunca logaram
+                Object.entries(CADETES).forEach(([uid, display]) => {
+                    const data = byUid[uid] || null;
+                    const figs = (data && data.figurinhas) || [];
+                    const packs = (data && data.packsAbertos) || 0;
+                    if (data) active++;
+                    if (figs.length > 0) withCards++;
+                    totalPacks += packs;
+
+                    _cadetes.push({
+                        uid,
+                        nome: (data && data.nome) || display,
+                        figurinhas: figs,
+                        repeats: (data && data.repeats) || {},
+                        lastPackDate: (data && data.lastPackDate) || null,
+                        packsAbertos: packs,
+                        extraPacks: (data && data.extraPacks) || 0,
+                        completedAt: (data && data.completedAt) || null,
+                        hasProfile: !!data
+                    });
+                });
+
+                $('statTotal').textContent = _cadetes.length;
+                $('statWithCards').textContent = withCards;
+                $('statPacks').textContent = totalPacks;
+                renderCadeteList();
+            } catch (e) {
+                console.error(e);
+                $('statTotal').textContent = 'erro';
+            }
+        }
+
+        function renderCadeteList() {
+            const search = $('searchInput').value.toLowerCase().trim();
+            const sort = $('sortSelect').value;
+
+            let list = _cadetes.filter(c => {
+                if (!search) return true;
+                return c.nome.toLowerCase().includes(search) || c.uid.toLowerCase().includes(search);
+            });
+
+            const countLendarias = c => c.figurinhas.filter(id => LENDARIAS.has(id)).length;
+
+            list.sort((a, b) => {
+                if (sort === 'progress-desc') return b.figurinhas.length - a.figurinhas.length;
+                if (sort === 'progress-asc') return a.figurinhas.length - b.figurinhas.length;
+                if (sort === 'lendaria-desc') return countLendarias(b) - countLendarias(a);
+                if (sort === 'packs-desc') return b.packsAbertos - a.packsAbertos;
+                return a.nome.localeCompare(b.nome, 'pt-BR');
+            });
+
+            const container = $('cadeteList');
+            if (list.length === 0) {
+                container.innerHTML = '<div class="cadete-empty">Nenhum cadete encontrado.</div>';
+                return;
+            }
+
+            container.innerHTML = list.map(c => {
+                const total = c.figurinhas.length;
+                const sorted = [...c.figurinhas].sort((a, b) => a - b);
+                const figsHtml = sorted.length > 0
+                    ? `<div class="figs-grid">${sorted.map(id => {
+                        const dups = c.repeats[id] || 0;
+                        return `<div class="fig-chip">
+                            <span class="fig-num">#${String(id).padStart(2, '0')}</span>
+                            <span>${FIG_TITLES[id] || '—'}</span>
+                            ${dups > 0 ? `<span class="fig-dup">x${dups + 1}</span>` : ''}
+                        </div>`;
+                    }).join('')}</div>`
+                    : '<div class="cadete-empty">Nenhuma figurinha ainda.</div>';
+
+                const inactive = !c.hasProfile;
+                const lendariaCount = countLendarias(c);
+                const extras = c.extraPacks || 0;
+                const completed = !!c.completedAt;
+                const fmtDate = (iso) => {
+                    if (!iso) return '';
+                    const d = new Date(iso);
+                    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+                };
+                const extraPanel = `
+                    <div class="extra-panel">
+                        <div class="extra-info">
+                            🎁 Pacotes extras: <strong id="extra-val-${c.uid}">${extras}</strong>
+                        </div>
+                        <div class="extra-controls">
+                            <button data-extra="1" data-uid="${escapeHtml(c.uid)}">+1</button>
+                            <button data-extra="3" data-uid="${escapeHtml(c.uid)}">+3</button>
+                            <button data-extra="5" data-uid="${escapeHtml(c.uid)}">+5</button>
+                            <button data-extra="-1" data-uid="${escapeHtml(c.uid)}" class="minus">−1</button>
+                            <button data-extra="zero" data-uid="${escapeHtml(c.uid)}" class="minus">zerar</button>
+                        </div>
+                    </div>`;
+                const resetPanel = c.hasProfile ? `
+                    <div class="reset-panel">
+                        <div class="reset-info">
+                            ⚠️ Resetar figurinhas, repetidas, cartas extras e cooldown deste cadete.
+                        </div>
+                        <button data-action="reset-cadete" data-uid="${escapeHtml(c.uid)}" data-nome="${escapeHtml(c.nome)}" class="reset-btn">
+                            ZERAR FIGURINHAS
+                        </button>
+                    </div>` : '';
+                return `
+                    <div class="cadete-row${inactive ? ' inactive' : ''}" data-uid="${c.uid}">
+                        <div class="cadete-head">
+                            <div class="cadete-name">${completed ? '🏆 ' : ''}${escapeHtml(c.nome)}${inactive ? '<span class="inactive-badge">NÃO ACESSOU</span>' : ''}${completed ? `<span class="completed-badge" title="Completou em ${fmtDate(c.completedAt)}">COMPLETO · ${fmtDate(c.completedAt)}</span>` : ''}</div>
+                            <div class="cadete-packs">${c.packsAbertos} pacote${c.packsAbertos !== 1 ? 's' : ''}</div>
+                            ${extras > 0 ? `<div class="cadete-extra" title="Pacotes extras liberados">🎁 ${extras}</div>` : ''}
+                            <div class="cadete-lendaria${lendariaCount === 0 ? ' zero' : ''}" title="Lendárias distintas (sem contar repetidas)">👑 ${lendariaCount}/3</div>
+                            <div class="cadete-progress">${completed ? 'COMPLETO' : `${total}/50`}</div>
+                            <div class="cadete-actions">
+                                <button data-action="expand">DETALHES</button>
+                                <a href="/djad/album?view=${encodeURIComponent(c.uid)}" target="_blank" rel="noopener">VER ÁLBUM</a>
+                            </div>
+                        </div>
+                        <div class="cadete-details">${extraPanel}${resetPanel}${figsHtml}</div>
+                    </div>
+                `;
+            }).join('');
+
+            container.querySelectorAll('[data-extra]').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const uid = btn.dataset.uid;
+                    const op = btn.dataset.extra;
+                    await changeExtraPacks(uid, op, btn);
+                });
+            });
+
+            container.querySelectorAll('[data-action="reset-cadete"]').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const uid = btn.dataset.uid;
+                    const nome = btn.dataset.nome;
+                    await resetCadeteCards(uid, nome, btn);
+                });
+            });
+
+            container.querySelectorAll('[data-action="expand"]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    btn.closest('.cadete-row').classList.toggle('expanded');
+                });
+            });
+            container.querySelectorAll('.cadete-head').forEach(head => {
+                head.addEventListener('click', (e) => {
+                    if (e.target.closest('a') || e.target.closest('button')) return;
+                    head.closest('.cadete-row').classList.toggle('expanded');
+                });
+            });
+        }
+
+        // Adiciona/remove pacotes extras de um cadete.
+        // Reseta TODAS as cartas/figurinhas de um cadete específico.
+        // Mantém: nome, congregacao, extraPacks (pacotes pagos), firstAccessAt
+        // Limpa: figurinhas, repeats, cartasExtras, lastPackDate, packsAbertos, completedAt
+        async function resetCadeteCards(uid, nome, btn) {
+            if (!confirm(`Zerar TODAS as figurinhas e cartas extras de ${nome}?\n\nEla(e) volta a 0/50, sem cooldown, sem cartas extras.\nOs pacotes extras pagos (🎁) e o nome são preservados.`)) return;
+            const confirm2 = prompt(`Pra confirmar, digite o nome: ${nome}`);
+            if (!confirm2 || confirm2.trim().toLowerCase() !== nome.toLowerCase()) {
+                alert('Nome não bate. Operação cancelada.');
+                return;
+            }
+
+            btn.disabled = true;
+            const originalText = btn.textContent;
+            btn.textContent = 'ZERANDO…';
+            try {
+                await db.collection(COLLECTION).doc(uid).set({
+                    figurinhas: [],
+                    repeats: {},
+                    cartasExtras: [],
+                    lastPackDate: null,
+                    packsAbertos: 0,
+                    completedAt: null,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                // Atualiza o cache local
+                const cadete = _cadetes.find(c => c.uid === uid);
+                if (cadete) {
+                    cadete.figurinhas = [];
+                    cadete.repeats = {};
+                    cadete.cartasExtras = [];
+                    cadete.lastPackDate = null;
+                    cadete.packsAbertos = 0;
+                    cadete.completedAt = null;
+                }
+                renderCadeteList();
+                // Atualiza stats agregadas
+                await refreshStats();
+            } catch (e) {
+                console.error('resetCadeteCards', e);
+                alert('Erro ao zerar: ' + e.message);
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+
+        async function changeExtraPacks(uid, op, btn) {
+            const cadete = _cadetes.find(c => c.uid === uid);
+            if (!cadete) return;
+
+            if (op === 'zero' && !confirm(`Zerar os pacotes extras de ${cadete.nome}?`)) return;
+
+            const panel = btn.closest('.extra-panel');
+            const btns = panel ? panel.querySelectorAll('button') : [];
+            btns.forEach(b => b.disabled = true);
+
+            const ref = db.collection(COLLECTION).doc(uid);
+            try {
+                let newValue;
+                if (op === 'zero') {
+                    await ref.set({ extraPacks: 0, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+                    newValue = 0;
+                } else {
+                    const delta = parseInt(op, 10);
+                    // Transação: lê o valor atual e grava max(0, atual + delta).
+                    // Garante consistência mesmo se o cadete abrir um pacote ao mesmo tempo.
+                    newValue = await db.runTransaction(async (tx) => {
+                        const snap = await tx.get(ref);
+                        const cur = (snap.exists && snap.data().extraPacks) || 0;
+                        const next = Math.max(0, cur + delta);
+                        tx.set(ref, {
+                            extraPacks: next,
+                            nome: (snap.exists && snap.data().nome) || cadete.nome,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        }, { merge: true });
+                        return next;
+                    });
+                }
+                cadete.extraPacks = newValue;
+                cadete.hasProfile = true;
+
+                // Update direto no DOM (preserva o estado expandido da linha)
+                const valEl = document.getElementById(`extra-val-${uid}`);
+                if (valEl) valEl.textContent = newValue;
+                const row = document.querySelector(`.cadete-row[data-uid="${CSS.escape(uid)}"]`);
+                if (row) {
+                    let badge = row.querySelector('.cadete-extra');
+                    if (newValue > 0) {
+                        if (!badge) {
+                            badge = document.createElement('div');
+                            badge.className = 'cadete-extra';
+                            badge.title = 'Pacotes extras liberados';
+                            const lendaria = row.querySelector('.cadete-lendaria');
+                            lendaria.parentNode.insertBefore(badge, lendaria);
+                        }
+                        badge.textContent = `🎁 ${newValue}`;
+                    } else if (badge) {
+                        badge.remove();
+                    }
+                }
+            } catch (e) {
+                console.error('changeExtraPacks', e);
+                alert('Erro ao atualizar pacotes extras: ' + e.message);
+            } finally {
+                btns.forEach(b => b.disabled = false);
+            }
+        }
+
+        function escapeHtml(s) {
+            return String(s).replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[c]);
+        }
+
+        $('searchInput')?.addEventListener('input', renderCadeteList);
+        $('sortSelect')?.addEventListener('change', renderCadeteList);
+
+        async function resetAll() {
+            const btn = $('resetAllBtn');
+            btn.disabled = true;
+            btn.textContent = 'ZERANDO…';
+            logEl.innerHTML = '';
+            log('Buscando perfis…', 'info');
+
+            try {
+                const snap = await db.collection(COLLECTION).get();
+                log(`${snap.size} perfis encontrados.`, 'info');
+
+                let ok = 0, fail = 0;
+                for (const doc of snap.docs) {
+                    try {
+                        await db.collection(COLLECTION).doc(doc.id).set({
+                            figurinhas: [],
+                            repeats: {},
+                            lastPackDate: null,
+                            packsAbertos: 0,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        }, { merge: true });
+                        ok++;
+                        log(`  ✓ ${doc.id}`, 'ok');
+                    } catch (e) {
+                        fail++;
+                        log(`  ✗ ${doc.id} → ${e.message}`, 'err');
+                    }
+                }
+                log(`\nConcluído: ${ok} zerados, ${fail} erros.`, ok > 0 ? 'ok' : 'err');
+                await refreshStats();
+            } catch (e) {
+                log(`Erro fatal: ${e.message}`, 'err');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'ZERAR FIGURINHAS DE TODOS';
+            }
+        }
+
+        $('refreshStatsBtn').addEventListener('click', refreshStats);
+        $('saveBlockBtn').addEventListener('click', saveBlock);
+        $('clearBlockBtn').addEventListener('click', clearBlock);
+        $('saveCapBtn').addEventListener('click', saveCap);
+        $('clearCapBtn').addEventListener('click', clearCap);
+        $('resetAllBtn').addEventListener('click', () => {
+            const confirm1 = confirm('ZERAR figurinhas de TODOS os cadetes? Esta ação não pode ser desfeita.');
+            if (!confirm1) return;
+            const confirm2 = prompt('Para confirmar, digite ZERAR (em maiúsculas):');
+            if (confirm2 !== 'ZERAR') {
+                alert('Confirmação inválida. Operação cancelada.');
+                return;
+            }
+            resetAll();
+        });
+
+        // === BOOT ===
+        (function boot() {
+            const uid = localStorage.getItem(STORAGE_KEY);
+            if (uid && ADMINS[uid]) {
+                showAdmin(ADMINS[uid].display);
+            } else {
+                showLogin();
+            }
+        })();
+    </script>
+</body>
+
+</html>

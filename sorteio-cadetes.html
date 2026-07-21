@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/cadetes.css">
+    <link rel="stylesheet" href="/styles/sorteio-cadetes.css">
+    <title>Sorteio dos Cadetes - DJAD</title>
+    <meta name="description" content="Sorteio oficial das equipes Cadetes de Cristo">
+
+    <!-- GSAP + Confetti via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">CADETES<span>DE</span>CRISTO</div>
+        <div class="nav-links">
+            <a href="/djad/cadetes">INÍCIO</a>
+            <a href="#" class="active">SORTEIO</a>
+            <a href="/djad/ranking">RANKING</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero sorteio-hero">
+        <div class="hero-icon">
+            <img src="/images/cadetes/logo-cadetes.png" alt="Cadetes" style="max-height: 130px; width: auto;">
+        </div>
+        <h1>SORTEIO DAS EQUIPES</h1>
+        <p class="subtitle">Que o Senhor sorteie cada cadete para sua missão</p>
+        <div class="round-indicator" id="roundIndicator">RODADA 0 / 0</div>
+    </section>
+
+    <div class="container">
+
+        <!-- Teams Display -->
+        <div class="teams-display" id="teamsDisplay"></div>
+
+        <!-- Sorteio Arena -->
+        <div class="sorteio-arena" id="arena">
+            <div class="arena-label">PRÓXIMA LINHA A SORTEAR</div>
+            <div class="slot-reels" id="slotReels"></div>
+            <div class="controls-row">
+                <button class="sortear-btn" id="sortearBtn">🎲 SORTEAR</button>
+                <button class="reset-btn" id="resetBtn">↻ RESETAR</button>
+                <button class="save-btn" id="saveBtn" disabled>💾 SALVAR EQUIPES</button>
+            </div>
+            <div class="save-status" id="saveStatus"></div>
+        </div>
+
+        <!-- Section Header -->
+        <div class="section-header" hidden>
+            <h2>📋 LINHAS RESTANTES</h2>
+        </div>
+
+        <!-- Remaining Rows -->
+        <div class="remaining-list" id="remainingList" hidden></div>
+    </div>
+
+    <!-- Flying Cards Layer -->
+    <div class="flight-layer" id="flightLayer"></div>
+
+    <!-- Celebration Overlay -->
+    <div class="celebration-overlay" id="celebration">
+        <div class="celebration-title">⚔️ EQUIPES FORMADAS! ⚔️</div>
+        <div class="celebration-close">
+            <button class="sortear-btn" onclick="document.getElementById('celebration').classList.remove('active')">CONTINUAR</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="cross">✝️</div>
+        <p>DJAD - Sorteio dos Cadetes de Cristo</p>
+        <p style="opacity: 0.5; font-size: 0.7rem; margin-top: 10px;">"A sorte se lança no regaço, mas do Senhor procede toda decisão" — Pv 16:33</p>
+    </footer>
+
+    <script>
+    // =========================================================================
+    // FIREBASE
+    // =========================================================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+        authDomain: "umadcamp-patu.firebaseapp.com",
+        projectId: "umadcamp-patu",
+        storageBucket: "umadcamp-patu.firebasestorage.app",
+        messagingSenderId: "1043102355965",
+        appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+        measurementId: "G-S6N9R4F8Z8"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // =========================================================================
+    // DADOS — Edite aqui se algum nome/gênero estiver errado
+    // Notação: 'M' = Masculino (Homem), 'F' = Feminino (Mulher)
+    // =========================================================================
+    const POTES = [
+        // [Pote 1, Pote 2, Pote 3]    null = vaga vazia
+        ['Elaine',         'Jonas',     'Suzana'],
+        ['Jonnas',         'Mirià',     'Sara'],
+        ['Ana Júlia',      'Mikael',    'Nicolas Cortez'],
+        ['Natália',        'Simone',    'Elias'],
+        ['Ritinha',        'Rayssa',    'Asafe'],
+        ['Syllas',         'Moisés',    'Silvia'],
+        ['Olga',           'Aniely',    'Judson'],
+        ['Shemilla',       'Álvaro',    'Isadora'],
+        ['Italwan',        'Thiago',    'Vitória'],
+        ['Nicolas Leite',  null,        'Daniel']
+    ];
+
+    const GENDERS = {
+        'Elaine': 'F', 'Jonas': 'M', 'Suzana': 'F',
+        'Jonnas': 'M', 'Mirià': 'F', 'Sara': 'F',
+        'Ana Júlia': 'F', 'Mikael': 'M', 'Nicolas Cortez': 'M', // VERIFICAR: usuário marcou (M) mas nome é tipicamente masculino
+        'Natália': 'F', 'Simone': 'F', 'Elias': 'M',
+        'Ritinha': 'F', 'Rayssa': 'F', 'Asafe': 'M',
+        'Syllas': 'M', 'Moisés': 'M', 'Silvia': 'F',
+        'Olga': 'F', 'Aniely': 'F', 'Judson': 'M',
+        'Shemilla': 'F', 'Álvaro': 'M', 'Isadora': 'F',
+        'Italwan': 'M', 'Thiago': 'M', 'Vitória': 'F',
+        'Nicolas Leite': 'M', 'Daniel': 'M' // VERIFICAR: usuário marcou (M) mas nome é tipicamente masculino
+    };
+
+    const PAIRS = [
+        ['Italwan', 'Álvaro'],
+        ['Silvia', 'Rayssa']
+    ];
+
+    const TEAMS = [
+        { id: 'red',   name: 'FALCÕES DO REI',     logo: '/images/cadetes/logo-vermelho.png' },
+        { id: 'green', name: 'CONDORES DO REINO',  logo: '/images/cadetes/logo-verde.png' },
+        { id: 'blue',  name: 'ÁGUIAS DA ALIANÇA',  logo: '/images/cadetes/logo-azul.png' }
+    ];
+
+    // =========================================================================
+    // SOLVER DE RESTRIÇÕES (backtracking)
+    // Saída: assignment[row][nameIdx] = teamIdx (0..2)
+    // =========================================================================
+    const PERMS = [[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]];
+
+    function shuffle(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function findTeam(name, assignment) {
+        for (let r = 0; r < POTES.length; r++) {
+            const idx = POTES[r].indexOf(name);
+            if (idx >= 0 && assignment[r]) return assignment[r][idx];
+        }
+        return -1;
+    }
+
+    function checkPartial(assignment) {
+        // Conta tamanhos atuais e gêneros
+        const sizes = [0,0,0];
+        const males = [0,0,0];
+        const females = [0,0,0];
+        for (let r = 0; r < assignment.length; r++) {
+            const perm = assignment[r];
+            for (let i = 0; i < 3; i++) {
+                const name = POTES[r][i];
+                if (!name) continue;
+                const team = perm[i];
+                sizes[team]++;
+                if (GENDERS[name] === 'M') males[team]++; else females[team]++;
+            }
+        }
+        // Não permitir desbalanço já irrecuperável
+        const remaining = POTES.length - assignment.length;
+        const slack = remaining * 3; // upper bound — basta checar deltas finais no final
+        if (Math.max(...sizes) - Math.min(...sizes) > slack + 1) return false;
+        return true;
+    }
+
+    function checkFinal(assignment) {
+        // Pares juntos
+        for (const [a, b] of PAIRS) {
+            const ta = findTeam(a, assignment);
+            const tb = findTeam(b, assignment);
+            if (ta === -1 || tb === -1 || ta !== tb) return false;
+        }
+        // Tamanhos diff <= 1
+        const sizes = [0,0,0], males = [0,0,0], females = [0,0,0];
+        for (let r = 0; r < POTES.length; r++) {
+            for (let i = 0; i < 3; i++) {
+                const name = POTES[r][i];
+                if (!name) continue;
+                const t = assignment[r][i];
+                sizes[t]++;
+                if (GENDERS[name] === 'M') males[t]++; else females[t]++;
+            }
+        }
+        if (Math.max(...sizes) - Math.min(...sizes) > 1) return false;
+        if (Math.max(...males) - Math.min(...males) > 1) return false;
+        if (Math.max(...females) - Math.min(...females) > 1) return false;
+        return true;
+    }
+
+    function solve() {
+        const assignment = [];
+        function backtrack(row) {
+            if (row === POTES.length) return checkFinal(assignment);
+            const perms = shuffle(PERMS.map(p => [...p]));
+            for (const p of perms) {
+                assignment.push(p);
+                if (checkPartial(assignment) && backtrack(row + 1)) return true;
+                assignment.pop();
+            }
+            return false;
+        }
+        const ok = backtrack(0);
+        return ok ? assignment : null;
+    }
+
+    // =========================================================================
+    // ÁUDIO PROCEDURAL (Web Audio API)
+    // =========================================================================
+    let audioCtx = null;
+    function getAudio() {
+        if (!audioCtx) {
+            try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+            catch(e) { return null; }
+        }
+        return audioCtx;
+    }
+
+    function playTick() {
+        const ctx = getAudio(); if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.frequency.value = 1200;
+        osc.type = 'square';
+        gain.gain.setValueAtTime(0.04, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.05);
+    }
+
+    function playThud() {
+        const ctx = getAudio(); if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.frequency.setValueAtTime(180, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.2);
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.4, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.3);
+    }
+
+    function playDing(freq = 880) {
+        const ctx = getAudio(); if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.frequency.value = freq;
+        osc.type = 'triangle';
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.6);
+    }
+
+    function playFanfare() {
+        [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => playDing(f), i * 120));
+    }
+
+    // =========================================================================
+    // ESTADO + RENDER
+    // =========================================================================
+    let assignment = null;
+    let currentRound = 0;
+    let isAnimating = false;
+    const teamMembers = [[], [], []]; // arrays de {name, gender}
+
+    function totalNames() {
+        return POTES.reduce((s, row) => s + row.filter(n => n).length, 0);
+    }
+
+    function renderTeams() {
+        const display = document.getElementById('teamsDisplay');
+        display.innerHTML = '';
+        TEAMS.forEach((team, idx) => {
+            const males = teamMembers[idx].filter(m => m.gender === 'M').length;
+            const females = teamMembers[idx].filter(m => m.gender === 'F').length;
+            const box = document.createElement('div');
+            box.className = `team-box ${team.id}`;
+            box.id = `team-box-${idx}`;
+            box.innerHTML = `
+                <img src="${team.logo}" alt="${team.name}" class="team-logo">
+                <div class="team-name">${team.name}</div>
+                <div class="team-counter">${teamMembers[idx].length}<span class="total"> membros</span></div>
+                <div class="team-balance"><span class="h">♂ ${males}</span> · <span class="m">♀ ${females}</span></div>
+                <div class="team-members" id="team-members-${idx}">
+                    ${teamMembers[idx].map(m => `
+                        <div class="team-member">
+                            <span class="gender-badge">${m.gender === 'M' ? '♂' : '♀'}</span>
+                            ${m.name}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            display.appendChild(box);
+        });
+    }
+
+    function renderRemaining() {
+        const list = document.getElementById('remainingList');
+        list.innerHTML = '';
+        POTES.forEach((row, idx) => {
+            const div = document.createElement('div');
+            div.className = 'remaining-row';
+            if (idx < currentRound) div.classList.add('done');
+            if (idx === currentRound) div.classList.add('current');
+            div.innerHTML = `
+                <span class="row-label">L${String(idx+1).padStart(2,'0')}</span>
+                ${row.map(n => `<span class="name-cell ${n ? '' : 'empty'}">${n || '— vazio —'}</span>`).join('')}
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    function renderRoundIndicator() {
+        const ind = document.getElementById('roundIndicator');
+        ind.textContent = `RODADA ${Math.min(currentRound + 1, POTES.length)} / ${POTES.length}`;
+    }
+
+    function renderReels() {
+        const reels = document.getElementById('slotReels');
+        reels.innerHTML = '';
+        if (currentRound >= POTES.length) {
+            reels.innerHTML = '<div style="grid-column: 1/-1; padding: 30px; color: var(--gold); font-family: \'Press Start 2P\', cursive; font-size: 12px;">✓ TODAS AS LINHAS SORTEADAS</div>';
+            return;
+        }
+        TEAMS.forEach((team, idx) => {
+            const reel = document.createElement('div');
+            reel.className = `reel ${team.id}`;
+            reel.id = `reel-${idx}`;
+            reel.innerHTML = `
+                <div class="reel-header">${team.name.split(' ')[0]}</div>
+                <div class="reel-strip" id="strip-${idx}">
+                    <div class="reel-item reel-placeholder">?</div>
+                </div>
+                <div class="reel-window"></div>
+            `;
+            reels.appendChild(reel);
+        });
+    }
+
+    // =========================================================================
+    // ANIMAÇÃO PRINCIPAL
+    // =========================================================================
+    async function spinAndReveal() {
+        if (isAnimating || currentRound >= POTES.length) return;
+        isAnimating = true;
+        document.getElementById('sortearBtn').disabled = true;
+        document.getElementById('arena').classList.add('spinning');
+
+        const row = POTES[currentRound];
+        const perm = assignment[currentRound]; // perm[i] = team for name i
+        const namesByTeam = [null, null, null];
+        for (let i = 0; i < 3; i++) {
+            if (row[i]) namesByTeam[perm[i]] = row[i];
+        }
+
+        // Construir tiras longas para cada reel para o efeito de "spin".
+        // Quando a linha tem menos de 3 nomes, o pool inclui um marcador "vazio"
+        // pra que qualquer reel possa cair em "SEM SORTEIO" — mantém o suspense.
+        const SPIN_ITEMS = 25;
+        const VOID_MARKER = '__VOID__';
+        const realNames = row.filter(n => n);
+        const voidsCount = 3 - realNames.length;
+        const spinPool = [...realNames, ...Array(voidsCount).fill(VOID_MARKER)];
+
+        const renderItem = (name, isFinal = false) => {
+            if (name === VOID_MARKER || !name) {
+                return `<div class="reel-item reel-void${isFinal ? ' is-final' : ''}">— SEM SORTEIO —</div>`;
+            }
+            return `<div class="reel-item${isFinal ? ' is-final' : ''}">${name}</div>`;
+        };
+
+        for (let t = 0; t < 3; t++) {
+            const strip = document.getElementById(`strip-${t}`);
+            const finalName = namesByTeam[t]; // null se essa equipe não recebe ninguém
+            let html = '';
+            for (let k = 0; k < SPIN_ITEMS; k++) {
+                const n = spinPool[Math.floor(Math.random() * spinPool.length)];
+                html += renderItem(n);
+            }
+            html += renderItem(finalName, true);
+            strip.innerHTML = html;
+            gsap.set(strip, { y: 0 });
+        }
+
+        // Spin com escalonamento
+        const tickInterval = setInterval(playTick, 80);
+
+        const itemHeight = 110;
+        const finalY = -(SPIN_ITEMS * itemHeight); // landing on the last item
+        const spinDurations = [2.0, 2.8, 3.6]; // reel 1, 2, 3 stop times
+
+        const promises = [];
+        for (let t = 0; t < 3; t++) {
+            promises.push(new Promise(resolve => {
+                gsap.to(`#strip-${t}`, {
+                    y: finalY,
+                    duration: spinDurations[t],
+                    ease: "power3.out",
+                    onComplete: () => {
+                        const reel = document.getElementById(`reel-${t}`);
+                        reel.classList.add('locked');
+                        playThud();
+                        if (navigator.vibrate) navigator.vibrate(50);
+                        resolve();
+                    }
+                });
+            }));
+        }
+
+        await Promise.all(promises);
+        clearInterval(tickInterval);
+
+        await new Promise(r => setTimeout(r, 400));
+        playDing(1100);
+
+        // Voar cards para as equipes
+        await flyCards(namesByTeam);
+
+        // Atualiza estado
+        for (let t = 0; t < 3; t++) {
+            if (namesByTeam[t]) {
+                teamMembers[t].push({ name: namesByTeam[t], gender: GENDERS[namesByTeam[t]] || 'M' });
+            }
+        }
+        currentRound++;
+        renderTeams();
+        renderRoundIndicator();
+        renderRemaining();
+        renderReels();
+
+        document.getElementById('arena').classList.remove('spinning');
+        isAnimating = false;
+
+        if (currentRound >= POTES.length) {
+            document.getElementById('sortearBtn').disabled = true;
+            document.getElementById('sortearBtn').textContent = '✓ COMPLETO';
+            document.getElementById('saveBtn').disabled = false;
+            celebrate();
+        } else {
+            document.getElementById('sortearBtn').disabled = false;
+        }
+    }
+
+    // =========================================================================
+    // SALVAR EQUIPES NO FIRESTORE
+    // =========================================================================
+    async function saveTeams() {
+        const status = document.getElementById('saveStatus');
+        const btn = document.getElementById('saveBtn');
+        if (currentRound < POTES.length) {
+            status.textContent = '⚠️ Complete o sorteio antes de salvar.';
+            status.className = 'save-status error';
+            return;
+        }
+        if (!confirm('Salvar essa composição de equipes? Isso vai SUBSTITUIR a composição atual e ZERAR todos os pontos do ranking.')) return;
+
+        btn.disabled = true;
+        status.textContent = 'Salvando...';
+        status.className = 'save-status loading';
+
+        const teamsData = TEAMS.map((team, idx) => ({
+            id: team.id,
+            name: team.name,
+            logo: team.logo,
+            bonus: 0,
+            members: teamMembers[idx].map(m => ({
+                name: m.name,
+                gender: m.gender,
+                points: 0
+            }))
+        }));
+
+        try {
+            await db.collection('cadetes_pontuacao').doc('equipes').set({
+                teams: teamsData,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            status.textContent = '✓ Equipes salvas! Acesse /djad/ranking para ver o ranking.';
+            status.className = 'save-status success';
+        } catch (err) {
+            console.error(err);
+            status.textContent = '❌ Erro ao salvar: ' + err.message;
+            status.className = 'save-status error';
+            btn.disabled = false;
+        }
+    }
+
+    function flyCards(namesByTeam) {
+        const layer = document.getElementById('flightLayer');
+        const promises = [];
+        for (let t = 0; t < 3; t++) {
+            const name = namesByTeam[t];
+            if (!name) continue;
+            const reel = document.getElementById(`reel-${t}`);
+            const target = document.getElementById(`team-box-${t}`);
+            if (!reel || !target) continue;
+
+            const reelRect = reel.getBoundingClientRect();
+            const targetRect = target.getBoundingClientRect();
+
+            const card = document.createElement('div');
+            card.className = `flying-card ${TEAMS[t].id}`;
+            card.textContent = name;
+            layer.appendChild(card);
+
+            const startX = reelRect.left + reelRect.width / 2;
+            const startY = reelRect.top + reelRect.height / 2;
+            const endX = targetRect.left + targetRect.width / 2;
+            const endY = targetRect.top + targetRect.height / 2;
+
+            gsap.set(card, {
+                x: startX,
+                y: startY,
+                xPercent: -50,
+                yPercent: -50,
+                scale: 0,
+                rotation: 0
+            });
+
+            promises.push(new Promise(resolve => {
+                const tl = gsap.timeline({ onComplete: resolve });
+                tl.to(card, { scale: 1.3, duration: 0.3, ease: "back.out(2)" })
+                  .to(card, { scale: 1, duration: 0.15 })
+                  .to(card, {
+                      x: endX,
+                      y: endY,
+                      rotation: (Math.random() - 0.5) * 30,
+                      duration: 1.0,
+                      ease: "power2.in",
+                      delay: t * 0.15
+                  })
+                  .to(card, {
+                      scale: 0.3,
+                      opacity: 0,
+                      duration: 0.3,
+                      onStart: () => {
+                          // Highlight target team
+                          target.classList.add('receiving');
+                          setTimeout(() => target.classList.remove('receiving'), 600);
+                          // Mini confetti
+                          const colors = { red: ['#c41e3a', '#ff4d6d'], green: ['#228b22', '#4ade80'], blue: ['#1e90ff', '#60a5fa'] };
+                          confetti({
+                              particleCount: 30,
+                              spread: 50,
+                              origin: { x: endX / window.innerWidth, y: endY / window.innerHeight },
+                              colors: colors[TEAMS[t].id],
+                              disableForReducedMotion: true
+                          });
+                      }
+                  })
+                  .call(() => card.remove());
+            }));
+        }
+        return Promise.all(promises);
+    }
+
+    function celebrate() {
+        document.getElementById('celebration').classList.add('active');
+        // Burst pesado
+        const duration = 4000;
+        const end = Date.now() + duration;
+        const colors = ['#d4af37', '#ffd700', '#c41e3a', '#228b22', '#1e90ff'];
+        (function frame() {
+            confetti({
+                particleCount: 4,
+                angle: 60,
+                spread: 70,
+                origin: { x: 0 },
+                colors,
+                disableForReducedMotion: true
+            });
+            confetti({
+                particleCount: 4,
+                angle: 120,
+                spread: 70,
+                origin: { x: 1 },
+                colors,
+                disableForReducedMotion: true
+            });
+            if (Date.now() < end) requestAnimationFrame(frame);
+        })();
+        playFanfare();
+    }
+
+    // =========================================================================
+    // INIT
+    // =========================================================================
+    function reset() {
+        currentRound = 0;
+        teamMembers[0] = []; teamMembers[1] = []; teamMembers[2] = [];
+        assignment = solve();
+        if (!assignment) {
+            alert('⚠️ Não foi possível encontrar uma combinação válida. Verifique os pares e gêneros.');
+            return;
+        }
+        renderTeams();
+        renderRemaining();
+        renderRoundIndicator();
+        renderReels();
+        document.getElementById('sortearBtn').disabled = false;
+        document.getElementById('sortearBtn').textContent = '🎲 SORTEAR';
+        document.getElementById('saveBtn').disabled = true;
+        const status = document.getElementById('saveStatus');
+        status.textContent = '';
+        status.className = 'save-status';
+        document.getElementById('celebration').classList.remove('active');
+    }
+
+    document.getElementById('sortearBtn').addEventListener('click', () => {
+        getAudio(); // unlock audio on user gesture
+        spinAndReveal();
+    });
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        if (confirm('Resetar o sorteio? Todo o progresso atual será perdido e uma nova combinação será gerada.')) {
+            reset();
+        }
+    });
+    document.getElementById('saveBtn').addEventListener('click', saveTeams);
+
+    reset();
+    </script>
+</body>
+
+</html>

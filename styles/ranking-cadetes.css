@@ -1,0 +1,701 @@
+/* === RANKING / ADMIN CADETES === */
+/* Herda cadetes.css */
+
+.ranking-hero {
+    padding: 30px 20px 20px;
+}
+
+.ranking-hero h1 {
+    font-size: 1.3rem;
+}
+
+/* === SECTION TITLE === */
+.section-title {
+    font-family: 'Press Start 2P', cursive;
+    color: var(--gold);
+    font-size: 0.95rem;
+    text-align: center;
+    letter-spacing: 1.5px;
+    margin: 40px 0 20px;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+}
+
+/* === STATE CARDS === */
+.state-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    color: var(--text-secondary);
+    margin: 30px auto;
+    max-width: 500px;
+}
+
+.state-card h3 {
+    color: var(--gold);
+    margin-bottom: 12px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.85rem;
+}
+
+.link-btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+    color: #000;
+    text-decoration: none;
+    border-radius: 4px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 9px;
+    letter-spacing: 1px;
+    transition: all 0.2s ease;
+}
+
+.link-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 14px var(--primary-gold);
+}
+
+button.link-btn {
+    border: none;
+    cursor: pointer;
+}
+
+button.link-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.link-inline {
+    color: var(--gold);
+    text-decoration: underline;
+}
+
+.seed-status {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    min-height: 20px;
+    color: var(--text-secondary);
+}
+.seed-status.loading { color: var(--gold); }
+.seed-status.success { color: #4ade80; }
+.seed-status.error   { color: #ff6b6b; }
+
+/* === PÓDIO === */
+.podium-section {
+    margin-bottom: 50px;
+}
+
+.podium {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr 1fr;
+    gap: 12px;
+    align-items: end;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.podium-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 18px 12px;
+    text-align: center;
+    position: relative;
+    transition: transform 0.2s ease;
+}
+
+.podium-card.first {
+    border-color: var(--gold);
+    box-shadow: 0 0 24px rgba(212, 175, 55, 0.45);
+    transform: scale(1.06);
+    padding-top: 22px;
+    padding-bottom: 22px;
+}
+
+.podium-card.second {
+    border-color: rgba(192, 192, 192, 0.6);
+}
+
+.podium-card.third {
+    border-color: rgba(205, 127, 50, 0.6);
+}
+
+.podium-card.red    { border-top: 4px solid var(--team-red); }
+.podium-card.green  { border-top: 4px solid var(--team-green); }
+.podium-card.blue   { border-top: 4px solid var(--team-blue); }
+
+.podium-medal {
+    font-size: 2.5rem;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.podium-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-bottom: 8px;
+}
+
+.podium-card.first .podium-logo {
+    width: 75px;
+    height: 75px;
+}
+
+.podium-name {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.55rem;
+    color: var(--text-primary);
+    line-height: 1.4;
+    min-height: 28px;
+    margin-bottom: 8px;
+}
+
+.podium-points {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.4rem;
+    color: var(--gold);
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+.podium-card.first .podium-points { font-size: 1.7rem; }
+
+.podium-points .pts-label {
+    font-size: 0.55rem;
+    color: var(--text-secondary);
+    margin-left: 4px;
+}
+
+.podium-rank-num {
+    margin-top: 6px;
+    color: var(--text-secondary);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.6rem;
+}
+
+/* === TEAMS DETAIL === */
+.teams-detail {
+    display: grid;
+    gap: 18px;
+}
+
+.team-detail-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.team-detail-card.red    { border-color: var(--team-red);   box-shadow: 0 0 18px var(--team-red-glow); }
+.team-detail-card.green  { border-color: var(--team-green); box-shadow: 0 0 18px var(--team-green-glow); }
+.team-detail-card.blue   { border-color: var(--team-blue);  box-shadow: 0 0 18px var(--team-blue-glow); }
+
+.team-detail-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.team-detail-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.team-detail-rank {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.6rem;
+    color: var(--gold);
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+}
+
+.team-detail-name {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.75rem;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.team-detail-meta {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    margin-top: 6px;
+}
+
+.team-detail-total {
+    text-align: right;
+}
+
+.team-detail-total .total-num {
+    display: block;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.8rem;
+    color: var(--gold);
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+}
+
+.team-detail-total .total-label {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    margin-top: 4px;
+}
+
+.cadetes-list {
+    list-style: none;
+    margin: 0;
+    padding: 8px 0;
+}
+
+.cadete-row {
+    display: grid;
+    grid-template-columns: 32px 24px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: background 0.15s ease;
+}
+
+.cadete-row:last-child { border-bottom: none; }
+.cadete-row:hover { background: rgba(212, 175, 55, 0.04); }
+
+.cadete-row.empty {
+    grid-template-columns: 1fr;
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 18px;
+}
+
+.cadete-rank {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.cadete-row:nth-child(1) .cadete-rank { color: #ffd700; }
+.cadete-row:nth-child(2) .cadete-rank { color: #c0c0c0; }
+.cadete-row:nth-child(3) .cadete-rank { color: #cd7f32; }
+
+.cadete-gender {
+    color: var(--gold);
+    text-align: center;
+    font-size: 1rem;
+}
+
+.cadete-name {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.cadete-points {
+    font-family: 'Press Start 2P', cursive;
+    color: var(--gold);
+    font-size: 0.85rem;
+}
+
+.cadete-points .pts-suffix {
+    margin-left: 4px;
+    font-size: 0.55rem;
+    color: var(--text-secondary);
+}
+
+/* === OVERALL TOP 10 === */
+.overall-list {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.overall-row {
+    display: grid;
+    grid-template-columns: 36px 24px 1fr auto auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    border-left: 4px solid transparent;
+}
+
+.overall-row:last-child { border-bottom: none; }
+.overall-row.red    { border-left-color: var(--team-red); }
+.overall-row.green  { border-left-color: var(--team-green); }
+.overall-row.blue   { border-left-color: var(--team-blue); }
+
+.overall-rank {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.85rem;
+    color: var(--gold);
+    text-align: center;
+}
+
+.overall-row:nth-child(1) .overall-rank { font-size: 1rem; }
+
+.overall-gender {
+    color: var(--gold);
+    text-align: center;
+}
+
+.overall-name {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.overall-team {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    text-align: right;
+}
+
+.overall-points {
+    font-family: 'Press Start 2P', cursive;
+    color: var(--gold);
+    font-size: 0.85rem;
+}
+
+.overall-points .pts-suffix {
+    margin-left: 4px;
+    font-size: 0.55rem;
+    color: var(--text-secondary);
+}
+
+.overall-row.empty {
+    grid-template-columns: 1fr;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+/* =========================================================================
+ * ADMIN
+ * ========================================================================= */
+
+.admin-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--gold);
+    color: var(--text-primary);
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+}
+
+.admin-toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.admin-toast.success { border-left-color: #4ade80; }
+.admin-toast.error   { border-left-color: #ff6b6b; }
+
+.admin-section {
+    margin-top: 20px;
+}
+
+.admin-quick-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 30px;
+}
+
+.admin-quick-card h3 {
+    color: var(--gold);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.75rem;
+    margin-bottom: 8px;
+}
+
+.admin-help {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    margin-bottom: 14px;
+}
+
+.admin-quick-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.bonus-cell {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-top-width: 4px;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+}
+
+.bonus-cell.red    { border-top-color: var(--team-red); }
+.bonus-cell.green  { border-top-color: var(--team-green); }
+.bonus-cell.blue   { border-top-color: var(--team-blue); }
+
+.bonus-logo {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    margin-bottom: 6px;
+}
+
+.bonus-team-name {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.55rem;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    min-height: 18px;
+    line-height: 1.3;
+}
+
+.bonus-controls {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Admin team cards */
+.admin-teams {
+    display: grid;
+    gap: 18px;
+}
+
+.admin-team-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.admin-team-card.red    { border-color: var(--team-red); }
+.admin-team-card.green  { border-color: var(--team-green); }
+.admin-team-card.blue   { border-color: var(--team-blue); }
+
+.admin-team-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.admin-team-logo { width: 48px; height: 48px; object-fit: contain; }
+
+.admin-team-name {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.admin-team-meta {
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    margin-top: 4px;
+}
+
+.admin-team-total {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.3rem;
+    color: var(--gold);
+    text-align: right;
+}
+
+.admin-team-total span {
+    display: block;
+    font-size: 0.55rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.admin-cadetes-list {
+    list-style: none;
+    margin: 0;
+    padding: 6px 0;
+}
+
+.admin-cadete-row {
+    display: grid;
+    grid-template-columns: 24px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.admin-cadete-row:last-child { border-bottom: none; }
+.admin-cadete-row:hover { background: rgba(212, 175, 55, 0.04); }
+
+.cadete-controls {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+/* Botões de pontos */
+.pt-btn {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 6px 10px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 9px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    min-width: 36px;
+}
+
+.pt-btn.sm {
+    padding: 5px 8px;
+    font-size: 8px;
+    min-width: 30px;
+}
+
+.pt-btn:hover { transform: translateY(-1px); }
+
+.pt-btn.pos {
+    border-color: rgba(74, 222, 128, 0.5);
+    color: #4ade80;
+}
+
+.pt-btn.pos:hover {
+    background: rgba(74, 222, 128, 0.15);
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.3);
+}
+
+.pt-btn.pos.big {
+    background: linear-gradient(135deg, #228b22 0%, #4ade80 100%);
+    color: #000;
+    border-color: #4ade80;
+}
+
+.pt-btn.neg {
+    border-color: rgba(255, 107, 107, 0.5);
+    color: #ff6b6b;
+}
+
+.pt-btn.neg:hover {
+    background: rgba(255, 107, 107, 0.15);
+    box-shadow: 0 0 8px rgba(255, 107, 107, 0.3);
+}
+
+.pt-input {
+    width: 60px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    color: var(--gold);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    padding: 6px 4px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.pt-input.sm {
+    width: 50px;
+    font-size: 9px;
+    padding: 5px 4px;
+}
+
+.pt-input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 6px rgba(212, 175, 55, 0.3);
+}
+
+/* Danger zone */
+.admin-danger-zone {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.reset-all-btn {
+    background: transparent;
+    color: #ff6b6b;
+    border: 1px dashed rgba(255, 107, 107, 0.5);
+    padding: 10px 18px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 9px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reset-all-btn:hover {
+    background: rgba(255, 107, 107, 0.1);
+    border-style: solid;
+    box-shadow: 0 0 12px rgba(255, 107, 107, 0.3);
+}
+
+/* === Responsive === */
+@media (max-width: 720px) {
+    .podium {
+        grid-template-columns: 1fr;
+        max-width: 360px;
+    }
+    .podium-card.first { transform: none; order: -1; }
+
+    .team-detail-header,
+    .admin-team-header {
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto;
+    }
+    .team-detail-total,
+    .admin-team-total {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding-top: 8px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .admin-quick-row {
+        grid-template-columns: 1fr;
+    }
+
+    .overall-row {
+        grid-template-columns: 30px 22px 1fr auto;
+    }
+    .overall-team { display: none; }
+
+    .cadete-row {
+        grid-template-columns: 28px 22px 1fr auto;
+        font-size: 0.85rem;
+    }
+
+    .admin-cadete-row {
+        grid-template-columns: 22px 1fr;
+        grid-template-rows: auto auto;
+    }
+    .cadete-controls {
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+    }
+}

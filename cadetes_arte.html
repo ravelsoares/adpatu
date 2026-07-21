@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/cadetes.css">
+    <title>Cadetes a Jato 2.0 - Hyper Launch</title>
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-gold: #ffd700;
+            --deep-space: #050a12;
+            --grid-color: rgba(0, 243, 255, 0.2);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-color: var(--deep-space);
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- 3D SCENE WRAPPER --- */
+        .scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            perspective: 1000px;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        /* --- 3D MOVING GRID BACKGROUND --- */
+        .grid-container {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background-image:
+                linear-gradient(transparent 90%, var(--grid-color) 90%, var(--grid-color) 95%, transparent 95%),
+                linear-gradient(90deg, transparent 90%, var(--grid-color) 90%, var(--grid-color) 95%, transparent 95%);
+            background-size: 100px 100px;
+            background-position: center center;
+            transform: rotateX(45deg);
+            animation: grid-move 10s linear infinite;
+            opacity: 0.6;
+            mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 70%);
+        }
+
+        @keyframes grid-move {
+            0% {
+                transform: rotateX(45deg) translateY(0);
+            }
+
+            100% {
+                transform: rotateX(45deg) translateY(100px);
+            }
+        }
+
+        /* --- AMBIENT GLOW --- */
+        .ambient-glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0, 243, 255, 0.1) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        /* --- MAIN CONTENT WRAPPER --- */
+        .content-wrapper {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(5, 10, 18, 0.6);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+            clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
+        }
+
+        /* --- LOGO STYLES --- */
+        .logo-container {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .main-title {
+            font-size: 4rem;
+            color: #fff;
+            text-transform: uppercase;
+            margin: 0;
+            line-height: 0.9;
+            letter-spacing: -2px;
+            position: relative;
+            text-shadow:
+                2px 2px 0px rgba(0, 243, 255, 0.5),
+                -2px -2px 0px rgba(255, 0, 85, 0.5);
+            animation: glitch-skew 3s infinite;
+        }
+
+        .version-tag {
+            font-size: 1.5rem;
+            color: var(--neon-gold);
+            background: rgba(255, 215, 0, 0.1);
+            padding: 5px 15px;
+            border: 1px solid var(--neon-gold);
+            display: inline-block;
+            margin-top: 10px;
+            letter-spacing: 5px;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        /* --- LAUNCH BUTTON --- */
+        .launch-btn-container {
+            position: relative;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .launch-btn {
+            background: transparent;
+            color: var(--neon-cyan);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 20px 60px;
+            border: 2px solid var(--neon-cyan);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+        }
+
+        .launch-btn:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow:
+                0 0 20px var(--neon-cyan),
+                0 0 50px var(--neon-cyan);
+            text-shadow: none;
+        }
+
+        /* Button Scanline Effect */
+        .launch-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(transparent, rgba(255, 255, 255, 0.8), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+            opacity: 0;
+        }
+
+        .launch-btn:hover::after {
+            opacity: 1;
+        }
+
+        @keyframes shine {
+            0% {
+                top: -100%;
+                left: -100%;
+            }
+
+            20% {
+                top: 100%;
+                left: 100%;
+            }
+
+            100% {
+                top: 100%;
+                left: 100%;
+            }
+        }
+
+        /* --- DECORATIVE ELEMENTS --- */
+        .dec-line {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+            margin: 20px 0;
+            opacity: 0.5;
+        }
+
+        .status-text {
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* --- GLITCH ANIMATION --- */
+        @keyframes glitch-skew {
+            0% {
+                transform: skew(0deg);
+            }
+
+            20% {
+                transform: skew(0deg);
+            }
+
+            22% {
+                transform: skew(5deg);
+            }
+
+            24% {
+                transform: skew(-5deg);
+            }
+
+            26% {
+                transform: skew(0deg);
+            }
+
+            100% {
+                transform: skew(0deg);
+            }
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+
+            .content-wrapper {
+                width: 80%;
+                padding: 20px;
+            }
+
+            .launch-btn {
+                padding: 15px 30px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 3D Grid Background Wrapper -->
+    <div class="scene">
+        <div class="grid-container"></div>
+    </div>
+
+    <div class="ambient-glow"></div>
+
+    <div class="content-wrapper">
+
+        <div class="logo-container">
+            <h1 class="pixel-font main-title">CADETES<br>A JATO</h1>
+            <div class="pixel-font version-tag">2.0</div>
+        </div>
+
+        <div class="dec-line"></div>
+
+        <div class="launch-btn-container">
+            <a href="/cadetes.html" class="launch-btn">
+                INICIAR SISTEMA
+            </a>
+        </div>
+
+        <div class="status-text pixel-font">
+            SERVER STATUS: ONLINE<br>
+            PING: 12ms
+        </div>
+
+    </div>
+
+</body>
+
+</html>

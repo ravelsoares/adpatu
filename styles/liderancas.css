@@ -1,0 +1,132 @@
+/* Base styles from other pages */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "DM Sans", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
+    text-align: center;
+    background-color: #1a1a1a;
+    min-height: 100vh;
+}
+
+.top-banner {
+    min-height: 37vh;
+    background: url(../images/background-censo.png) no-repeat center center;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo img {
+    height: 80px;
+    max-width: 90%;
+    margin-bottom: 5px;
+}
+
+.logo h1 {
+    font-size: 28px;
+    margin: 0;
+    margin-bottom: 3px;
+}
+
+.logo .subtitle {
+    font-size: 16px;
+    font-weight: normal;
+    margin: 0;
+}
+
+.container {
+    max-width: 1000px;
+    margin: -80px auto 20px;
+    background: #1a1a1a;
+    border-radius: 20px;
+    overflow: hidden;
+    color: #f0f0f0;
+    text-align: left;
+    position: relative;
+}
+
+.main-content {
+    padding: 30px;
+}
+
+/* New styles for leadership page */
+.leadership-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.leader-card {
+    background: linear-gradient(135deg, #464646 0%, #2a2a2a 100%);
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-left: 4px solid #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.leader-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(255, 255, 255, 0.15);
+    /* Alterado de laranja para brilho branco */
+}
+
+.leader-card.pastor {
+    grid-column: 1 / -1;
+    /* Ocupa a largura total */
+    background: linear-gradient(135deg, #5e5e5e 0%, #3e3e3e 100%);
+    /* Alterado de laranja para cinza escuro */
+    border-left: none;
+}
+
+.leader-photo {
+    width: 150px;
+    /* Aumentado de 130px */
+    height: 150px;
+    /* Aumentado de 130px */
+    border-radius: 50%;
+    margin-bottom: 20px;
+    border: 4px solid #777;
+    object-fit: cover;
+    /* Garante que a imagem preencha o círculo */
+    background-color: #555;
+    /* Cor de fundo caso a imagem não carregue */
+}
+
+.leader-role {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #ffffff;
+    /* Alterado de laranja para branco */
+    margin-bottom: 8px;
+}
+
+.leader-card.pastor .leader-role {
+    color: white;
+    font-size: 1.3em;
+}
+
+.leader-name {
+    font-size: 1.4em;
+    color: white;
+}

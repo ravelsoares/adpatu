@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Censo UMADCAMP</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary: #64748b;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --dark-bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', 'Segoe UI', Tahoma, sans-serif;
+            background-color: var(--dark-bg);
+            background-image: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url(images/backgroud-home.png);
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-main);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: var(--text-muted);
+        }
+
+        .nav-links {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--glass-border);
+            border-radius: 99px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .form-section {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .form-section h2 {
+            color: var(--text-main);
+            margin-bottom: 25px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            font-size: 16px;
+            color: white;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .search-box {
+            padding: 12px 20px;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            width: 300px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary);
+            width: 320px;
+        }
+
+        .members-header {
+            margin-bottom: 30px;
+        }
+
+        .members-table {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            overflow: hidden;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid var(--glass-border);
+        }
+
+        .members-table th {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 18px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .members-table td {
+            padding: 18px;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--text-main);
+        }
+
+        .members-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .members-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .sequence-number {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .age-badge {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Modal Specifics */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #1e293b;
+            border: 1px solid var(--glass-border);
+            color: white;
+            border-radius: 24px;
+        }
+
+        .modal-header {
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.9) !important;
+            backdrop-filter: blur(10px);
+        }
+
+        .loading-content {
+            background: #1e293b !important;
+            border: 1px solid var(--glass-border) !important;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            border-radius: 20px;
+        }
+
+        .evento-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid var(--glass-border);
+            border-left: 4px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .evento-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .evento-info {
+            flex: 1;
+        }
+
+        .evento-info h4 {
+            margin: 0 0 8px 0;
+            color: var(--text-main);
+            font-size: 1.25em;
+            font-weight: 700;
+        }
+
+        .evento-info p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .evento-info strong {
+            color: var(--primary);
+        }
+
+        .evento-acoes {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-event {
+            padding: 8px 16px;
+            font-size: 13px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-edit-event {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-edit-event:hover {
+            background: rgba(59, 130, 246, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .btn-delete-event {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-delete-event:hover {
+            background: rgba(239, 68, 68, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .no-events {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-style: italic;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            border: 2px dashed var(--glass-border);
+        }
+
+        .btn-edit {
+            background: rgba(245, 158, 11, 0.1);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-right: 8px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+        }
+
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            background: rgba(245, 158, 11, 0.25);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+            border-color: #fbbf24;
+        }
+
+        .btn-danger-icon {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+        }
+
+        .btn-danger-icon:hover {
+            transform: translateY(-2px);
+            background: rgba(239, 68, 68, 0.25);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+            border-color: #f87171;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, var(--success) 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-save:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid var(--glass-border);
+            padding: 14px 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 0;
+                min-height: 100vh;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .nav-links {
+                position: relative;
+                top: 0;
+                right: 0;
+                justify-content: center;
+                margin-bottom: 20px;
+                flex-wrap: wrap;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Philosopher&family=Ruda:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+
+<body>
+
+    <!-- Login Overlay -->
+    <div id="loginOverlay" class="loading-overlay" style="z-index: 9999; display: flex;">
+        <div class="loading-content" style="max-width: 400px; width: 90%;">
+            <div class="logo"><img src="/images/logo.png" height="100px" style="margin-bottom: 20px;"></div>
+            <h2 style="margin-bottom: 20px;">Área Administrativa</h2>
+            <p style="margin-bottom: 20px; color: var(--text-muted);">Digite a senha para continuar</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="password" id="adminPassword" placeholder="Senha do Administrador"
+                        style="text-align: center;" required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Entrar</button>
+                <p id="loginError" style="color: var(--danger); margin-top: 10px; display: none; font-size: 14px;">Senha
+                    incorreta!</p>
+            </form>
+        </div>
+    </div>
+
+    <div class="container" id="mainContainer" style="display: none;">
+        <div class="header">
+            <div class="nav-links">
+                <a href="/umadcamp/">Home UMADCAMP</a>
+                <a href="/umadcamp/censo">Censo</a>
+                <a href="/umadcamp/agenda">Agenda UMADCAMP</a>
+            </div>
+            <!-- Logo adicionada conforme home.html -->
+            <div class="logo"><img src="/images/logo.png" height="150px" style="margin-bottom: 10px;"></div>
+            <h1>UMADCAMP - Admin</h1>
+            <p>União de Mocidades da Igreja Evangélica Assembleia de Deus do Campo de Patu</p>
+        </div>
+
+        <div class="main-content">
+            <div class="form-section">
+                <h2>Cadastrar Novo Membro</h2>
+                <div id="formMessages"></div>
+                <form id="memberForm">
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label for="nome">Nome Completo</label>
+                            <input type="text" id="nome" name="nome" required>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="dataNascimento">Data de Nascimento</label>
+                            <input type="date" id="dataNascimento" name="dataNascimento" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="cidade">Cidade</label>
+                            <input type="text" id="cidade" name="cidade" required>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="cargo">Cargo (Opcional)</label>
+                            <select id="cargo" name="cargo" class="search-box">
+                                <option value="">Nenhum</option>
+                                <option value="Líder">Líder</option>
+                                <option value="Vice-líder">Vice-líder</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Adicionar Membro</button>
+                </form>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalMembros">0</div>
+                    <div class="stat-label">Total de Membros</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="idadeMedia">0</div>
+                    <div class="stat-label">Idade Média</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="maisJovem">-</div>
+                    <div class="stat-label">Mais Jovem</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="maisVelho">-</div>
+                    <div class="stat-label">Mais Velho</div>
+                </div>
+            </div>
+
+            <!-- Seção de Gerenciamento de Agenda -->
+            <div class="form-section">
+                <h2>📅 Gerenciar Agenda</h2>
+                <div id="agendaMessages"></div>
+
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <button class="btn" onclick="mostrarFormularioEvento()"
+                        style="background: linear-gradient(135deg, #52c234 0%, #61b15a 100%);">
+                        ➕ Adicionar Evento
+                    </button>
+                    <button class="btn" onclick="carregarEventos()"
+                        style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);">
+                        🔄 Atualizar Lista
+                    </button>
+                    <button class="btn btn-danger" onclick="limparTodaAgenda()">
+                        🗑️ Limpar Agenda
+                    </button>
+                </div>
+
+                <!-- Formulário de Adicionar/Editar Evento -->
+                <div id="eventoFormContainer" style="display: none;" class="form-section">
+                    <h3 id="formularioTitulo">Adicionar Novo Evento</h3>
+                    <form id="eventoForm">
+                        <div class="form-row">
+                            <div class="form-group" style="flex: 1;">
+                                <label for="eventoMes">Mês</label>
+                                <select id="eventoMes" name="eventoMes" required>
+                                    <option value="">Selecione o mês</option>
+                                    <option value="JANEIRO">Janeiro</option>
+                                    <option value="FEVEREIRO">Fevereiro</option>
+                                    <option value="MARÇO">Março</option>
+                                    <option value="ABRIL">Abril</option>
+                                    <option value="MAIO">Maio</option>
+                                    <option value="JUNHO">Junho</option>
+                                    <option value="JULHO">Julho</option>
+                                    <option value="AGOSTO">Agosto</option>
+                                    <option value="SETEMBRO">Setembro</option>
+                                    <option value="OUTUBRO">Outubro</option>
+                                    <option value="NOVEMBRO">Novembro</option>
+                                    <option value="DEZEMBRO">Dezembro</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label for="eventoTitulo">Título do Evento</label>
+                                <input type="text" id="eventoTitulo" name="eventoTitulo" required
+                                    placeholder="Ex: Congresso de Jovens">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group" style="flex: 1;">
+                                <label for="eventoDataInicio">Data de Início</label>
+                                <input type="date" id="eventoDataInicio" name="eventoDataInicio" required>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label for="eventoDataFim">Data de Fim (Opcional)</label>
+                                <input type="date" id="eventoDataFim" name="eventoDataFim">
+                                <small style="color: #666;">Deixe vazio para evento de um dia</small>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group" style="flex: 1;">
+                                <label for="eventoLocal">Local</label>
+                                <input type="text" id="eventoLocal" name="eventoLocal" required
+                                    placeholder="Ex: Patu, João Dias">
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="submit" class="btn" id="btnSalvarEvento">
+                                💾 Salvar Evento
+                            </button>
+                            <button type="button" class="btn btn-cancel" onclick="cancelarFormularioEvento()">
+                                ❌ Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Lista de Eventos -->
+                <div id="eventosLista">
+                    <h3>Eventos da Agenda</h3>
+                    <div id="eventosContainer">
+                        <!-- Eventos serão carregados aqui -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="members-section">
+                <div class="members-header">
+                    <h2>Membros Cadastrados</h2>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="searchInput" class="search-box" placeholder="Pesquisar por nome...">
+                        <select id="cityFilter" class="search-box" style="width: 200px;">
+                            <option value="">Todas as cidades</option>
+                        </select>
+                        <select id="roleFilter" class="search-box" style="width: 150px;">
+                            <option value="">Todos os cargos</option>
+                            <option value="Líder">Líder</option>
+                            <option value="Vice-líder">Vice-líder</option>
+                            <option value="sem_cargo">Sem Cargo</option>
+                        </select>
+                        <button class="btn" onclick="limparFiltros()" style="padding: 10px 15px; font-size: 12px;">
+                            🔄 Limpar Filtros
+                        </button>
+                    </div>
+                </div>
+
+                <table class="members-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="numero">Nº<span class="sort-indicator"></span></th>
+                            <th data-sort="nome">Nome<span class="sort-indicator"></span></th>
+                            <th data-sort="dataNascimento">Data de Nascimento<span class="sort-indicator"></span>
+                            </th>
+                            <th>Idade</th>
+                            <th data-sort="cidade">Cidade<span class="sort-indicator"></span></th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTableBody">
+                        <tr class="no-members">
+                            <td colspan="6">Nenhum membro cadastrado ainda</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Editar Membro</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="editMessages"></div>
+                <form id="editForm">
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label for="editNome">Nome Completo</label>
+                            <input type="text" id="editNome" name="editNome" required>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="editDataNascimento">Data de Nascimento</label>
+                            <input type="date" id="editDataNascimento" name="editDataNascimento" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="editCidade">Cidade</label>
+                            <input type="text" id="editCidade" name="editCidade" required>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="editCargo">Cargo (Opcional)</label>
+                            <select id="editCargo" name="editCargo" class="search-box">
+                                <option value="">Nenhum</option>
+                                <option value="Líder">Líder</option>
+                                <option value="Vice-líder">Vice-líder</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-save" id="btnSalvar">
+                        💾 Salvar Alterações
+                    </button>
+                    <button type="button" class="btn-cancel" onclick="fecharModal()">
+                        ❌ Cancelar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+            authDomain: "umadcamp-patu.firebaseapp.com",
+            projectId: "umadcamp-patu",
+            storageBucket: "umadcamp-patu.firebasestorage.app",
+            messagingSenderId: "1043102355965",
+            appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+            measurementId: "G-S6N9R4F8Z8"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let membros = [];
+        let proximoNumero = 1;
+        let isLoading = false;
+        let sortState = { column: 'numero', direction: 'asc' };
+
+        // Funções de utilidade
+        function showMessage(message, type = 'success') {
+            const messagesContainer = document.getElementById('formMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
+            messageDiv.textContent = message;
+
+            messagesContainer.innerHTML = '';
+            messagesContainer.appendChild(messageDiv);
+
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        function showLoading(show = true) {
+            if (show) {
+                const overlay = document.createElement('div');
+                overlay.className = 'loading-overlay';
+                overlay.id = 'loadingOverlay';
+                overlay.innerHTML = `
+                    <div class="loading-content">
+                        <div class="loading"></div>
+                        <p style="margin-top: 15px;">Carregando...</p>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+            } else {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {
+                    overlay.remove();
+                }
+            }
+        }
+
+        function calcularIdade(dataNascimento) {
+            const hoje = new Date();
+            const nascimento = parseDateLocal(dataNascimento);
+            let idade = hoje.getFullYear() - nascimento.getFullYear();
+            const mes = hoje.getMonth() - nascimento.getMonth();
+
+            if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+                idade--;
+            }
+
+            return idade;
+        }
+
+        function parseDateLocal(dateStr) {
+            if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                const [y, m, d] = dateStr.split('-').map(Number);
+                return new Date(y, m - 1, d);
+            }
+            return new Date(dateStr);
+        }
+
+        function formatarData(data) {
+            const dt = parseDateLocal(data);
+            return dt.toLocaleDateString('pt-BR');
+        }
+
+        function criarCargoTag(cargo) {
+            if (!cargo) return '';
+
+            const cargoClass = cargo.toLowerCase() === 'líder' ? 'role-tag-lider' : 'role-tag-vice-lider';
+            return `<span class="role-tag ${cargoClass}">${cargo}</span>`;
+        }
+
+        async function adicionarMembro(nome, dataNascimento, cidade, cargo) {
+            if (isLoading) return;
+
+            isLoading = true;
+            showLoading(true);
+
+            try {
+                const membro = {
+                    numero: proximoNumero++,
+                    nome: nome,
+                    dataNascimento: dataNascimento,
+                    cidade: cidade,
+                    idade: calcularIdade(dataNascimento),
+                    dataCadastro: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                if (cargo) {
+                    membro.cargo = cargo;
+                }
+
+                // Salvar no Firebase
+                await db.collection('membros').add(membro);
+
+                // Atualizar array local e reordenar
+                membros.push(membro);
+                sortMembros();
+
+                // Atualizar interface
+                atualizarTabela();
+                atualizarEstatisticas();
+                atualizarFiltroCidades();
+
+                showMessage('Membro adicionado com sucesso!');
+
+            } catch (error) {
+                console.error('Erro ao adicionar membro:', error);
+                showMessage('Erro ao adicionar membro. Tente novamente.', 'error');
+            } finally {
+                isLoading = false;
+                showLoading(false);
+            }
+        }
+
+        async function removerMembro(numero) {
+            if (isLoading) return;
+
+            if (!confirm('Tem certeza que deseja remover este membro?')) {
+                return;
+            }
+
+            isLoading = true;
+            showLoading(true);
+
+            try {
+                // Encontrar o membro no array local
+                const membroIndex = membros.findIndex(membro => membro.numero === numero);
+                if (membroIndex === -1) {
+                    throw new Error('Membro não encontrado');
+                }
+
+                const membro = membros[membroIndex];
+
+                // Remover do Firebase
+                if (membro.id) {
+                    await db.collection('membros').doc(membro.id).delete();
+                }
+
+                // Remover do array local
+                membros.splice(membroIndex, 1);
+
+                // Atualizar interface
+                atualizarTabela();
+                atualizarEstatisticas();
+                atualizarFiltroCidades();
+
+                showMessage('Membro removido com sucesso!');
+
+            } catch (error) {
+                console.error('Erro ao remover membro:', error);
+                showMessage('Erro ao remover membro. Tente novamente.', 'error');
+            } finally {
+                isLoading = false;
+                showLoading(false);
+            }
+        }
+
+        function atualizarTabela(membrosParaExibir = membros) {
+            const tbody = document.getElementById('membersTableBody');
+
+            if (membrosParaExibir.length === 0) {
+                tbody.innerHTML = '<tr class="no-members"><td colspan="6">Nenhum membro encontrado</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = membrosParaExibir.map(membro => `
+                <tr>
+                    <td><span class="sequence-number">${membro.numero}</span></td>
+                    <td>${membro.nome}${criarCargoTag(membro.cargo)}</td>
+                    <td>${formatarData(membro.dataNascimento)}</td>
+                    <td><span class="age-badge">${membro.idade} anos</span></td>
+                    <td>${membro.cidade}</td>
+                    <td>
+                        <button class="btn-edit" title="Editar Membro" data-membro-id="${membro.id}" data-membro-numero="${membro.numero}" data-membro-nome="${membro.nome}" data-membro-data="${membro.dataNascimento}" data-membro-cidade="${membro.cidade}" data-membro-cargo="${membro.cargo || ''}">
+                            ✏️
+                        </button>
+                        <button class="btn-danger-icon" title="Remover Membro" onclick="removerMembro(${membro.numero})">
+                            🗑️
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function atualizarEstatisticas(membrosParaCalcular = membros) {
+            const total = membrosParaCalcular.length;
+            document.getElementById('totalMembros').textContent = total;
+
+            if (total > 0) {
+                const idades = membrosParaCalcular.map(m => m.idade);
+                const idadeMedia = Math.round(idades.reduce((a, b) => a + b, 0) / total);
+                const maisJovem = Math.min(...idades);
+                const maisVelho = Math.max(...idades);
+
+                document.getElementById('idadeMedia').textContent = idadeMedia;
+                document.getElementById('maisJovem').textContent = maisJovem;
+                document.getElementById('maisVelho').textContent = maisVelho;
+            } else {
+                document.getElementById('idadeMedia').textContent = '0';
+                document.getElementById('maisJovem').textContent = '-';
+                document.getElementById('maisVelho').textContent = '-';
+            }
+        }
+
+        function pesquisarMembros(termo) {
+            const termoLower = termo.toLowerCase();
+            const cidadeSelecionada = document.getElementById('cityFilter').value;
+            const cargoSelecionado = document.getElementById('roleFilter').value;
+
+            let resultados = membros.filter(membro =>
+                membro.nome.toLowerCase().includes(termoLower)
+            );
+
+            if (cidadeSelecionada) {
+                resultados = resultados.filter(membro =>
+                    membro.cidade === cidadeSelecionada
+                );
+            }
+
+            if (cargoSelecionado) {
+                if (cargoSelecionado === 'sem_cargo') {
+                    resultados = resultados.filter(membro => !membro.cargo);
+                } else {
+                    resultados = resultados.filter(membro => membro.cargo === cargoSelecionado);
+                }
+            }
+
+            atualizarTabela(resultados);
+            atualizarEstatisticas(resultados);
+            atualizarIndicadorFiltros(termo, cidadeSelecionada, cargoSelecionado);
+        }
+
+        function atualizarIndicadorFiltros(termo, cidade, cargo) {
+            const temFiltros = termo || cidade || cargo;
+            const statsContainer = document.querySelector('.stats');
+
+            if (temFiltros) {
+                statsContainer.style.border = '2px solid #667eea';
+                statsContainer.style.borderRadius = '15px';
+                statsContainer.style.padding = '20px';
+                statsContainer.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)';
+
+                // Adicionar texto indicativo
+                let textoFiltro = '📊 Estatísticas dos dados filtrados';
+                if (cidade) {
+                    textoFiltro += ` (Cidade: ${cidade})`;
+                }
+                if (cargo) {
+                    if (cargo === 'sem_cargo') {
+                        textoFiltro += ` (Sem Cargo)`;
+                    } else {
+                        textoFiltro += ` (Cargo: ${cargo})`;
+                    }
+                }
+                if (termo) {
+                    textoFiltro += ` (Busca: "${termo}")`;
+                }
+
+                // Remover indicador anterior se existir
+                const indicadorAnterior = document.getElementById('filtroIndicador');
+                if (indicadorAnterior) {
+                    indicadorAnterior.remove();
+                }
+
+                // Adicionar novo indicador
+                const indicador = document.createElement('div');
+                indicador.id = 'filtroIndicador';
+                indicador.style.cssText = `
+                    text-align: center;
+                    margin-bottom: 15px;
+                    padding: 10px;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    border-radius: 10px;
+                    font-weight: 600;
+                    font-size: 14px;
+                `;
+                indicador.textContent = textoFiltro;
+                statsContainer.insertBefore(indicador, statsContainer.firstChild);
+            } else {
+                statsContainer.style.border = 'none';
+                statsContainer.style.padding = '0';
+                statsContainer.style.background = 'none';
+
+                const indicador = document.getElementById('filtroIndicador');
+                if (indicador) {
+                    indicador.remove();
+                }
+            }
+        }
+
+        function atualizarFiltroCidades() {
+            const cityFilter = document.getElementById('cityFilter');
+            const cidades = [...new Set(membros.map(membro => membro.cidade))].sort();
+
+            // Manter a opção "Todas as cidades" e limpar as outras
+            cityFilter.innerHTML = '<option value="">Todas as cidades</option>';
+
+            cidades.forEach(cidade => {
+                const option = document.createElement('option');
+                option.value = cidade;
+                option.textContent = cidade;
+                cityFilter.appendChild(option);
+            });
+        }
+
+        function aplicarFiltros() {
+            const termo = document.getElementById('searchInput').value;
+            pesquisarMembros(termo);
+        }
+
+        function limparFiltros() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('cityFilter').value = '';
+            document.getElementById('roleFilter').value = '';
+            atualizarTabela();
+            atualizarEstatisticas();
+            atualizarIndicadorFiltros('', '', '');
+        }
+
+        function sortMembros() {
+            const { column, direction } = sortState;
+            const modifier = direction === 'asc' ? 1 : -1;
+
+            membros.sort((a, b) => {
+                const valA = a[column];
+                const valB = b[column];
+
+                if (column === 'nome' || column === 'cidade') {
+                    return (valA || '').localeCompare(valB || '', 'pt-BR', { sensitivity: 'base' }) * modifier;
+                }
+
+                if (column === 'dataNascimento') {
+                    const dateA = parseDateLocal(valA);
+                    const dateB = parseDateLocal(valB);
+                    if (dateA > dateB) return 1 * modifier;
+                    if (dateA < dateB) return -1 * modifier;
+                    return 0;
+                }
+
+                if (column === 'numero') {
+                    return (valA - valB) * modifier;
+                }
+
+                return 0;
+            });
+        }
+
+        function handleSort(column) {
+            if (isLoading) return;
+
+            if (sortState.column === column) {
+                sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortState.column = column;
+                sortState.direction = 'asc';
+            }
+
+            sortMembros();
+            pesquisarMembros(document.getElementById('searchInput').value); // Re-render with filters
+            updateSortIndicators();
+        }
+
+        function updateSortIndicators() {
+            document.querySelectorAll('.members-table th[data-sort]').forEach(th => {
+                th.classList.remove('sorted-asc', 'sorted-desc');
+                if (th.dataset.sort === sortState.column) {
+                    th.classList.add(sortState.direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
+                }
+            });
+        }
+
+        // Variáveis para edição
+        let membroEditando = null;
+
+        function editarMembro(id, numero, nome, dataNascimento, cidade, cargo) {
+            console.log('Função editarMembro chamada com:', { id, numero, nome, dataNascimento, cidade, cargo });
+
+            membroEditando = { id, numero, nome, dataNascimento, cidade, cargo };
+
+            // Preencher o formulário
+            document.getElementById('editNome').value = nome;
+            document.getElementById('editDataNascimento').value = dataNascimento;
+            document.getElementById('editCidade').value = cidade;
+            document.getElementById('editCargo').value = cargo || '';
+
+            // Mostrar modal
+            document.getElementById('editModal').style.display = 'block';
+
+            // Limpar mensagens
+            document.getElementById('editMessages').innerHTML = '';
+        }
+
+        function editarMembroFromButton(button) {
+            const id = button.getAttribute('data-membro-id');
+            const numero = button.getAttribute('data-membro-numero');
+            const nome = button.getAttribute('data-membro-nome');
+            const dataNascimento = button.getAttribute('data-membro-data');
+            const cidade = button.getAttribute('data-membro-cidade');
+            const cargo = button.getAttribute('data-membro-cargo');
+
+            console.log('Editando membro:', { id, numero, nome, dataNascimento, cidade, cargo });
+            editarMembro(id, numero, nome, dataNascimento, cidade, cargo);
+        }
+
+        function fecharModal() {
+            document.getElementById('editModal').style.display = 'none';
+            membroEditando = null;
+            document.getElementById('editForm').reset();
+            document.getElementById('editMessages').innerHTML = '';
+        }
+
+        function showEditMessage(message, type = 'success') {
+            const messagesContainer = document.getElementById('editMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
+            messageDiv.textContent = message;
+
+            messagesContainer.innerHTML = '';
+            messagesContainer.appendChild(messageDiv);
+
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        async function salvarEdicao() {
+            if (!membroEditando || isLoading) return;
+
+            const nome = document.getElementById('editNome').value.trim();
+            const dataNascimento = document.getElementById('editDataNascimento').value;
+            const cidade = document.getElementById('editCidade').value.trim();
+            const cargo = document.getElementById('editCargo').value;
+
+            if (!nome || !dataNascimento || !cidade) {
+                showEditMessage('Por favor, preencha todos os campos obrigatórios.', 'error');
+                return;
+            }
+
+            isLoading = true;
+            const btnSalvar = document.getElementById('btnSalvar');
+            const textoOriginal = btnSalvar.textContent;
+            btnSalvar.disabled = true;
+            btnSalvar.textContent = '💾 Salvando...';
+
+            try {
+                const dadosAtualizados = {
+                    nome: nome,
+                    dataNascimento: dataNascimento,
+                    cidade: cidade,
+                    idade: calcularIdade(dataNascimento),
+                    dataAtualizacao: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                if (cargo) {
+                    dadosAtualizados.cargo = cargo;
+                } else {
+                    dadosAtualizados.cargo = firebase.firestore.FieldValue.delete();
+                }
+
+                // Atualizar no Firebase
+                await db.collection('membros').doc(membroEditando.id).update(dadosAtualizados);
+
+                // Atualizar no array local
+                const membroIndex = membros.findIndex(m => m.id === membroEditando.id);
+                if (membroIndex !== -1) {
+                    membros[membroIndex].nome = nome;
+                    membros[membroIndex].dataNascimento = dataNascimento;
+                    membros[membroIndex].cidade = cidade;
+                    membros[membroIndex].idade = calcularIdade(dataNascimento);
+
+                    if (cargo) {
+                        membros[membroIndex].cargo = cargo;
+                    } else {
+                        delete membros[membroIndex].cargo;
+                    }
+                    // Reordena caso um campo de ordenação tenha sido alterado
+                    sortMembros();
+                }
+
+                atualizarTabela();
+                atualizarEstatisticas();
+                atualizarFiltroCidades();
+
+                showEditMessage('Membro atualizado com sucesso!');
+
+                // Fechar modal após 1.5 segundos
+                setTimeout(() => {
+                    fecharModal();
+                }, 1500);
+
+            } catch (error) {
+                console.error('Erro ao atualizar membro:', error);
+                showEditMessage('Erro ao atualizar membro. Tente novamente.', 'error');
+            } finally {
+                isLoading = false;
+                btnSalvar.disabled = false;
+                btnSalvar.textContent = textoOriginal;
+            }
+        }
+
+        async function carregarMembros() {
+            if (isLoading) return;
+
+            isLoading = true;
+            showLoading(true);
+
+            try {
+                const snapshot = await db.collection('membros').orderBy('numero', 'asc').get();
+
+                membros = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    membros.push({
+                        id: doc.id,
+                        ...data,
+                        idade: calcularIdade(data.dataNascimento)
+                    });
+                });
+
+                // Atualizar próximo número
+                if (membros.length > 0) {
+                    proximoNumero = Math.max(...membros.map(m => m.numero)) + 1;
+                } else {
+                    proximoNumero = 1;
+                }
+
+                // Atualizar interface
+                atualizarTabela();
+                atualizarEstatisticas();
+                atualizarFiltroCidades();
+                updateSortIndicators();
+
+            } catch (error) {
+                console.error('Erro ao carregar membros:', error);
+                showMessage('Erro ao carregar dados. Verifique sua conexão.', 'error');
+            } finally {
+                isLoading = false;
+                showLoading(false);
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('memberForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const nome = document.getElementById('nome').value.trim();
+            const dataNascimento = document.getElementById('dataNascimento').value;
+            const cidade = document.getElementById('cidade').value.trim();
+            const cargo = document.getElementById('cargo').value;
+
+            if (nome && dataNascimento && cidade) {
+                await adicionarMembro(nome, dataNascimento, cidade, cargo);
+                this.reset();
+            }
+        });
+
+        document.getElementById('searchInput').addEventListener('input', function (e) {
+            pesquisarMembros(e.target.value);
+        });
+
+        document.getElementById('cityFilter').addEventListener('change', function (e) {
+            aplicarFiltros();
+        });
+
+        document.getElementById('roleFilter').addEventListener('change', function (e) {
+            aplicarFiltros();
+        });
+
+        document.querySelector('.members-table thead').addEventListener('click', (event) => {
+            const header = event.target.closest('th[data-sort]');
+            if (!header) return;
+
+            const column = header.dataset.sort;
+            handleSort(column);
+        });
+
+        // Event Listeners para edição
+        document.getElementById('editForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            await salvarEdicao();
+        });
+
+        // Event delegation para botões de editar
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('btn-edit')) {
+                editarMembroFromButton(e.target);
+            }
+        });
+
+        // Fechar modal ao clicar fora dele
+        window.addEventListener('click', function (event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                fecharModal();
+            }
+        });
+
+        // Fechar modal com tecla ESC
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                fecharModal();
+            }
+        });
+
+        // ===== FUNCIONALIDADES DA AGENDA =====
+
+        let eventoEditando = null;
+
+        function showAgendaMessage(message, type = 'success') {
+            const messagesContainer = document.getElementById('agendaMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
+            messageDiv.textContent = message;
+
+            messagesContainer.innerHTML = '';
+            messagesContainer.appendChild(messageDiv);
+
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        function mostrarFormularioEvento() {
+            const container = document.getElementById('eventoFormContainer');
+            container.style.display = 'block';
+            eventoEditando = null;
+            document.getElementById('formularioTitulo').textContent = 'Adicionar Novo Evento';
+            document.getElementById('btnSalvarEvento').textContent = '💾 Salvar Evento';
+            document.getElementById('eventoForm').reset();
+        }
+
+        function cancelarFormularioEvento() {
+            document.getElementById('eventoFormContainer').style.display = 'none';
+            eventoEditando = null;
+            document.getElementById('eventoForm').reset();
+        }
+
+        function formatarDataEvento(dataInicio, dataFim) {
+            const inicio = new Date(dataInicio + 'T00:00:00');
+            const diaInicio = inicio.getDate();
+            const mesInicio = inicio.toLocaleString('pt-BR', { month: 'short' }).replace('.', '');
+
+            if (!dataFim || dataInicio === dataFim) {
+                return `${diaInicio} de ${mesInicio}`;
+            }
+
+            const fim = new Date(dataFim + 'T00:00:00');
+            const diaFim = fim.getDate();
+            const mesFim = fim.toLocaleString('pt-BR', { month: 'short' }).replace('.', '');
+
+            if (inicio.getMonth() === fim.getMonth()) {
+                return `${diaInicio} a ${diaFim} de ${mesInicio}`;
+            } else {
+                return `${diaInicio} de ${mesInicio} a ${diaFim} de ${mesFim}`;
+            }
+        }
+
+        async function carregarEventos() {
+            try {
+                const snapshot = await db.collection('agenda').orderBy('dataInicio', 'asc').get();
+                const container = document.getElementById('eventosContainer');
+
+                if (snapshot.empty) {
+                    container.innerHTML = '<div class="no-events">Nenhum evento cadastrado na agenda.</div>';
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach(doc => {
+                    const evento = doc.data();
+                    const dataFormatada = formatarDataEvento(evento.dataInicio, evento.dataFim);
+
+                    html += `
+                        <div class="evento-card">
+                            <div class="evento-info">
+                                <h4>${evento.titulo}</h4>
+                                <p><strong>${evento.mes}</strong> - ${dataFormatada} | <strong>Local:</strong> ${evento.local}</p>
+                            </div>
+                            <div class="evento-acoes">
+                                <button class="btn-event btn-edit-event" onclick="editarEvento('${doc.id}', '${evento.mes}', '${evento.titulo}', '${evento.dataInicio}', '${evento.dataFim || ''}', '${evento.local}')">
+                                    ✏️ Editar
+                                </button>
+                                <button class="btn-event btn-delete-event" onclick="removerEvento('${doc.id}', '${evento.titulo}')">
+                                    🗑️ Remover
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+                showAgendaMessage('Eventos carregados com sucesso!');
+
+            } catch (error) {
+                console.error('Erro ao carregar eventos:', error);
+                showAgendaMessage('Erro ao carregar eventos: ' + error.message, 'error');
+            }
+        }
+
+        function editarEvento(id, mes, titulo, dataInicio, dataFim, local) {
+            eventoEditando = id;
+
+            document.getElementById('eventoMes').value = mes;
+            document.getElementById('eventoTitulo').value = titulo;
+            document.getElementById('eventoDataInicio').value = dataInicio;
+            document.getElementById('eventoDataFim').value = dataFim;
+            document.getElementById('eventoLocal').value = local;
+
+            document.getElementById('formularioTitulo').textContent = 'Editar Evento';
+            document.getElementById('btnSalvarEvento').textContent = '💾 Atualizar Evento';
+            document.getElementById('eventoFormContainer').style.display = 'block';
+        }
+
+        async function removerEvento(id, titulo) {
+            if (!confirm(`Tem certeza que deseja remover o evento "${titulo}"?`)) {
+                return;
+            }
+
+            try {
+                await db.collection('agenda').doc(id).delete();
+                showAgendaMessage('Evento removido com sucesso!');
+                carregarEventos();
+            } catch (error) {
+                console.error('Erro ao remover evento:', error);
+                showAgendaMessage('Erro ao remover evento: ' + error.message, 'error');
+            }
+        }
+
+        async function limparTodaAgenda() {
+            if (!confirm('Tem certeza que deseja remover TODOS os eventos da agenda? Esta ação não pode ser desfeita.')) {
+                return;
+            }
+
+            try {
+                const snapshot = await db.collection('agenda').get();
+                const batch = db.batch();
+
+                snapshot.docs.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+
+                await batch.commit();
+                showAgendaMessage(`Agenda limpa! ${snapshot.size} eventos removidos.`);
+                carregarEventos();
+
+            } catch (error) {
+                console.error('Erro ao limpar agenda:', error);
+                showAgendaMessage('Erro ao limpar agenda: ' + error.message, 'error');
+            }
+        }
+
+        async function salvarEvento(eventoData) {
+            try {
+                const doc = {
+                    ...eventoData,
+                    dataCadastro: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                if (eventoEditando) {
+                    // Atualizar evento existente
+                    await db.collection('agenda').doc(eventoEditando).update(doc);
+                    showAgendaMessage('Evento atualizado com sucesso!');
+                } else {
+                    // Adicionar novo evento
+                    await db.collection('agenda').add(doc);
+                    showAgendaMessage('Evento adicionado com sucesso!');
+                }
+
+                cancelarFormularioEvento();
+                carregarEventos();
+
+            } catch (error) {
+                console.error('Erro ao salvar evento:', error);
+                showAgendaMessage('Erro ao salvar evento: ' + error.message, 'error');
+            }
+        }
+
+        // Event Listeners para Agenda
+        document.getElementById('eventoForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const mes = document.getElementById('eventoMes').value;
+            const titulo = document.getElementById('eventoTitulo').value.trim();
+            const dataInicio = document.getElementById('eventoDataInicio').value;
+            const dataFim = document.getElementById('eventoDataFim').value;
+            const local = document.getElementById('eventoLocal').value.trim();
+
+            if (!mes || !titulo || !dataInicio || !local) {
+                showAgendaMessage('Por favor, preencha todos os campos obrigatórios.', 'error');
+                return;
+            }
+
+            const eventoData = {
+                mes: mes,
+                titulo: titulo,
+                dataInicio: dataInicio,
+                dataFim: dataFim || null,
+                local: local
+            };
+
+            await salvarEvento(eventoData);
+        });
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function () {
+            carregarMembros();
+            carregarEventos(); // Carregar eventos da agenda também
+        });
+    </script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+            const correctPassword = "crj@2026";
+
+            if (password === correctPassword) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('mainContainer').style.display = 'block';
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminPassword').focus();
+            }
+        });
+    </script>
+</body>
+
+</html>

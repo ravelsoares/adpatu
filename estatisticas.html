@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMADCAMP - Estatísticas</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/styles/estatisticas.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="top-banner" style="position: relative;">
+        <div style="position: absolute; top: 20px; left: 20px;">
+            <a href="/umadcamp"
+                style="text-decoration: none; color: white; border: 1px solid white; padding: 5px 15px; border-radius: 5px; font-size: 14px; font-weight: bold; background: rgba(0,0,0,0.3);">←
+                Voltar</a>
+        </div>
+        <div class="logo">
+            <a href="/umadcamp"><img src="/images/logo.png" alt="Logo"></a>
+            <h1>Estatísticas UMADCAMP</h1>
+            <h3 class="subtitle">Análise de dados dos membros</h3>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="charts-grid">
+                <!-- Card 1: Membros por Cidade -->
+                <div class="chart-card">
+                    <h3>Membros por Cidade</h3>
+                    <canvas id="cidadesChart"></canvas>
+                </div>
+
+                <!-- Card 2: Idade Média por Cidade -->
+                <div class="chart-card">
+                    <h3>Idade Média por Cidade (Sem os líderes)</h3>
+                    <canvas id="idadeMediaChart"></canvas>
+                </div>
+
+                <!-- Card 3: Idade Média de Líderes e Vice-Líderes -->
+                <div class="chart-card">
+                    <h3>Idade Média de Líderes e Vice-Líderes por Cidade</h3>
+                    <canvas id="lideresChart"></canvas>
+                </div>
+
+                <!-- Card 5: Distribuição por Faixa Etária -->
+                <div class="chart-card full-width">
+                    <div class="chart-header">
+                        <h3>Distribuição por Faixa Etária</h3>
+                        <div class="filter-container">
+                            <select id="faixaEtariaCityFilter">
+                                <option value="">Todas as Cidades</option>
+                            </select>
+                        </div>
+                    </div>
+                    <canvas id="faixaEtariaChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+            authDomain: "umadcamp-patu.firebaseapp.com",
+            projectId: "umadcamp-patu",
+            storageBucket: "umadcamp-patu.firebasestorage.app",
+            messagingSenderId: "1043102355965",
+            appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+            measurementId: "G-S6N9R4F8Z8"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Variáveis globais para armazenar dados e instâncias de gráficos
+        let todosOsMembros = [];
+        let faixaEtariaChartInstance = null;
+
+        // Utility functions
+        function showLoading(show = true) {
+            const existingOverlay = document.getElementById('loadingOverlay');
+            if (existingOverlay) {
+                existingOverlay.remove();
+            }
+
+            if (show) {
+                const overlay = document.createElement('div');
+                overlay.className = 'loading-overlay';
+                overlay.id = 'loadingOverlay';
+                overlay.innerHTML = `
+                    <div class="loading-content">
+                        <div class="loading"></div>
+                        <p style="margin-top: 15px; color: #333;">Analisando dados...</p>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+            }
+        }
+
+        function calcularIdade(dataNascimento) {
+            // Retorna null se a data de nascimento for inválida (nula, indefinida, vazia)
+            if (!dataNascimento) {
+                console.warn('Data de nascimento vazia ou nula:', dataNascimento);
+                return null;
+            }
+
+            const hoje = new Date();
+            // Adicionar T00:00:00 para garantir que a data seja interpretada como local e não UTC
+            const nascimento = new Date(dataNascimento + 'T00:00:00');
+
+            // Verifica se a data resultante é um objeto de data válido
+            if (isNaN(nascimento.getTime())) {
+                console.warn('Data de nascimento inválida:', dataNascimento);
+                return null;
+            }
+
+            let idade = hoje.getFullYear() - nascimento.getFullYear();
+            const mes = hoje.getMonth() - nascimento.getMonth();
+            if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+                idade--;
+            }
+
+            // Verificar se a idade é razoável (entre 0 e 150 anos)
+            if (idade < 0 || idade > 150) {
+                console.warn('Idade calculada fora do range esperado:', idade, 'para data:', dataNascimento);
+                return null;
+            }
+
+            return idade;
+        }
+
+
+        // Chart rendering functions
+        function renderChart(ctx, type, data, options) {
+            try {
+                console.log('Renderizando gráfico:', type, data, options);
+                const chart = new Chart(ctx, { type, data, options });
+                console.log('Gráfico criado com sucesso:', chart);
+                return chart;
+            } catch (error) {
+                console.error('Erro ao criar gráfico:', error);
+                throw error;
+            }
+        }
+
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#f0f0f0' // Cor para legendas
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: '#ccc', stepSize: 1 },
+                    grid: { color: 'rgba(204, 204, 204, 0.2)' }
+                },
+                x: {
+                    ticks: { color: '#ccc' },
+                    grid: { color: 'rgba(204, 204, 204, 0.2)' }
+                }
+            }
+        };
+
+        // Data processing and chart creation
+        async function carregarEstatisticas() {
+            showLoading(true);
+            try {
+                const snapshot = await db.collection('membros').get();
+                if (snapshot.empty) {
+                    document.querySelector('.main-content').innerHTML = '<p class="no-data">Nenhum membro encontrado para gerar estatísticas.</p>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    todosOsMembros.push({
+                        ...data,
+                        idade: calcularIdade(data.dataNascimento)
+                    });
+                });
+
+                popularFiltroCidades();
+                processarDados(todosOsMembros);
+
+                // Adicionar listener para o filtro de cidade do gráfico de faixa etária
+                document.getElementById('faixaEtariaCityFilter').addEventListener('change', function () {
+                    const cidadeSelecionada = this.value;
+                    let membrosFiltrados = todosOsMembros;
+
+                    if (cidadeSelecionada) {
+                        membrosFiltrados = todosOsMembros.filter(m => m.cidade === cidadeSelecionada);
+                    }
+
+                    atualizarGraficoFaixaEtaria(membrosFiltrados);
+                });
+
+            } catch (error) {
+                console.error("Erro ao carregar estatísticas: ", error);
+                document.querySelector('.main-content').innerHTML = '<p class="no-data">Ocorreu um erro ao carregar os dados. Tente novamente.</p>';
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function popularFiltroCidades() {
+            const cityFilter = document.getElementById('faixaEtariaCityFilter');
+            const cidades = [...new Set(todosOsMembros.map(m => m.cidade).filter(Boolean))].sort();
+
+            cidades.forEach(cidade => {
+                const option = document.createElement('option');
+                option.value = cidade;
+                option.textContent = cidade;
+                cityFilter.appendChild(option);
+            });
+        }
+
+        function processarDados(membros) {
+            console.log('Total de membros processados:', membros.length);
+            console.log('Exemplo de dados dos membros:', membros.slice(0, 3));
+
+            // 1. Membros por Cidade
+            const membrosPorCidade = membros.reduce((acc, membro) => {
+                acc[membro.cidade] = (acc[membro.cidade] || 0) + 1;
+                return acc;
+            }, {});
+            const sortedCidades = Object.entries(membrosPorCidade).sort((a, b) => b[1] - a[1]);
+            renderChart(document.getElementById('cidadesChart').getContext('2d'), 'bar', {
+                labels: sortedCidades.map(c => c[0]),
+                datasets: [{
+                    label: 'Nº de Membros',
+                    data: sortedCidades.map(c => c[1]),
+                    backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    borderWidth: 1
+                }]
+            }, chartOptions);
+
+            // 2. Idade Média por Cidade - VERSÃO SIMPLIFICADA
+            console.log('=== INICIANDO PROCESSAMENTO IDADE MÉDIA ===');
+
+            // Verificar se o elemento canvas existe
+            const idadeMediaCanvas = document.getElementById('idadeMediaChart');
+            if (!idadeMediaCanvas) {
+                console.error('Elemento canvas idadeMediaChart não encontrado!');
+                return;
+            }
+            console.log('Canvas encontrado:', idadeMediaCanvas);
+
+            // Processar dados de idade
+            const idadesPorCidade = {};
+            let membrosComIdadeValida = 0;
+
+            membros.forEach((membro, index) => {
+                // Filtrar apenas jovens sem cargo (excluir líderes e outros cargos)
+                const temCargo = membro.cargo && membro.cargo.trim() !== '' && membro.cargo.toLowerCase() !== 'nenhum';
+                const temCargoLideranca = temCargo && (
+                    membro.cargo.toLowerCase().includes('lider') ||
+                    membro.cargo.toLowerCase().includes('líder') ||
+                    membro.cargo.toLowerCase().includes('pastor') ||
+                    membro.cargo.toLowerCase().includes('presidente') ||
+                    membro.cargo.toLowerCase().includes('coordenador') ||
+                    membro.cargo.toLowerCase().includes('secretário') ||
+                    membro.cargo.toLowerCase().includes('tesoureiro')
+                );
+
+                // Considerar apenas membros sem cargo ou sem cargo de liderança
+                if (membro.cidade &&
+                    typeof membro.idade === 'number' &&
+                    !isNaN(membro.idade) &&
+                    membro.idade > 0 &&
+                    !temCargoLideranca) {
+
+                    if (!idadesPorCidade[membro.cidade]) {
+                        idadesPorCidade[membro.cidade] = { totalIdade: 0, count: 0 };
+                    }
+                    idadesPorCidade[membro.cidade].totalIdade += membro.idade;
+                    idadesPorCidade[membro.cidade].count++;
+                    membrosComIdadeValida++;
+                }
+            });
+
+            console.log('Membros jovens sem cargo (excluindo líderes):', membrosComIdadeValida);
+            console.log('Dados por cidade (apenas jovens sem cargo):', idadesPorCidade);
+
+            // Criar dados para o gráfico
+            const idadeMediaPorCidade = Object.entries(idadesPorCidade).map(([cidade, data]) => ({
+                cidade,
+                media: Math.round(data.totalIdade / data.count)
+            })).sort((a, b) => b.media - a.media);
+
+            console.log('Dados finais para gráfico:', idadeMediaPorCidade);
+
+            // Sempre criar um gráfico, mesmo que seja com dados de teste
+            let labels, data;
+
+            if (idadeMediaPorCidade.length > 0) {
+                labels = idadeMediaPorCidade.map(c => c.cidade);
+                data = idadeMediaPorCidade.map(c => c.media);
+                console.log('Usando dados reais:', { labels, data });
+            } else {
+                // Dados de teste se não houver dados reais
+                labels = ['Sem dados válidos'];
+                data = [0];
+                console.log('Usando dados de teste:', { labels, data });
+            }
+
+            // Configuração específica para o gráfico de idade média
+            const idadeMediaOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#f0f0f0'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#ccc' },
+                        grid: { color: 'rgba(204, 204, 204, 0.2)' }
+                    },
+                    x: {
+                        ticks: { color: '#ccc', stepSize: 1 },
+                        grid: { color: 'rgba(204, 204, 204, 0.2)' }
+                    }
+                }
+            };
+
+            try {
+                console.log('Criando gráfico de idade média...');
+                const chart = new Chart(idadeMediaCanvas.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Idade Média',
+                            data: data,
+                            backgroundColor: 'rgba(82, 194, 52, 0.7)',
+                            borderColor: 'rgba(82, 194, 52, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: idadeMediaOptions
+                });
+                console.log('Gráfico de idade média criado com sucesso!', chart);
+            } catch (error) {
+                console.error('Erro ao criar gráfico de idade média:', error);
+            }
+
+            // 3. Idade Média de Líderes e Vice-Líderes por Cidade
+            console.log('=== INICIANDO PROCESSAMENTO LÍDERES E VICE-LÍDERES ===');
+
+            // Verificar se o elemento canvas existe
+            const lideresCanvas = document.getElementById('lideresChart');
+            if (!lideresCanvas) {
+                console.error('Elemento canvas lideresChart não encontrado!');
+            } else {
+                console.log('Canvas de líderes encontrado:', lideresCanvas);
+
+                // Processar dados de líderes e vice-líderes
+                const lideresPorCidade = {};
+                let lideresComIdadeValida = 0;
+
+                membros.forEach((membro, index) => {
+                    // Filtrar apenas líderes e vice-líderes
+                    const cargo = membro.cargo ? membro.cargo.toLowerCase() : '';
+                    const ehLider = cargo.includes('lider') || cargo.includes('líder');
+                    const ehViceLider = cargo.includes('vice') && (cargo.includes('lider') || cargo.includes('líder'));
+                    const ehLiderOuViceLider = ehLider || ehViceLider;
+
+                    if (ehLiderOuViceLider &&
+                        membro.cidade &&
+                        typeof membro.idade === 'number' &&
+                        !isNaN(membro.idade) &&
+                        membro.idade > 0) {
+
+                        if (!lideresPorCidade[membro.cidade]) {
+                            lideresPorCidade[membro.cidade] = { totalIdade: 0, count: 0 };
+                        }
+                        lideresPorCidade[membro.cidade].totalIdade += membro.idade;
+                        lideresPorCidade[membro.cidade].count++;
+                        lideresComIdadeValida++;
+
+                    }
+                });
+
+                console.log('Líderes e vice-líderes com idade válida:', lideresComIdadeValida);
+                console.log('Dados de líderes por cidade:', lideresPorCidade);
+
+                // Criar dados para o gráfico de líderes
+                const idadeMediaLideresPorCidade = Object.entries(lideresPorCidade).map(([cidade, data]) => ({
+                    cidade,
+                    media: Math.round(data.totalIdade / data.count)
+                })).sort((a, b) => b.media - a.media);
+
+                console.log('Dados finais para gráfico de líderes:', idadeMediaLideresPorCidade);
+
+                // Sempre criar um gráfico, mesmo que seja com dados de teste
+                let labelsLideres, dataLideres;
+
+                if (idadeMediaLideresPorCidade.length > 0) {
+                    labelsLideres = idadeMediaLideresPorCidade.map(c => c.cidade);
+                    dataLideres = idadeMediaLideresPorCidade.map(c => c.media);
+                    console.log('Usando dados reais de líderes:', { labelsLideres, dataLideres });
+                } else {
+                    // Dados de teste se não houver líderes
+                    labelsLideres = ['Sem líderes registrados'];
+                    dataLideres = [0];
+                    console.log('Usando dados de teste para líderes:', { labelsLideres, dataLideres });
+                }
+
+                // Configuração específica para o gráfico de líderes
+                const lideresOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#f0f0f0'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#ccc' },
+                            grid: { color: 'rgba(204, 204, 204, 0.2)' }
+                        },
+                        x: {
+                            ticks: { color: '#ccc', stepSize: 1 },
+                            grid: { color: 'rgba(204, 204, 204, 0.2)' }
+                        }
+                    }
+                };
+
+                try {
+                    console.log('Criando gráfico de líderes e vice-líderes...');
+                    const chartLideres = new Chart(lideresCanvas.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: labelsLideres,
+                            datasets: [{
+                                label: 'Idade Média dos Líderes',
+                                data: dataLideres,
+                                backgroundColor: 'rgba(255, 159, 64, 0.7)',
+                                borderColor: 'rgba(255, 159, 64, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: lideresOptions
+                    });
+                    console.log('Gráfico de líderes criado com sucesso!', chartLideres);
+                } catch (error) {
+                    console.error('Erro ao criar gráfico de líderes:', error);
+                }
+            }
+
+            // 4. Renderização inicial do gráfico de Faixa Etária
+            atualizarGraficoFaixaEtaria(membros);
+        }
+
+        function atualizarGraficoFaixaEtaria(membrosFiltrados) {
+            // Destruir a instância anterior do gráfico, se existir
+            if (faixaEtariaChartInstance) {
+                faixaEtariaChartInstance.destroy();
+            }
+
+            const faixasEtarias = {};
+            // Filtrar apenas membros com idade válida
+            const membrosComIdade = membrosFiltrados.filter(m => typeof m.idade === 'number' && !isNaN(m.idade));
+
+            if (membrosComIdade.length === 0) {
+                // Se não há membros com idade válida, criar faixa padrão
+                faixasEtarias['Sem dados'] = 0;
+            } else {
+                const minIdade = Math.min(...membrosComIdade.map(m => m.idade));
+                const maxIdade = Math.max(...membrosComIdade.map(m => m.idade));
+
+                for (let i = Math.floor(minIdade / 2) * 2; i <= maxIdade; i += 2) {
+                    const faixa = `${i} a ${i + 1} anos`;
+                    faixasEtarias[faixa] = 0;
+                }
+
+                membrosComIdade.forEach(membro => {
+                    const inicioFaixa = Math.floor(membro.idade / 2) * 2;
+                    const faixa = `${inicioFaixa} a ${inicioFaixa + 1} anos`;
+                    if (faixasEtarias[faixa] !== undefined) {
+                        faixasEtarias[faixa]++;
+                    }
+                });
+            }
+
+            faixaEtariaChartInstance = renderChart(document.getElementById('faixaEtariaChart').getContext('2d'), 'bar', {
+                labels: Object.keys(faixasEtarias),
+                datasets: [{
+                    label: 'Nº de Membros',
+                    data: Object.values(faixasEtarias),
+                    backgroundColor: 'rgba(255, 107, 107, 0.7)',
+                    borderColor: 'rgba(255, 107, 107, 1)',
+                    borderWidth: 1
+                }]
+            }, chartOptions);
+        }
+
+        // Função para testar se Chart.js está funcionando
+        function testarChartJS() {
+            console.log('Testando Chart.js...');
+            console.log('Chart disponível:', typeof Chart !== 'undefined');
+
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js não está carregado!');
+                return false;
+            }
+
+            // Teste simples com dados mock
+            try {
+                const testCanvas = document.createElement('canvas');
+                const testChart = new Chart(testCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Teste'],
+                        datasets: [{
+                            label: 'Teste',
+                            data: [1],
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)'
+                        }]
+                    }
+                });
+                console.log('Chart.js funcionando corretamente!');
+                testChart.destroy();
+                return true;
+            } catch (error) {
+                console.error('Erro ao testar Chart.js:', error);
+                return false;
+            }
+        }
+
+        // Initial Load
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOM carregado, iniciando testes...');
+
+            // Testar Chart.js primeiro
+            if (testarChartJS()) {
+                console.log('Chart.js OK, carregando estatísticas...');
+                carregarEstatisticas();
+            } else {
+                console.error('Chart.js não está funcionando, não é possível carregar gráficos');
+                document.querySelector('.main-content').innerHTML =
+                    '<p class="no-data">Erro: Chart.js não está carregado corretamente. Verifique sua conexão com a internet.</p>';
+            }
+        });
+    </script>
+</body>
+
+</html>

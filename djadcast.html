@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DJAD'Cast – Revista CPAD Jovens 2º Trim. 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    /* ── RESET & BASE ─────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --gold: #C9A227;
+      --gold-light: #E8C84A;
+      --gold-dark: #8B6E14;
+      --black: #0D0B08;
+      --dark: #1A1508;
+      --dark-2: #241E0C;
+      --dark-card: #1E1A0E;
+      --cream: #F5E8C8;
+      --white: #FFFFFF;
+      --muted: #9A8A6A;
+      --radius: 12px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "DM Sans", sans-serif;
+      background-color: var(--black);
+      color: var(--white);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── SCROLLBAR ───────────────────────────────── */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--dark);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--gold-dark);
+      border-radius: 3px;
+    }
+
+    /* ── HERO ────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px 80px;
+      overflow: hidden;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, #3A2A00 0%, var(--black) 70%);
+    }
+
+    /* sound wave deco behind hero */
+    .hero-waves {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0.07;
+    }
+
+    .hero-waves svg {
+      width: 100%;
+      height: 260px;
+    }
+
+    /* gold glow orb */
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: -180px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(201, 162, 39, .35) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(201, 162, 39, .12);
+      border: 1px solid rgba(201, 162, 39, .4);
+      border-radius: 999px;
+      padding: 6px 18px;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 28px;
+    }
+
+    .hero-badge span {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: pulse 1.6s infinite;
+    }
+
+    .logo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 24px;
+    }
+
+    .logo-icon {
+      font-size: 4rem;
+      line-height: 1;
+      filter: drop-shadow(0 0 18px rgba(201, 162, 39, .6));
+    }
+
+    .logo-title {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(4rem, 14vw, 9rem);
+      letter-spacing: 0.04em;
+      line-height: 0.9;
+      background: linear-gradient(160deg, #FFF5D0 0%, var(--gold) 40%, var(--gold-dark) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 4px 24px rgba(201, 162, 39, .4));
+    }
+
+    .logo-sub {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(1rem, 3vw, 1.6rem);
+      letter-spacing: 0.35em;
+      color: var(--gold-light);
+      opacity: 0.8;
+    }
+
+    .hero-desc {
+      max-width: 560px;
+      font-size: clamp(1rem, 2.5vw, 1.15rem);
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.7;
+      margin-bottom: 40px;
+      opacity: 0.9;
+    }
+
+    .hero-desc strong {
+      color: var(--gold-light);
+      font-weight: 600;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 36px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stat-num {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 2.4rem;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .scroll-hint .arrow {
+      animation: bounce 1.4s infinite;
+      font-size: 1.1rem;
+    }
+
+    /* ── SECTION HEADER ──────────────────────────── */
+    .section-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .section-eyebrow {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      letter-spacing: 0.05em;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--white) 0%, var(--gold-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-line {
+      width: 48px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      margin: 14px auto 0;
+      border-radius: 2px;
+    }
+
+    /* ── EPISODES SECTION ────────────────────────── */
+    .episodes-section {
+      padding: 80px 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .episode-card {
+      background: var(--dark-card);
+      border: 1px solid rgba(201, 162, 39, .15);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 48px;
+      transition: border-color .3s, box-shadow .3s;
+      position: relative;
+    }
+
+    .episode-card:hover {
+      border-color: rgba(201, 162, 39, .4);
+      box-shadow: 0 8px 48px rgba(201, 162, 39, .1);
+    }
+
+    /* gold left accent */
+    .episode-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(180deg, var(--gold), var(--gold-dark));
+      border-radius: 20px 0 0 20px;
+    }
+
+    .episode-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 28px 32px 20px;
+      flex-wrap: wrap;
+    }
+
+    .episode-num {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 3.6rem;
+      color: rgba(201, 162, 39, .2);
+      line-height: 1;
+      min-width: 56px;
+      text-align: center;
+    }
+
+    .episode-meta {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .episode-tag {
+      display: inline-block;
+      background: rgba(201, 162, 39, .12);
+      border: 1px solid rgba(201, 162, 39, .3);
+      border-radius: 999px;
+      padding: 3px 12px;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 8px;
+    }
+
+    .episode-title {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+      color: var(--white);
+    }
+
+    .episode-subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .episode-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-weight: 500;
+    }
+
+    .status-available {
+      background: rgba(39, 201, 80, .12);
+      border: 1px solid rgba(39, 201, 80, .3);
+      color: #6EE89A;
+    }
+
+    .status-coming {
+      background: rgba(201, 162, 39, .08);
+      border: 1px solid rgba(201, 162, 39, .2);
+      color: var(--muted);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .status-available .status-dot {
+      background: #6EE89A;
+      animation: pulse 1.6s infinite;
+    }
+
+    .status-coming .status-dot {
+      background: var(--muted);
+    }
+
+    /* VIDEO PLAYER */
+    .video-wrap {
+      padding: 0 32px 28px;
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #000;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .video-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--dark-2);
+      gap: 16px;
+      cursor: default;
+    }
+
+    .video-placeholder .mic-icon {
+      font-size: 3rem;
+      opacity: 0.3;
+    }
+
+    .video-placeholder p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── YOUTUBE THUMBNAIL PLAYER ─────────────────── */
+    .yt-thumb-player {
+      position: absolute;
+      inset: 0;
+      cursor: pointer;
+      overflow: hidden;
+      border-radius: var(--radius);
+    }
+
+    .yt-thumb-player:hover .yt-play-btn {
+      transform: scale(1.12);
+      background: var(--gold-light);
+      box-shadow: 0 0 0 14px rgba(201, 162, 39, .2), 0 8px 40px rgba(0, 0, 0, .6);
+    }
+
+    .yt-thumb-player:hover .yt-custom-thumb {
+      filter: brightness(.8);
+    }
+
+    /* custom thumb */
+    .yt-custom-thumb {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #1A1208 0%, #2C2008 40%, #0D0B08 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: filter .3s;
+    }
+
+    .yt-waves-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .yt-custom-content {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-align: center;
+    }
+
+    .yt-ep-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: .8;
+    }
+
+    .yt-ep-name {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(1.4rem, 4vw, 2.4rem);
+      letter-spacing: 0.06em;
+      color: var(--white);
+      line-height: 1.1;
+      max-width: 480px;
+      text-shadow: 0 2px 16px rgba(0, 0, 0, .8);
+    }
+
+    .yt-play-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 8px rgba(201, 162, 39, .25), 0 8px 32px rgba(0, 0, 0, .5);
+      transition: transform .2s, background .2s, box-shadow .2s;
+      margin-top: 8px;
+    }
+
+    .yt-play-btn svg {
+      margin-left: 5px;
+    }
+
+    .yt-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .55);
+      font-weight: 500;
+    }
+
+    .yt-timestamp {
+      position: absolute;
+      bottom: 12px;
+      right: 14px;
+      background: rgba(0, 0, 0, .75);
+      color: var(--gold-light);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.06em;
+    }
+
+    /* TABS */
+    .content-tabs {
+      padding: 0 32px 32px;
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid rgba(201, 162, 39, .15);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: "DM Sans", sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 10px 18px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color .2s, border-color .2s;
+      letter-spacing: 0.04em;
+    }
+
+    .tab-btn.active,
+    .tab-btn:hover {
+      color: var(--gold-light);
+      border-bottom-color: var(--gold);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* TEXT CONTENT */
+    .lesson-text {
+      font-size: 0.92rem;
+      line-height: 1.8;
+      color: #D0C4A8;
+    }
+
+    .lesson-text h3 {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.08em;
+      color: var(--gold-light);
+      margin: 20px 0 8px;
+    }
+
+    .lesson-text h3:first-child {
+      margin-top: 0;
+    }
+
+    .lesson-text p {
+      margin-bottom: 12px;
+    }
+
+    .lesson-text blockquote {
+      border-left: 3px solid var(--gold);
+      padding-left: 16px;
+      margin: 16px 0;
+      color: var(--cream);
+      font-style: italic;
+      font-size: 1rem;
+    }
+
+    /* RESOURCES GRID */
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .resource-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid rgba(201, 162, 39, .12);
+      border-radius: 10px;
+      padding: 14px 16px;
+      text-decoration: none;
+      color: var(--white);
+      transition: background .2s, border-color .2s, transform .2s;
+    }
+
+    .resource-item:hover {
+      background: rgba(201, 162, 39, .08);
+      border-color: rgba(201, 162, 39, .35);
+      transform: translateY(-2px);
+    }
+
+    .resource-icon {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+
+    .resource-info {
+      min-width: 0;
+    }
+
+    .resource-name {
+      font-weight: 600;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .resource-type {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 2px;
+    }
+
+    /* DISCUSSION / QUESTIONS */
+    .questions-list {
+      list-style: none;
+    }
+
+    .questions-list li {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .05);
+      font-size: 0.9rem;
+      color: #D0C4A8;
+      line-height: 1.6;
+    }
+
+    .questions-list li:last-child {
+      border-bottom: none;
+    }
+
+    .q-num {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1.4rem;
+      color: var(--gold);
+      opacity: 0.5;
+      min-width: 28px;
+      line-height: 1.2;
+    }
+
+    /* ── ABOUT SECTION ───────────────────────────── */
+    .about-section {
+      padding: 80px 20px;
+      background: linear-gradient(180deg, var(--black) 0%, var(--dark) 50%, var(--black) 100%);
+    }
+
+    .about-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .about-inner p {
+      font-size: 1.05rem;
+      color: #C0B490;
+      line-height: 1.9;
+      margin-bottom: 16px;
+    }
+
+    .about-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 32px;
+    }
+
+    .about-tag {
+      background: rgba(201, 162, 39, .08);
+      border: 1px solid rgba(201, 162, 39, .2);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      color: var(--gold-light);
+    }
+
+    /* ── WAVE DIVIDER ────────────────────────────── */
+    .wave-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 20px 0;
+      opacity: 0.25;
+    }
+
+    .wave-divider span {
+      display: inline-block;
+      width: 3px;
+      border-radius: 3px;
+      background: var(--gold);
+      animation: wavebar 1.2s ease-in-out infinite;
+    }
+
+    /* ── FOOTER ──────────────────────────────────── */
+    footer {
+      padding: 40px 20px;
+      text-align: center;
+      border-top: 1px solid rgba(201, 162, 39, .1);
+    }
+
+    footer .footer-logo {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 0.1em;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    footer p {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    /* ── ANIMATIONS ──────────────────────────────── */
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(6px);
+      }
+    }
+
+    @keyframes wavebar {
+
+      0%,
+      100% {
+        height: 8px;
+      }
+
+      50% {
+        height: 32px;
+      }
+    }
+
+    /* stagger the wave bars */
+    .wave-divider span:nth-child(1) {
+      animation-delay: 0s;
+      height: 12px;
+    }
+
+    .wave-divider span:nth-child(2) {
+      animation-delay: .08s;
+      height: 20px;
+    }
+
+    .wave-divider span:nth-child(3) {
+      animation-delay: .16s;
+      height: 28px;
+    }
+
+    .wave-divider span:nth-child(4) {
+      animation-delay: .24s;
+      height: 36px;
+    }
+
+    .wave-divider span:nth-child(5) {
+      animation-delay: .32s;
+      height: 44px;
+    }
+
+    .wave-divider span:nth-child(6) {
+      animation-delay: .24s;
+      height: 36px;
+    }
+
+    .wave-divider span:nth-child(7) {
+      animation-delay: .16s;
+      height: 28px;
+    }
+
+    .wave-divider span:nth-child(8) {
+      animation-delay: .08s;
+      height: 20px;
+    }
+
+    .wave-divider span:nth-child(9) {
+      animation-delay: 0s;
+      height: 12px;
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 600px) {
+      .episode-header {
+        padding: 20px 20px 14px;
+        gap: 12px;
+      }
+
+      .video-wrap,
+      .content-tabs {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .episode-num {
+        font-size: 2.4rem;
+      }
+
+      .hero-stats {
+        gap: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════ -->
+  <section class="hero">
+    <!-- background sound-wave -->
+    <div class="hero-waves">
+      <svg viewBox="0 0 1200 260" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <g fill="var(--gold)" opacity="1">
+          <rect x="0" y="100" width="6" height="60" rx="3" />
+          <rect x="14" y="80" width="6" height="100" rx="3" />
+          <rect x="28" y="60" width="6" height="140" rx="3" />
+          <rect x="42" y="90" width="6" height="80" rx="3" />
+          <rect x="56" y="50" width="6" height="160" rx="3" />
+          <rect x="70" y="70" width="6" height="120" rx="3" />
+          <rect x="84" y="40" width="6" height="180" rx="3" />
+          <rect x="98" y="85" width="6" height="90" rx="3" />
+          <rect x="112" y="110" width="6" height="40" rx="3" />
+          <rect x="126" y="60" width="6" height="140" rx="3" />
+          <rect x="140" y="30" width="6" height="200" rx="3" />
+          <rect x="154" y="75" width="6" height="110" rx="3" />
+          <rect x="168" y="95" width="6" height="70" rx="3" />
+          <rect x="182" y="55" width="6" height="150" rx="3" />
+          <rect x="196" y="45" width="6" height="170" rx="3" />
+          <rect x="210" y="80" width="6" height="100" rx="3" />
+          <rect x="224" y="100" width="6" height="60" rx="3" />
+          <rect x="238" y="65" width="6" height="130" rx="3" />
+          <rect x="252" y="35" width="6" height="190" rx="3" />
+          <rect x="266" y="90" width="6" height="80" rx="3" />
+
+          <rect x="934" y="90" width="6" height="80" rx="3" />
+          <rect x="948" y="35" width="6" height="190" rx="3" />
+          <rect x="962" y="65" width="6" height="130" rx="3" />
+          <rect x="976" y="100" width="6" height="60" rx="3" />
+          <rect x="990" y="80" width="6" height="100" rx="3" />
+          <rect x="1004" y="45" width="6" height="170" rx="3" />
+          <rect x="1018" y="55" width="6" height="150" rx="3" />
+          <rect x="1032" y="95" width="6" height="70" rx="3" />
+          <rect x="1046" y="75" width="6" height="110" rx="3" />
+          <rect x="1060" y="30" width="6" height="200" rx="3" />
+          <rect x="1074" y="60" width="6" height="140" rx="3" />
+          <rect x="1088" y="110" width="6" height="40" rx="3" />
+          <rect x="1102" y="85" width="6" height="90" rx="3" />
+          <rect x="1116" y="40" width="6" height="180" rx="3" />
+          <rect x="1130" y="70" width="6" height="120" rx="3" />
+          <rect x="1144" y="50" width="6" height="160" rx="3" />
+          <rect x="1158" y="90" width="6" height="80" rx="3" />
+          <rect x="1172" y="60" width="6" height="140" rx="3" />
+          <rect x="1186" y="80" width="6" height="100" rx="3" />
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-badge">
+      <span></span>
+      Podcast · Revista CPAD Jovens · 2º Trimestre 2026
+    </div>
+
+    <div class="logo-wrap">
+      <div class="logo-icon">🎙️</div>
+      <div class="logo-title">DJAD'Cast</div>
+      <div class="logo-sub">by @djadpatu</div>
+    </div>
+
+    <p class="hero-desc">
+      <strong>Entre a Verdade e o Engano</strong> — Combatendo ideologias<br />
+      e ensinos que se opõem à Palavra de Deus.<br />
+      <strong>Revista CPAD Jovens – 2º Trimestre de 2026</strong>
+    </p>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-num">13</span>
+        <span class="stat-label">Lições</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">3</span>
+        <span class="stat-label">Unidades</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">2026</span>
+        <span class="stat-label">2º Trimestre</span>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <span>Episódios</span>
+      <span class="arrow">↓</span>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+     WAVE DIVIDER
+══════════════════════════════════════════════ -->
+  <div class="wave-divider">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+     EPISODES
+══════════════════════════════════════════════ -->
+  <section class="episodes-section">
+    <div class="section-header">
+      <div class="section-eyebrow">Temporada 2026.2</div>
+      <div class="section-title">Episódios</div>
+      <div class="section-line"></div>
+    </div>
+
+    <!-- ──────────────────────────────────────────
+       EP 01
+  ─────────────────────────────────────────── -->
+    <article class="episode-card" id="ep01">
+      <div class="episode-header">
+        <div class="episode-num">01</div>
+        <div class="episode-meta">
+          <div class="episode-tag">Unidade 1 · Lição 1</div>
+          <div class="episode-title">O que é uma Ideologia</div>
+          <div class="episode-subtitle">Entre a verdade e o engano — o ponto de partida</div>
+        </div>
+        <div class="episode-status status-available">
+          <span class="status-dot"></span> Disponível
+        </div>
+      </div>
+
+      <div class="video-wrap">
+        <div class="video-container">
+          <div class="yt-thumb-player" onclick="loadYT(this, 'H8By4npDHRA', 0)">
+            <!-- fundo com ondas sonoras decorativas -->
+            <div class="yt-custom-thumb">
+              <svg class="yt-waves-bg" viewBox="0 0 900 300" preserveAspectRatio="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <g fill="rgba(201,162,39,0.18)">
+                  <rect x="0" y="110" width="7" height="80" rx="3.5" />
+                  <rect x="16" y="85" width="7" height="130" rx="3.5" />
+                  <rect x="32" y="55" width="7" height="190" rx="3.5" />
+                  <rect x="48" y="95" width="7" height="110" rx="3.5" />
+                  <rect x="64" y="40" width="7" height="220" rx="3.5" />
+                  <rect x="80" y="70" width="7" height="160" rx="3.5" />
+                  <rect x="96" y="30" width="7" height="240" rx="3.5" />
+                  <rect x="112" y="80" width="7" height="140" rx="3.5" />
+                  <rect x="128" y="105" width="7" height="90" rx="3.5" />
+                  <rect x="144" y="50" width="7" height="200" rx="3.5" />
+                  <rect x="160" y="20" width="7" height="260" rx="3.5" />
+                  <rect x="176" y="75" width="7" height="150" rx="3.5" />
+                  <rect x="192" y="90" width="7" height="120" rx="3.5" />
+                  <rect x="208" y="45" width="7" height="210" rx="3.5" />
+
+                  <rect x="685" y="45" width="7" height="210" rx="3.5" />
+                  <rect x="701" y="90" width="7" height="120" rx="3.5" />
+                  <rect x="717" y="75" width="7" height="150" rx="3.5" />
+                  <rect x="733" y="20" width="7" height="260" rx="3.5" />
+                  <rect x="749" y="50" width="7" height="200" rx="3.5" />
+                  <rect x="765" y="105" width="7" height="90" rx="3.5" />
+                  <rect x="781" y="80" width="7" height="140" rx="3.5" />
+                  <rect x="797" y="30" width="7" height="240" rx="3.5" />
+                  <rect x="813" y="70" width="7" height="160" rx="3.5" />
+                  <rect x="829" y="40" width="7" height="220" rx="3.5" />
+                  <rect x="845" y="95" width="7" height="110" rx="3.5" />
+                  <rect x="861" y="55" width="7" height="190" rx="3.5" />
+                  <rect x="877" y="85" width="7" height="130" rx="3.5" />
+                </g>
+              </svg>
+              <div class="yt-custom-content">
+                <div class="yt-ep-label">Episódio 01 · DJAD'Cast</div>
+                <div class="yt-ep-name">O que é uma Ideologia?</div>
+                <div class="yt-play-btn">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+                <div class="yt-label">Assistir no YouTube</div>
+              </div>
+            </div>
+            <span class="yt-timestamp">▶ Assistir no YouTube</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-tabs">
+        <div class="tabs-nav">
+          <button class="tab-btn active" onclick="switchTab(this, 'ep01-resumo')">📝 Resumo da Lição</button>
+          <button class="tab-btn" onclick="switchTab(this, 'ep01-reflexao')">💬 Reflexões</button>
+          <button class="tab-btn" onclick="switchTab(this, 'ep01-materiais')">📁 Materiais</button>
+        </div>
+
+        <div id="ep01-resumo" class="tab-panel active">
+          <div class="lesson-text">
+            <h3>Introdução</h3>
+            <p>Uma ideologia é um conjunto de ideias, crenças e valores que moldam a maneira como enxergamos o mundo, a
+              sociedade e o ser humano. Toda pessoa possui, de alguma forma, uma visão de mundo que influencia suas
+              escolhas e comportamentos.</p>
+            <h3>Ponto Central</h3>
+            <blockquote>"Não vos conformeis com este século, mas transformai-vos pela renovação do vosso entendimento."
+              — Romanos 12.2</blockquote>
+            <p>O cristão é chamado a ter uma cosmovisão bíblica, que vai de encontro às ideologias que relativizam a
+              verdade de Deus e colocam o ser humano no centro de tudo.</p>
+            <h3>Aplicação Prática</h3>
+            <p>Identificar as ideologias presentes nos meios que nos rodeiam – redes sociais, música, séries – e
+              submetê-las ao crivo da Palavra de Deus.</p>
+          </div>
+        </div>
+
+        <div id="ep01-reflexao" class="tab-panel">
+          <ul class="questions-list">
+            <li><span class="q-num">01</span><span>Que visão de mundo você absorveu sem perceber através das mídias e do
+                ambiente em que cresceu?</span></li>
+            <li><span class="q-num">02</span><span>De que forma a Bíblia pode ser nossa âncora ao navegar em meio a
+                tantas ideologias diferentes?</span></li>
+            <li><span class="q-num">03</span><span>Como você diferencia uma opinião de uma ideologia? Compartilhe um
+                exemplo do cotidiano.</span></li>
+            <li><span class="q-num">04</span><span>O que significa ter a "mente de Cristo" (1 Cor 2.16) no contexto das
+                ideologias contemporâneas?</span></li>
+          </ul>
+        </div>
+
+        <div id="ep01-materiais" class="tab-panel">
+          <div class="resources-grid">
+            <a href="/djad/licao-01-estudo" target="_blank" class="resource-item">
+              <span class="resource-icon">📄</span>
+              <div class="resource-info">
+                <div class="resource-name">Material de Estudo Completo</div>
+                <div class="resource-type">HTML · Disponível · Salvar como PDF</div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ──────────────────────────────────────────
+       EP 02 — COMING SOON (modelo)
+  ─────────────────────────────────────────── -->
+    <article class="episode-card" id="ep02">
+      <div class="episode-header">
+        <div class="episode-num">02</div>
+        <div class="episode-meta">
+          <div class="episode-tag">Unidade 1 · Lição 2</div>
+          <div class="episode-title">A falácia do Materialismo Histórico</div>
+          <div class="episode-subtitle">Quando a luta de classes tenta substituir a Palavra de Deus</div>
+        </div>
+        <div class="episode-status status-coming">
+          <span class="status-dot"></span> Em breve
+        </div>
+      </div>
+
+      <div class="video-wrap">
+        <div class="video-container">
+          <div class="video-placeholder">
+            <div class="mic-icon">🎙️</div>
+            <p>Episódio ainda não gravado</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-tabs">
+        <div class="tabs-nav">
+          <button class="tab-btn active" onclick="switchTab(this, 'ep02-resumo')">📝 Resumo da Lição</button>
+          <button class="tab-btn" onclick="switchTab(this, 'ep02-reflexao')">💬 Reflexões</button>
+          <button class="tab-btn" onclick="switchTab(this, 'ep02-materiais')">📁 Materiais</button>
+        </div>
+
+        <div id="ep02-resumo" class="tab-panel active">
+          <div class="lesson-text">
+            <h3>Em preparação</h3>
+            <p>O conteúdo desta lição estará disponível em breve. Acompanhe o <strong>@djadpatu</strong> nas redes para
+              ser avisado quando o episódio for ao ar.</p>
+          </div>
+        </div>
+        <div id="ep02-reflexao" class="tab-panel">
+          <div class="lesson-text">
+            <p style="color:var(--muted)">Reflexões disponíveis após a publicação do episódio.</p>
+          </div>
+        </div>
+        <div id="ep02-materiais" class="tab-panel">
+          <div class="lesson-text">
+            <p style="color:var(--muted)">Materiais disponíveis após a publicação do episódio.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ──────────────────────────────────────────
+       EPs 03–13 — PLACEHOLDER CARDS
+  ─────────────────────────────────────────── -->
+    <div id="more-episodes">
+      <!-- Os cards abaixo podem ser duplicados e preenchidos conforme os episódios forem gravados -->
+    </div>
+
+    <!-- Botão expandir restantes -->
+    <div style="text-align:center; margin-top: 8px;">
+      <button onclick="loadMoreEpisodes()" id="load-more-btn" style="background:rgba(201,162,39,.1); border:1px solid rgba(201,162,39,.3); color:var(--gold-light);
+             font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600;
+             padding:14px 36px; border-radius:999px; cursor:pointer; letter-spacing:.06em;
+             transition:background .2s, border-color .2s;">
+        Ver lições restantes (3 a 13) ↓
+      </button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+     ABOUT
+══════════════════════════════════════════════ -->
+  <section class="about-section">
+    <div class="section-header">
+      <div class="section-eyebrow">Sobre o Projeto</div>
+      <div class="section-title">O que é o DJAD'Cast?</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="about-inner">
+      <p>
+        O <strong style="color:var(--gold-light)">DJAD'Cast</strong> é uma iniciativa da liderança da <strong
+          style="color:var(--gold-light)">Juventude</strong> para aprofundar o estudo da Palavra de Deus através das
+        lições da Revista CPAD Jovens.
+      </p>
+      <p>
+        Cada episódio traz uma conversa dinâmica e contextualizada sobre a lição da semana, com reflexões práticas para
+        o dia a dia do jovem cristão — sem deixar de lado a profundidade bíblica.
+      </p>
+      <p>
+        Além dos vídeos, disponibilizamos materiais de apoio, resumos comentados e perguntas para debate em célula ou
+        estudo bíblico.
+      </p>
+      <div class="about-tags">
+        <span class="about-tag">🎙️ Podcast em Vídeo</span>
+        <span class="about-tag">📖 CPAD Jovens 2026</span>
+        <span class="about-tag">💬 Debate & Reflexão</span>
+        <span class="about-tag">📁 Material de Apoio</span>
+        <span class="about-tag">✝️ Cosmovisão Bíblica</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-logo">DJAD'Cast</div>
+    <p>@djadpatu · Revista CPAD Jovens · 2º Trimestre 2026</p>
+    <p style="margin-top:6px; font-size:.7rem; color:#4A3F28;">
+      Feito com fé e dedicação para a juventude.
+    </p>
+  </footer>
+
+  <!-- ══════════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════════ -->
+  <script>
+    /* ── YOUTUBE LOADER ───────────────────────────── */
+    function loadYT(el, videoId, startSec) {
+      const url = startSec > 0
+        ? `https://www.youtube.com/watch?v=${videoId}&t=${startSec}s`
+        : `https://www.youtube.com/watch?v=${videoId}`;
+      window.open(url, '_blank');
+    }
+
+    /* ── TAB SWITCHER ─────────────────────────────── */
+    function switchTab(btn, panelId) {
+      const card = btn.closest('.episode-card');
+      card.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      card.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(panelId).classList.add('active');
+    }
+
+    /* ── LOAD MORE ────────────────────────────────── */
+    const remainingEpisodes = [
+      { num: '03', unit: 'Lição 3', title: 'A falácia do Relativismo Ético-moral', sub: 'Quando "a minha verdade" desafia a Verdade de Deus' },
+      { num: '04', unit: 'Lição 4', title: 'A falácia da Ideologia de Gênero', sub: 'O que a Palavra diz sobre identidade e criação' },
+      { num: '05', unit: 'Lição 5', title: 'A falácia da Teologia Progressista', sub: 'Fé moldada pela cultura ou pela Escritura?' },
+      { num: '06', unit: 'Lição 6', title: 'A falácia do Humanismo', sub: 'O homem como medida de todas as coisas' },
+      { num: '07', unit: 'Lição 7', title: 'A falácia da Teoria Darwiniana', sub: 'Evolução, criação e a dignidade humana' },
+      { num: '08', unit: 'Lição 8', title: 'A falácia do Pragmatismo', sub: 'Se funciona, está certo? Os limites do utilitarismo' },
+      { num: '09', unit: 'Lição 9', title: 'A falácia do Ateísmo', sub: 'Razão, ciência e a existência de Deus' },
+      { num: '10', unit: 'Lição 10', title: 'A falácia da Teoria do Deísmo', sub: 'Um Deus distante que não age na história' },
+      { num: '11', unit: 'Lição 11', title: 'A falácia da Teologia da Prosperidade', sub: 'Fé como moeda de troca com Deus' },
+      { num: '12', unit: 'Lição 12', title: 'A falácia do Triunfalismo', sub: 'Quando a vitória se torna arrogância espiritual' },
+      { num: '13', unit: 'Lição 13', title: 'O discernimento do cristão', sub: 'Fundados na Verdade, prontos para o mundo' },
+    ];
+
+    function loadMoreEpisodes() {
+      const container = document.getElementById('more-episodes');
+      const btn = document.getElementById('load-more-btn');
+
+      remainingEpisodes.forEach(ep => {
+        const id = `ep${ep.num}`;
+        const html = `
+      <article class="episode-card" id="${id}" style="margin-top:48px">
+        <div class="episode-header">
+          <div class="episode-num">${ep.num}</div>
+          <div class="episode-meta">
+            <div class="episode-tag">${ep.unit}</div>
+            <div class="episode-title">${ep.title}</div>
+            <div class="episode-subtitle">${ep.sub}</div>
+          </div>
+          <div class="episode-status status-coming">
+            <span class="status-dot"></span> Em breve
+          </div>
+        </div>
+        <div class="video-wrap">
+          <div class="video-container">
+            <div class="video-placeholder">
+              <div class="mic-icon">🎙️</div>
+              <p>Episódio ainda não gravado</p>
+            </div>
+          </div>
+        </div>
+        <div class="content-tabs">
+          <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchTab(this, '${id}-resumo')">📝 Resumo</button>
+            <button class="tab-btn" onclick="switchTab(this, '${id}-reflexao')">💬 Reflexões</button>
+            <button class="tab-btn" onclick="switchTab(this, '${id}-materiais')">📁 Materiais</button>
+          </div>
+          <div id="${id}-resumo" class="tab-panel active">
+            <div class="lesson-text"><h3>Em preparação</h3><p>Conteúdo disponível em breve.</p></div>
+          </div>
+          <div id="${id}-reflexao" class="tab-panel">
+            <div class="lesson-text"><p style="color:var(--muted)">Disponível após a publicação.</p></div>
+          </div>
+          <div id="${id}-materiais" class="tab-panel">
+            <div class="lesson-text"><p style="color:var(--muted)">Disponível após a publicação.</p></div>
+          </div>
+        </div>
+      </article>`;
+        container.insertAdjacentHTML('beforeend', html);
+      });
+
+      btn.style.display = 'none';
+    }
+  </script>
+</body>
+
+</html>

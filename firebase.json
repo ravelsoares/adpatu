@@ -1,0 +1,205 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "*.bat",
+      "*.sh",
+      "*.exe",
+      "*.md",
+      "import-csv.js",
+      "package.json",
+      "serviceAccountKey.json",
+      "update-agenda.html",
+      "admin-faces.html"
+    ],
+    "headers": [
+      {
+        "source": "models/**/*.onnx",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000, immutable"
+          },
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+          }
+        ]
+      },
+      {
+        "source": "images/album/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000, immutable"
+          }
+        ]
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "/admin",
+        "destination": "/admin.html"
+      },
+      {
+        "source": "/",
+        "destination": "/home-adpatu.html"
+      },
+      {
+        "source": "/login",
+        "destination": "/login-adpatu.html"
+      },
+      {
+        "source": "/cadastro",
+        "destination": "/cadastro-adpatu.html"
+      },
+      {
+        "source": "/agenda",
+        "destination": "/agenda-adpatu.html"
+      },
+      {
+        "source": "/umadcamp",
+        "destination": "/home.html"
+      },
+      {
+        "source": "/umadcamp/",
+        "destination": "/home.html"
+      },
+      {
+        "source": "/umadcamp/home",
+        "destination": "/home.html"
+      },
+      {
+        "source": "/umadcamp/agenda",
+        "destination": "/new_agenda.html"
+      },
+      {
+        "source": "/umadcamp/liderancas",
+        "destination": "/liderancas.html"
+      },
+      {
+        "source": "/umadcamp/projetos",
+        "destination": "/projetos.html"
+      },
+      {
+        "source": "/umadcamp/estatisticas",
+        "destination": "/estatisticas.html"
+      },
+      {
+        "source": "/umadcamp/doacoes",
+        "destination": "/doacoes.html"
+      },
+      {
+        "source": "/umadcamp/censo",
+        "destination": "/censo.html"
+      },
+      {
+        "source": "/umadcamp/crj",
+        "destination": "/crj.html"
+      },
+      {
+        "source": "/djad/cadetes",
+        "destination": "/cadetes.html"
+      },
+      {
+        "source": "/djad/sorteio",
+        "destination": "/sorteio-cadetes.html"
+      },
+      {
+        "source": "/djad/ranking",
+        "destination": "/ranking-cadetes.html"
+      },
+      {
+        "source": "/djad/admin-cadetes",
+        "destination": "/admin-cadetes.html"
+      },
+      {
+        "source": "/umadcamp/esquadroes",
+        "destination": "/esquadroes.html"
+      },
+      {
+        "source": "/umadcamp/missoes",
+        "destination": "/missoes.html"
+      },
+      {
+        "source": "/umadcamp/dossie-aguias",
+        "destination": "/dossie-aguias.html"
+      },
+      {
+        "source": "/umadcamp/cadetes-arte",
+        "destination": "/cadetes_arte.html"
+      },
+      {
+        "source": "/umadcamp/fotos-crj",
+        "destination": "/fotos-crj.html"
+      },
+      {
+        "source": "/umadcamp/encontre-me",
+        "destination": "/encontre-me.html"
+      },
+      {
+        "source": "/umadcamp/tapago",
+        "destination": "/tapago.html"
+      },
+      {
+        "source": "/umadcamp/desafio",
+        "destination": "/desafio.html"
+      },
+      {
+        "source": "/umadcamp/desafio-stats",
+        "destination": "/desafio-stats.html"
+      },
+      {
+        "source": "/desafio/stats",
+        "destination": "/desafio-stats.html"
+      },
+      {
+        "source": "/umadcamp/amor",
+        "destination": "/central-do-amor.html"
+      },
+      {
+        "source": "/amor",
+        "destination": "/central-do-amor.html"
+      },
+      {
+        "source": "/amor/stats",
+        "destination": "/admin-central-amor.html"
+      },
+      {
+        "source": "/umadcamp/amor-stats",
+        "destination": "/admin-central-amor.html"
+      },
+      {
+        "source": "/umadcamp/album",
+        "destination": "/album-efesios.html"
+      },
+      {
+        "source": "/djad/album",
+        "destination": "/album-efesios.html"
+      },
+      {
+        "source": "/djad/admin-album",
+        "destination": "/admin-album.html"
+      },
+      {
+        "source": "/djad/ranking-album",
+        "destination": "/ranking-album.html"
+      },
+      {
+        "source": "/djad/batalha",
+        "destination": "/batalha.html"
+      },
+      {
+        "source": "/ebd",
+        "destination": "/ebd.html"
+      },
+      {
+        "source": "*",
+        "destination": "/home-adpatu.html"
+      }
+    ]
+  }
+}

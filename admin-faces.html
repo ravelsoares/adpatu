@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Processar Face Descriptors (ArcFace)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Press+Start+2P&display=swap"
+        rel="stylesheet">
+
+    <!-- face-api.js for detection + landmarks -->
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.min.js"></script>
+
+    <!-- ONNX Runtime Web for ArcFace recognition -->
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/ort.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neon-orange': '#FF6600',
+                        'deep-red': '#4A0404',
+                        'dark-bg': '#0a0a0a',
+                        'card-bg': '#141414'
+                    },
+                    fontFamily: {
+                        'pixel': ['"Press Start 2P"', 'cursive'],
+                        'body': ['Montserrat', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050505;
+            color: white;
+        }
+    </style>
+</head>
+
+<body class="font-body p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <h1 class="font-pixel text-neon-orange text-lg mb-2">ADMIN: PROCESSAR FACE DESCRIPTORS</h1>
+        <p class="text-gray-400 mb-2">Este script processa todas as fotos do Google Drive e extrai os face descriptors
+            para reconhecimento facial. <strong>Rode apenas uma vez</strong> (ou quando adicionar novas fotos).</p>
+        <div class="bg-green-900/30 border border-green-700/50 rounded-lg px-4 py-2 mb-6">
+            <p class="text-green-400 text-sm">🧠 <strong>Motor: ArcFace (MobileFaceNet)</strong> — Descriptors 512D,
+                ~99.5% precisão LFW. Muito superior ao modelo anterior (128D).</p>
+        </div>
+
+        <!-- Config -->
+        <div class="bg-card-bg border border-gray-800 rounded-lg p-6 mb-6">
+            <h2 class="font-bold text-white mb-4">⚙️ Configuração</h2>
+            <label class="block text-sm text-gray-400 mb-2">API Key do Google Drive:</label>
+            <input id="api-key" type="text" value="AIzaSyCM05uKadKIX5xxtWt3FlyKp8nANwV4Kpc"
+                class="w-full bg-black border border-gray-700 rounded px-4 py-2 text-white mb-4 font-mono text-sm">
+
+            <label class="block text-sm text-gray-400 mb-2">Tamanho do thumbnail (px) - menor = mais rápido, maior =
+                mais preciso:</label>
+            <input id="thumb-size" type="number" value="1600"
+                class="w-32 bg-black border border-gray-700 rounded px-4 py-2 text-white mb-4 font-mono text-sm">
+        </div>
+
+        <!-- Controls -->
+        <div class="flex gap-4 mb-6">
+            <button onclick="startProcessing()"
+                class="bg-neon-orange text-black font-bold px-6 py-3 rounded hover:bg-white transition" id="start-btn">
+                ▶ INICIAR PROCESSAMENTO
+            </button>
+            <button onclick="downloadJSON()"
+                class="bg-gray-800 text-white font-bold px-6 py-3 rounded hover:bg-gray-700 transition hidden"
+                id="download-btn">
+                💾 BAIXAR JSON
+            </button>
+        </div>
+
+        <!-- Progress -->
+        <div class="bg-card-bg border border-gray-800 rounded-lg p-6 mb-6">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="font-bold text-white">📊 Progresso</h2>
+                <span id="progress-text" class="text-gray-400 text-sm font-mono">Aguardando...</span>
+            </div>
+            <div class="w-full bg-gray-800 h-4 rounded-full overflow-hidden mb-2">
+                <div id="progress-bar" class="bg-neon-orange h-4 rounded-full transition-all duration-300"
+                    style="width: 0%"></div>
+            </div>
+            <div class="flex justify-between text-xs text-gray-500">
+                <span id="stats-photos">Fotos: 0</span>
+                <span id="stats-faces">Faces detectadas: 0</span>
+                <span id="stats-errors">Erros: 0</span>
+            </div>
+        </div>
+
+        <!-- Log -->
+        <div class="bg-black border border-gray-800 rounded-lg p-4 max-h-96 overflow-y-auto font-mono text-xs" id="log">
+            <p class="text-gray-600">Console de processamento...</p>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  FOLDER CONFIG (same as fotos-crj.html)
+        // ============================================================
+        const FOLDERS = {
+            sexta: '1r7m0DtWVl63xdJ_kVMtUxRJN6qWs2R77',
+            sabado: '1fnGxi8PgDb1yeQCRgovQ4dYTQzcEMChc',
+            domingo: '1zds1vnNFwPbT_x6psXCwpI8dF5VlC7zY',
+            segunda: '1s2FBqj-LIQfuSatWGsqeZRdnPXcXcF5m',
+            terca: '1gOX1uCxlMoLwUuirUdmt3QYzTB32WMWd'
+        };
+
+        const EXTRA_FOLDERS = {
+            sexta: {
+                noite: ['1w4wyktrH_T3ZoOukQ2D06V8xNhK7Ve0V', '1uU9mNaWAXI6DNXbW2dCCjINq9vYuJ8j4']
+            },
+            sabado: {
+                tarde: ['1_zc60AamTCCDNCeuZXSII2mwpflPBiVC', '1NrS4IdSBMhLxqjbeLuaK2ZkiB3DWEaiG'],
+                noite: ['1BkONm2t_c4OUEZWPx6zbZhJaELROlWde', '1SuCHQll9Au4rjiu0rACAhzzvApDVOJ1y']
+            },
+            domingo: {
+                manha: ['1h5Bp_TAszj9PG_B7r-2qUw2efS8A6B-N', '1D2XSgArpVOi6swSpWdlwFoGrkwcHO7IV'],
+                tarde: ['1EbeXymNAz0GpbhQaMT2S634HrA9LxDaz', '1ElLMkJouwXx1djBtht_x4WEmqEe2hcBi'],
+                noite: ['1vjrsZiby_QkOFTVUiebdZpqH5pOEpnqa', '1YXuiEGzQ2frYcATZXpJsTBuCJ5yseu93']
+            },
+            segunda: {
+                manha: ['1dpfCbh7D0cwpLkWtygG6oOVAam5vlz9Y', '17toQRsXGmIjYUXc3ync-A4IrvVI7yAXx'],
+                tarde: ['1F0zPJ2dDYK6TsaxRP-n7aoEWhAuxfjC2'],
+                noite: ['1SJqdmgmy3hxyzNz5vJMDZzsFU4_HzxUO', '1SC635MusSvOJlUFCvdXrwdpVyVxuuQoZ']
+            },
+            terca: {
+                manha: ['168xkyjHNFxdRqYRTs4GJ20MsI8mROr65', '1yxjgMxz1zO5pNLKIjMw05b9zzl66Ychv'],
+                tarde: ['1wXuA9rztw2axZAfIokgUC_S2jngjSWdR'],
+                noite: ['1PvuY8_pGwrL20b9G365UA_VjsMfT8wz1']
+            }
+        };
+
+        let allResults = [];
+        let totalFaces = 0;
+        let totalErrors = 0;
+        let totalPhotos = 0;
+        let arcfaceSession = null;
+
+        // ============================================================
+        //  LOG
+        // ============================================================
+        function log(msg, type = 'info') {
+            const el = document.getElementById('log');
+            const colors = { info: 'text-gray-400', success: 'text-green-400', error: 'text-red-400', warn: 'text-yellow-400' };
+            el.innerHTML += `<p class="${colors[type] || 'text-gray-400'}">[${new Date().toLocaleTimeString()}] ${msg}</p>`;
+            el.scrollTop = el.scrollHeight;
+        }
+
+        function updateProgress(current, total) {
+            const pct = total > 0 ? Math.round((current / total) * 100) : 0;
+            document.getElementById('progress-bar').style.width = pct + '%';
+            document.getElementById('progress-text').textContent = `${current}/${total} (${pct}%)`;
+            document.getElementById('stats-photos').textContent = `Fotos: ${totalPhotos}`;
+            document.getElementById('stats-faces').textContent = `Faces detectadas: ${totalFaces}`;
+            document.getElementById('stats-errors').textContent = `Erros: ${totalErrors}`;
+        }
+
+        // ============================================================
+        //  COLLECT ALL FOLDER IDS
+        // ============================================================
+        function collectAllFolderIds() {
+            const all = new Set();
+
+            // Main folders
+            Object.values(FOLDERS).forEach(id => all.add(id));
+
+            // Extra folders
+            Object.values(EXTRA_FOLDERS).forEach(dayObj => {
+                Object.values(dayObj).forEach(arr => {
+                    arr.forEach(id => all.add(id));
+                });
+            });
+
+            return Array.from(all);
+        }
+
+        // ============================================================
+        //  LIST FILES IN FOLDER (including subfolders)
+        // ============================================================
+        async function listAllPhotos(folderId, apiKey) {
+            const photos = [];
+
+            // First check for subfolders
+            const subUrl = `https://www.googleapis.com/drive/v3/files?` +
+                `q='${folderId}'+in+parents+and+mimeType='application/vnd.google-apps.folder'` +
+                `&key=${apiKey}&fields=files(id,name)&pageSize=20`;
+
+            try {
+                const subResp = await fetch(subUrl);
+                if (subResp.ok) {
+                    const subData = await subResp.json();
+                    if (subData.files && subData.files.length > 0) {
+                        // Has subfolders — recurse into them
+                        for (const sub of subData.files) {
+                            const subPhotos = await listAllPhotos(sub.id, apiKey);
+                            photos.push(...subPhotos);
+                        }
+                    }
+                }
+            } catch (e) {
+                log(`Erro ao listar subpastas de ${folderId}: ${e.message}`, 'warn');
+            }
+
+            // List photos in this folder
+            let pageToken = '';
+            do {
+                const url = `https://www.googleapis.com/drive/v3/files?` +
+                    `q='${folderId}'+in+parents+and+mimeType+contains+'image/'` +
+                    `&key=${apiKey}` +
+                    `&fields=nextPageToken,files(id,name,mimeType)` +
+                    `&pageSize=100&orderBy=name` +
+                    (pageToken ? `&pageToken=${pageToken}` : '');
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    log(`Erro API ao listar pasta ${folderId}: ${response.status}`, 'error');
+                    break;
+                }
+
+                const data = await response.json();
+                if (data.files) {
+                    photos.push(...data.files);
+                }
+                pageToken = data.nextPageToken || '';
+            } while (pageToken);
+
+            return photos;
+        }
+
+        // ============================================================
+        //  ARCFACE: FACE ALIGNMENT (5-point to 112x112)
+        // ============================================================
+        // Standard ArcFace alignment reference points for 112x112
+        const ARCFACE_REF = [
+            [38.2946, 51.6963],  // left eye
+            [73.5318, 51.5014],  // right eye
+            [56.0252, 71.7366],  // nose
+            [41.5493, 92.3655],  // left mouth
+            [70.7299, 92.2041],  // right mouth
+        ];
+
+        // Extract 5 key points from face-api.js 68-point landmarks
+        function extract5Points(landmarks) {
+            const pts = landmarks.positions;
+
+            // Left eye center (points 36-41)
+            const leftEye = [0, 0];
+            for (let i = 36; i <= 41; i++) {
+                leftEye[0] += pts[i].x;
+                leftEye[1] += pts[i].y;
+            }
+            leftEye[0] /= 6;
+            leftEye[1] /= 6;
+
+            // Right eye center (points 42-47)
+            const rightEye = [0, 0];
+            for (let i = 42; i <= 47; i++) {
+                rightEye[0] += pts[i].x;
+                rightEye[1] += pts[i].y;
+            }
+            rightEye[0] /= 6;
+            rightEye[1] /= 6;
+
+            // Nose tip (point 30)
+            const nose = [pts[30].x, pts[30].y];
+
+            // Left mouth corner (point 48)
+            const leftMouth = [pts[48].x, pts[48].y];
+
+            // Right mouth corner (point 54)
+            const rightMouth = [pts[54].x, pts[54].y];
+
+            return [leftEye, rightEye, nose, leftMouth, rightMouth];
+        }
+
+        // Compute similarity transform (rotation + scale + translation)
+        function estimateAffineTransform(src, dst) {
+            // Using least squares to find the best affine transform
+            // src and dst are arrays of [x,y] pairs
+            const n = src.length;
+            let srcMeanX = 0, srcMeanY = 0, dstMeanX = 0, dstMeanY = 0;
+
+            for (let i = 0; i < n; i++) {
+                srcMeanX += src[i][0];
+                srcMeanY += src[i][1];
+                dstMeanX += dst[i][0];
+                dstMeanY += dst[i][1];
+            }
+            srcMeanX /= n; srcMeanY /= n;
+            dstMeanX /= n; dstMeanY /= n;
+
+            // Centered coordinates
+            const srcC = src.map(p => [p[0] - srcMeanX, p[1] - srcMeanY]);
+            const dstC = dst.map(p => [p[0] - dstMeanX, p[1] - dstMeanY]);
+
+            // Compute similarity transform parameters
+            let s1 = 0, s2 = 0, s3 = 0, s4 = 0;
+            for (let i = 0; i < n; i++) {
+                s1 += dstC[i][0] * srcC[i][0] + dstC[i][1] * srcC[i][1];
+                s2 += dstC[i][0] * srcC[i][1] - dstC[i][1] * srcC[i][0];
+                s3 += srcC[i][0] * srcC[i][0] + srcC[i][1] * srcC[i][1];
+            }
+
+            const a = s1 / s3;
+            const b = s2 / s3;
+            const tx = dstMeanX - a * srcMeanX - b * srcMeanY;
+            const ty = dstMeanY + b * srcMeanX - a * srcMeanY;
+
+            return { a, b, tx, ty };
+        }
+
+        // Align and crop face to 112x112 for ArcFace
+        function alignFace(sourceCanvas, landmarks) {
+            const srcPoints = extract5Points(landmarks);
+            const transform = estimateAffineTransform(srcPoints, ARCFACE_REF);
+
+            const outSize = 112;
+            const alignedCanvas = document.createElement('canvas');
+            alignedCanvas.width = outSize;
+            alignedCanvas.height = outSize;
+            const ctx = alignedCanvas.getContext('2d');
+
+            // Apply inverse transform to sample from source
+            const { a, b, tx, ty } = transform;
+            const det = a * a + b * b;
+            const ia = a / det;
+            const ib = -b / det;
+
+            const imageData = ctx.createImageData(outSize, outSize);
+            const srcCtx = sourceCanvas.getContext('2d');
+            const srcData = srcCtx.getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
+
+            for (let y = 0; y < outSize; y++) {
+                for (let x = 0; x < outSize; x++) {
+                    // Inverse transform: source coordinates
+                    const dx = x - tx;
+                    const dy = y - ty;
+                    const sx = ia * dx - ib * dy;
+                    const sy = ib * dx + ia * dy;
+
+                    const sx0 = Math.floor(sx);
+                    const sy0 = Math.floor(sy);
+
+                    if (sx0 >= 0 && sx0 < sourceCanvas.width - 1 && sy0 >= 0 && sy0 < sourceCanvas.height - 1) {
+                        // Bilinear interpolation
+                        const fx = sx - sx0;
+                        const fy = sy - sy0;
+
+                        for (let c = 0; c < 3; c++) {
+                            const i00 = (sy0 * sourceCanvas.width + sx0) * 4 + c;
+                            const i10 = (sy0 * sourceCanvas.width + (sx0 + 1)) * 4 + c;
+                            const i01 = ((sy0 + 1) * sourceCanvas.width + sx0) * 4 + c;
+                            const i11 = ((sy0 + 1) * sourceCanvas.width + (sx0 + 1)) * 4 + c;
+
+                            const val = srcData.data[i00] * (1 - fx) * (1 - fy)
+                                + srcData.data[i10] * fx * (1 - fy)
+                                + srcData.data[i01] * (1 - fx) * fy
+                                + srcData.data[i11] * fx * fy;
+
+                            imageData.data[(y * outSize + x) * 4 + c] = Math.round(val);
+                        }
+                        imageData.data[(y * outSize + x) * 4 + 3] = 255; // alpha
+                    }
+                }
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+            return alignedCanvas;
+        }
+
+        // ============================================================
+        //  ARCFACE: ONNX INFERENCE
+        // ============================================================
+        async function getArcFaceDescriptor(alignedCanvas) {
+            if (!arcfaceSession) {
+                throw new Error('ArcFace session not loaded');
+            }
+
+            const ctx = alignedCanvas.getContext('2d');
+            const imgData = ctx.getImageData(0, 0, 112, 112);
+            const pixels = imgData.data;
+
+            // Create NCHW tensor [1, 3, 112, 112]
+            // Normalize: (pixel / 255 - 0.5) / 0.5 = pixel / 127.5 - 1
+            const float32Data = new Float32Array(1 * 3 * 112 * 112);
+            for (let y = 0; y < 112; y++) {
+                for (let x = 0; x < 112; x++) {
+                    const pixelIdx = (y * 112 + x) * 4;
+                    const tensorIdx = y * 112 + x;
+                    // RGB channels in NCHW layout
+                    float32Data[0 * 112 * 112 + tensorIdx] = (pixels[pixelIdx] - 127.5) / 127.5;     // R
+                    float32Data[1 * 112 * 112 + tensorIdx] = (pixels[pixelIdx + 1] - 127.5) / 127.5; // G
+                    float32Data[2 * 112 * 112 + tensorIdx] = (pixels[pixelIdx + 2] - 127.5) / 127.5; // B
+                }
+            }
+
+            const inputTensor = new ort.Tensor('float32', float32Data, [1, 3, 112, 112]);
+            const inputName = arcfaceSession.inputNames[0];
+            const results = await arcfaceSession.run({ [inputName]: inputTensor });
+
+            // Get output — the model output name might vary
+            const outputName = arcfaceSession.outputNames[0];
+            const embedding = results[outputName].data;
+
+            // L2 normalize
+            let norm = 0;
+            for (let i = 0; i < embedding.length; i++) {
+                norm += embedding[i] * embedding[i];
+            }
+            norm = Math.sqrt(norm);
+
+            const normalized = new Float32Array(embedding.length);
+            for (let i = 0; i < embedding.length; i++) {
+                normalized[i] = embedding[i] / norm;
+            }
+
+            return normalized;
+        }
+
+        // ============================================================
+        //  PROCESS SINGLE PHOTO
+        // ============================================================
+        async function processPhoto(photo, thumbSize) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+
+                img.onload = async () => {
+                    try {
+                        // Draw image to canvas for processing
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.naturalWidth || img.width;
+                        canvas.height = img.naturalHeight || img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+
+                        // Use SSD MobileNet first (more accurate)
+                        let detections = await faceapi
+                            .detectAllFaces(img, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.3 }))
+                            .withFaceLandmarks();
+
+                        // Also try TinyFaceDetector for faces SSD missed
+                        const tinyDetections = await faceapi
+                            .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions({ inputSize: 512, scoreThreshold: 0.3 }))
+                            .withFaceLandmarks();
+
+                        // Merge: add tiny detections that don't overlap with SSD ones
+                        for (const td of tinyDetections) {
+                            const tBox = td.detection.box;
+                            const overlaps = detections.some(d => {
+                                const sBox = d.detection.box;
+                                const overlapX = Math.max(0, Math.min(sBox.right, tBox.right) - Math.max(sBox.left, tBox.left));
+                                const overlapY = Math.max(0, Math.min(sBox.bottom, tBox.bottom) - Math.max(sBox.top, tBox.top));
+                                const overlapArea = overlapX * overlapY;
+                                const minArea = Math.min(sBox.width * sBox.height, tBox.width * tBox.height);
+                                return overlapArea > minArea * 0.3;
+                            });
+                            if (!overlaps) detections.push(td);
+                        }
+
+                        // Filter out very small faces (< 0.5% of image)
+                        const imgArea = img.width * img.height;
+                        const minFaceArea = imgArea * 0.005;
+                        detections = detections.filter(d => {
+                            const box = d.detection.box;
+                            return (box.width * box.height) >= minFaceArea;
+                        });
+
+                        if (detections.length > 0) {
+                            // Generate ArcFace descriptors for each detected face
+                            const faces = [];
+                            for (const det of detections) {
+                                try {
+                                    const aligned = alignFace(canvas, det.landmarks);
+                                    const descriptor = await getArcFaceDescriptor(aligned);
+                                    faces.push(Array.from(descriptor));
+                                } catch (e) {
+                                    // Skip face if alignment/inference fails
+                                }
+                            }
+
+                            if (faces.length > 0) {
+                                resolve({ id: photo.id, name: photo.name, faces });
+                            } else {
+                                resolve(null);
+                            }
+                        } else {
+                            resolve(null);
+                        }
+                    } catch (err) {
+                        reject(err);
+                    }
+                };
+
+                img.onerror = () => reject(new Error('Image load failed'));
+                img.src = `https://lh3.googleusercontent.com/d/${photo.id}=w${thumbSize}`;
+            });
+        }
+
+        // ============================================================
+        //  MAIN PROCESSING
+        // ============================================================
+        async function startProcessing() {
+            const apiKey = document.getElementById('api-key').value.trim();
+            const thumbSize = parseInt(document.getElementById('thumb-size').value) || 800;
+
+            if (!apiKey) {
+                log('API Key é obrigatória!', 'error');
+                return;
+            }
+
+            const startBtn = document.getElementById('start-btn');
+            startBtn.disabled = true;
+            startBtn.textContent = '⏳ PROCESSANDO...';
+            startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            allResults = [];
+            totalFaces = 0;
+            totalErrors = 0;
+            totalPhotos = 0;
+
+            // Step 1: Load face-api models (detection + landmarks only)
+            log('Carregando modelos de detecção (face-api.js)...', 'info');
+            try {
+                const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model/';
+                await Promise.all([
+                    faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
+                    faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+                    faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+                    // NOTE: faceRecognitionNet NOT loaded — replaced by ArcFace
+                ]);
+                log('✅ Modelos de detecção carregados!', 'success');
+            } catch (err) {
+                log(`❌ Erro ao carregar modelos de detecção: ${err.message}`, 'error');
+                startBtn.disabled = false;
+                startBtn.textContent = '▶ INICIAR PROCESSAMENTO';
+                startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                return;
+            }
+
+            // Step 1b: Load ArcFace ONNX model
+            log('Carregando modelo ArcFace (ONNX Runtime)...', 'info');
+            try {
+                ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/';
+                arcfaceSession = await ort.InferenceSession.create('./models/w600k_mbf.onnx', {
+                    executionProviders: ['wasm'],
+                    graphOptimizationLevel: 'all'
+                });
+                log(`✅ ArcFace carregado! Input: ${arcfaceSession.inputNames}, Output: ${arcfaceSession.outputNames}`, 'success');
+            } catch (err) {
+                log(`❌ Erro ao carregar ArcFace: ${err.message}`, 'error');
+                log('Verifique se o arquivo models/w600k_mbf.onnx está disponível.', 'warn');
+                startBtn.disabled = false;
+                startBtn.textContent = '▶ INICIAR PROCESSAMENTO';
+                startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                return;
+            }
+
+            // Step 2: Collect all folder IDs and list all photos
+            log('Listando todas as fotos do Google Drive...', 'info');
+            const folderIds = collectAllFolderIds();
+            log(`${folderIds.length} pastas para processar`, 'info');
+
+            let allPhotos = [];
+            const seenIds = new Set();
+
+            for (const folderId of folderIds) {
+                try {
+                    const photos = await listAllPhotos(folderId, apiKey);
+                    for (const photo of photos) {
+                        if (!seenIds.has(photo.id)) {
+                            seenIds.add(photo.id);
+                            allPhotos.push(photo);
+                        }
+                    }
+                    log(`Pasta ${folderId.substring(0, 10)}...: ${photos.length} fotos`, 'info');
+                } catch (err) {
+                    log(`Erro na pasta ${folderId}: ${err.message}`, 'error');
+                }
+            }
+
+            log(`📷 Total de ${allPhotos.length} fotos únicas encontradas`, 'success');
+
+            // Step 3: Process each photo
+            const total = allPhotos.length;
+            let processed = 0;
+
+            for (const photo of allPhotos) {
+                try {
+                    const result = await processPhoto(photo, thumbSize);
+                    if (result) {
+                        allResults.push(result);
+                        totalFaces += result.faces.length;
+                        if (processed % 10 === 0) {
+                            log(`🔍 ${photo.name}: ${result.faces.length} face(s) [512D ArcFace]`, 'success');
+                        }
+                    }
+                    totalPhotos++;
+                } catch (err) {
+                    totalErrors++;
+                    if (totalErrors <= 10) {
+                        log(`⚠️ ${photo.name}: ${err.message}`, 'warn');
+                    }
+                }
+
+                processed++;
+                updateProgress(processed, total);
+
+                // Small delay to not freeze browser
+                if (processed % 5 === 0) {
+                    await new Promise(r => setTimeout(r, 50));
+                }
+            }
+
+            // Done
+            log('', 'info');
+            log('═══════════════════════════════════════', 'success');
+            log(`✅ PROCESSAMENTO CONCLUÍDO! (ArcFace 512D)`, 'success');
+            log(`📷 Fotos processadas: ${totalPhotos}`, 'success');
+            log(`👤 Faces detectadas: ${totalFaces}`, 'success');
+            log(`⚠️ Erros: ${totalErrors}`, totalErrors > 0 ? 'warn' : 'success');
+            log(`📦 Registros no JSON: ${allResults.length}`, 'success');
+            log('═══════════════════════════════════════', 'success');
+
+            document.getElementById('download-btn').classList.remove('hidden');
+            startBtn.disabled = false;
+            startBtn.textContent = '▶ REINICIAR PROCESSAMENTO';
+            startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        // ============================================================
+        //  DOWNLOAD JSON
+        // ============================================================
+        function downloadJSON() {
+            const data = {
+                version: 2,
+                engine: 'arcface-mobilefacenet-w600k',
+                descriptorSize: 512,
+                generated: new Date().toISOString(),
+                totalPhotos: totalPhotos,
+                totalFaces: totalFaces,
+                photos: allResults
+            };
+
+            const json = JSON.stringify(data);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'face-descriptors.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            log(`💾 JSON baixado! Tamanho: ${(json.length / 1024 / 1024).toFixed(2)} MB`, 'success');
+        }
+    </script>
+
+</body>
+
+</html>

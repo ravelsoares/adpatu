@@ -1,0 +1,24 @@
+{
+    "name": "umadcamp-csv-importer",
+    "version": "1.0.0",
+    "description": "Script para importar dados do CSV para o Firebase Firestore",
+    "main": "import-csv.js",
+    "scripts": {
+        "import": "node import-csv.js import",
+        "clear": "node import-csv.js clear",
+        "stats": "node import-csv.js stats"
+    },
+    "dependencies": {
+        "firebase-admin": "^12.0.0",
+        "csv-parser": "^3.0.0"
+    },
+    "keywords": [
+        "firebase",
+        "firestore",
+        "csv",
+        "import",
+        "umadcamp"
+    ],
+    "author": "UMADCAMP",
+    "license": "MIT"
+}

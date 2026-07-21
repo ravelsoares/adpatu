@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TÁ PAGO - Desafio de Leitura Bíblica UMADCAMP</title>
+    <meta name="description" content="Desafio diário de leitura bíblica da UMADCAMP - leu hoje? Posta o seu Tá Pago!">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="TÁ PAGO - Desafio de Leitura Bíblica">
+    <meta property="og:description" content="Leu a Bíblia hoje? Posta aí o seu Tá Pago!">
+
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #050505;
+            --card: #111111;
+            --card-2: #181818;
+            --neon: #ff4d2e;
+            --neon-2: #ff8a00;
+            --neon-glow: rgba(255, 77, 46, 0.45);
+            --green: #34d399;
+            --green-dark: #047857;
+            --text: #ffffff;
+            --text-dim: #888888;
+            --border: rgba(255, 138, 0, 0.25);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            background-image:
+                linear-gradient(rgba(255, 138, 0, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 138, 0, 0.04) 1px, transparent 1px);
+            background-size: 32px 32px;
+            color: var(--text);
+            font-family: 'DM Sans', system-ui, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        a { color: var(--neon-2); }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 5%;
+            background: linear-gradient(180deg, #1a0a05 0%, #0a0505 100%);
+            border-bottom: 3px solid var(--neon);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 30px var(--neon-glow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav .logo {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        nav .logo .neon { color: var(--neon); text-shadow: 0 0 10px var(--neon-glow); }
+
+        nav .home-link {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 12px;
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: all .2s;
+        }
+
+        nav .home-link:hover { color: var(--neon); border-color: var(--neon); }
+
+        .hero {
+            text-align: center;
+            padding: 50px 20px 30px;
+            background: radial-gradient(ellipse at center top, rgba(255, 77, 46, 0.18) 0%, transparent 60%);
+        }
+
+        .hero h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: clamp(1.6rem, 7vw, 3rem);
+            margin: 0 0 12px;
+            color: var(--neon);
+            text-shadow: 4px 4px 0 #4a0404, 0 0 30px var(--neon-glow);
+            letter-spacing: 2px;
+        }
+
+        .hero .tagline {
+            color: var(--text-dim);
+            font-size: 1rem;
+            max-width: 540px;
+            margin: 0 auto 18px;
+        }
+
+        .hero .today-pill {
+            display: inline-block;
+            background: rgba(255, 77, 46, 0.12);
+            border: 1px solid var(--neon);
+            color: var(--neon-2);
+            padding: 8px 18px;
+            border-radius: 999px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 20px 0 60px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.85rem;
+            color: var(--neon-2);
+            letter-spacing: 1.5px;
+            text-align: center;
+            margin: 36px 0 18px;
+            text-shadow: 0 0 10px var(--neon-glow);
+        }
+
+        /* Status do dia */
+        .my-status {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .my-status .info { min-width: 0; }
+
+        .my-status h2 {
+            margin: 0 0 4px;
+            font-size: 1.1rem;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+
+        .my-status .who {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .my-status .who .name { color: var(--neon-2); font-weight: 700; }
+
+        .my-status .who button.linkbtn {
+            background: none; border: none; color: var(--neon-2); text-decoration: underline; cursor: pointer; padding: 0; font: inherit;
+        }
+
+        .badge {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            padding: 8px 14px;
+            border-radius: 6px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .badge.done { background: var(--green-dark); color: #ecfdf5; border: 1px solid var(--green); box-shadow: 0 0 14px rgba(52, 211, 153, 0.4); }
+
+        .badge.pending { background: rgba(255, 77, 46, 0.15); color: var(--neon-2); border: 1px solid var(--neon); }
+
+        /* Form */
+        .form-grid {
+            display: grid;
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .form-row.two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 520px) {
+            .form-row.two-col { grid-template-columns: 1fr; }
+        }
+
+        .form-row label {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+            font-family: 'Press Start 2P', cursive;
+            letter-spacing: 1px;
+        }
+
+        .form-row input[type="text"],
+        .form-row input[type="search"],
+        .form-row textarea {
+            width: 100%;
+            background: var(--card-2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 11px 13px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: vertical;
+        }
+
+        .form-row input[type="text"]:focus,
+        .form-row input[type="search"]:focus,
+        .form-row textarea:focus {
+            outline: none;
+            border-color: var(--neon);
+            box-shadow: 0 0 0 3px rgba(255, 77, 46, 0.2);
+        }
+
+        .photo-drop {
+            background: var(--card-2);
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 30px 16px;
+            text-align: center;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all .2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-drop:hover { border-color: var(--neon); color: var(--neon-2); }
+
+        .photo-drop input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .photo-drop .icon { font-size: 2.6rem; line-height: 1; margin-bottom: 6px; }
+
+        .photo-drop.has-image { border-style: solid; padding: 0; }
+
+        .photo-drop.has-image .placeholder { display: none; }
+
+        .photo-drop .preview-wrap {
+            display: none;
+            position: relative;
+        }
+
+        .photo-drop.has-image .preview-wrap { display: block; }
+
+        .photo-drop .preview-wrap img {
+            display: block;
+            width: 100%;
+            max-height: 360px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .photo-drop .preview-wrap .change-hint {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--neon) 0%, var(--neon-2) 100%);
+            color: #fff;
+            border: none;
+            padding: 14px 22px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            transition: all .2s;
+            box-shadow: 0 4px 14px var(--neon-glow);
+        }
+
+        .submit-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px var(--neon-glow); }
+
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .form-msg { font-size: 0.85rem; min-height: 18px; text-align: center; color: var(--text-dim); }
+
+        .form-msg.error { color: #ff6b6b; }
+
+        .form-msg.success { color: var(--green); }
+
+        /* Feed */
+        .feed-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .post {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .post:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255, 77, 46, 0.18); }
+
+        .post img.photo {
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            object-fit: cover;
+            background: #000;
+            display: block;
+        }
+
+        .post .body { padding: 12px 14px; }
+
+        .post .who-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; }
+
+        .post .name { font-weight: 700; color: var(--text); font-size: 0.95rem; }
+
+        .post .time { color: var(--text-dim); font-size: 0.75rem; white-space: nowrap; }
+
+        .post .caption { color: var(--text-dim); font-size: 0.9rem; word-wrap: break-word; }
+
+        .post .streak {
+            display: inline-block;
+            background: rgba(255, 138, 0, 0.15);
+            color: var(--neon-2);
+            border: 1px solid var(--border);
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            margin-top: 6px;
+        }
+
+        /* Ranking */
+        .rank-list { list-style: none; margin: 0; padding: 0; }
+
+        .rank-row {
+            display: grid;
+            grid-template-columns: 36px 1fr auto;
+            gap: 12px;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .rank-row:last-child { border-bottom: none; }
+
+        .rank-row .pos {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            text-align: center;
+        }
+
+        .rank-row:nth-child(1) .pos { color: #ffd700; }
+        .rank-row:nth-child(2) .pos { color: #c0c0c0; }
+        .rank-row:nth-child(3) .pos { color: #cd7f32; }
+
+        .rank-row .info { min-width: 0; }
+        .rank-row .nm { color: var(--text); font-weight: 700; display: block; line-height: 1.2; }
+        .rank-row .city { color: var(--text-dim); font-size: 0.78rem; display: block; margin-top: 2px; }
+
+        .rank-row .points {
+            font-family: 'Press Start 2P', cursive;
+            color: var(--neon-2);
+            font-size: 0.95rem;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .rank-row .points .lbl { color: var(--text-dim); font-size: 0.55rem; margin-left: 4px; }
+        .rank-row .points .streak { display: block; color: var(--text-dim); font-size: 0.7rem; margin-top: 4px; font-family: 'DM Sans', sans-serif; }
+
+        /* Calendar grid */
+        .cal-wrap { overflow-x: auto; padding-bottom: 8px; }
+
+        .cal-table {
+            border-collapse: separate;
+            border-spacing: 4px;
+            min-width: 100%;
+        }
+
+        .cal-table th, .cal-table td {
+            font-size: 0.72rem;
+            padding: 0;
+            text-align: center;
+            color: var(--text-dim);
+        }
+
+        .cal-table thead th {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.55rem;
+            padding: 6px 4px;
+            color: var(--neon-2);
+            min-width: 26px;
+        }
+
+        .cal-table thead th.user-col { text-align: left; padding-left: 8px; min-width: 110px; color: var(--text-dim); }
+
+        .cal-table tbody td.user-col {
+            text-align: left;
+            color: var(--text);
+            font-weight: 600;
+            padding: 4px 8px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .cal-cell {
+            width: 22px;
+            height: 22px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .cal-cell.done { background: var(--green); box-shadow: 0 0 6px rgba(52, 211, 153, 0.5); }
+
+        .cal-cell.today { outline: 1.5px solid var(--neon); }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-dim);
+            padding: 30px 16px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 600px) {
+            .my-status { grid-template-columns: 1fr; }
+            .my-status .badge { justify-self: start; }
+        }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">TÁ <span class="neon">PAGO</span></div>
+        <a class="home-link" href="/umadcamp">← UMADCAMP</a>
+    </nav>
+
+    <section class="hero">
+        <h1>TÁ PAGO?</h1>
+        <p class="tagline">Desafio de <strong>leitura bíblica</strong> da UMADCAMP. Leu hoje? Posta a foto, o trecho que leu e some +1 ponto. <strong>Cada dia = 1 ponto.</strong></p>
+        <div class="today-pill" id="todayPill">CARREGANDO...</div>
+    </section>
+
+    <div class="container">
+
+        <!-- Meu status + formulário -->
+        <div class="card" id="meCard">
+            <div class="my-status">
+                <div class="info">
+                    <h2>SEU TÁ PAGO DE HOJE</h2>
+                    <div class="who" id="whoLine">Identifique-se para começar.</div>
+                </div>
+                <span class="badge pending" id="meBadge">PENDENTE</span>
+            </div>
+
+            <form class="form-grid" id="postForm">
+                <div class="form-row two-col">
+                    <div>
+                        <label for="userName">SEU NOME</label>
+                        <input type="text" id="userName" placeholder="Ex.: João Pedro" maxlength="40" autocomplete="name" required>
+                    </div>
+                    <div>
+                        <label for="userCity">CIDADE</label>
+                        <input type="text" id="userCity" placeholder="Ex.: Patu" maxlength="30" autocomplete="address-level2" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label>FOTO DA LEITURA DE HOJE (obrigatória)</label>
+                    <div class="photo-drop" id="photoDrop">
+                        <input type="file" id="photoInput" accept="image/*" capture="environment">
+                        <div class="placeholder">
+                            <div class="icon">📖</div>
+                            <div>Tire uma foto da sua Bíblia aberta no trecho lido hoje</div>
+                        </div>
+                        <div class="preview-wrap">
+                            <img id="photoPreview" alt="Preview">
+                            <span class="change-hint">Trocar foto</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label for="caption">TRECHO / REFLEXÃO (opcional)</label>
+                    <textarea id="caption" rows="2" maxlength="200" placeholder="Ex.: Salmos 23 — O Senhor é o meu pastor..."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">TÁ PAGO! +1 PONTO</button>
+                <div class="form-msg" id="formMsg"></div>
+            </form>
+        </div>
+
+        <!-- Feed do dia -->
+        <h2 class="section-title">📖 LERAM HOJE</h2>
+        <div id="feedContainer">
+            <div class="empty-state" id="feedEmpty">Carregando feed...</div>
+            <div class="feed-grid" id="feedGrid" hidden></div>
+        </div>
+
+        <!-- Ranking de pontos -->
+        <h2 class="section-title">🏆 RANKING (1 PONTO POR DIA)</h2>
+        <div class="card">
+            <ul class="rank-list" id="rankList">
+                <li class="empty-state">Ainda sem pontuação. Seja o primeiro a pagar.</li>
+            </ul>
+        </div>
+
+        <!-- Histórico -->
+        <h2 class="section-title">📅 HISTÓRICO (ÚLTIMOS 14 DIAS)</h2>
+        <div class="card">
+            <div class="cal-wrap">
+                <table class="cal-table" id="calTable">
+                    <thead><tr id="calHead"></tr></thead>
+                    <tbody id="calBody">
+                        <tr><td class="empty-state" colspan="15">Sem dados ainda.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>UMADCAMP · Desafio TÁ PAGO · Leitura Bíblica Diária</p>
+        <p style="opacity:0.6; font-size:0.75rem; margin-top:6px;">"Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho." — Sl 119:105</p>
+    </footer>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+            authDomain: "umadcamp-patu.firebaseapp.com",
+            projectId: "umadcamp-patu",
+            storageBucket: "umadcamp-patu.firebasestorage.app",
+            messagingSenderId: "1043102355965",
+            appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+            measurementId: "G-S6N9R4F8Z8"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const POSTS_COL = 'tapago_posts';
+        const HISTORY_DAYS = 14;
+
+        // ----- Util de data (timezone local) -----
+        function pad(n) { return n < 10 ? '0' + n : '' + n; }
+        function dateKey(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+        function todayKey() { return dateKey(new Date()); }
+        function daysAgoKey(n) { const d = new Date(); d.setDate(d.getDate() - n); return dateKey(d); }
+        function formatDateLong(d) {
+            return d.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+        }
+        function formatTime(ts) {
+            if (!ts) return '';
+            const d = ts.toDate ? ts.toDate() : new Date(ts);
+            return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // ----- Slug do nome (id estável por usuário) -----
+        function slugify(name) {
+            return name
+                .normalize('NFD').replace(/[̀-ͯ]/g, '')
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .substring(0, 40);
+        }
+
+        // ----- Compressão de imagem (max 900px, JPEG ~0.78) -----
+        function compressImage(file, maxDim = 900, quality = 0.78) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = new Image();
+                    img.onload = () => {
+                        let { width, height } = img;
+                        if (width > maxDim || height > maxDim) {
+                            const ratio = Math.min(maxDim / width, maxDim / height);
+                            width = Math.round(width * ratio);
+                            height = Math.round(height * ratio);
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#000';
+                        ctx.fillRect(0, 0, width, height);
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                        if (dataUrl.length > 950000) {
+                            // Tenta de novo com qualidade menor / dimensão menor
+                            resolve(canvas.toDataURL('image/jpeg', 0.6));
+                        } else {
+                            resolve(dataUrl);
+                        }
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ----- Identidade (slug = nome + cidade) -----
+        function buildSlug(name, city) {
+            return (slugify(name) + '--' + slugify(city || '')).replace(/--$/, '');
+        }
+
+        // ----- Estado -----
+        const state = {
+            me: localStorage.getItem('tapago_me') || '',
+            myCity: localStorage.getItem('tapago_city') || '',
+            mySlug: '',
+            posts: [],
+            photoDataUrl: null,
+        };
+        state.mySlug = state.me ? buildSlug(state.me, state.myCity) : '';
+
+        const els = {
+            todayPill: document.getElementById('todayPill'),
+            whoLine: document.getElementById('whoLine'),
+            meBadge: document.getElementById('meBadge'),
+            userName: document.getElementById('userName'),
+            userCity: document.getElementById('userCity'),
+            photoDrop: document.getElementById('photoDrop'),
+            photoInput: document.getElementById('photoInput'),
+            photoPreview: document.getElementById('photoPreview'),
+            caption: document.getElementById('caption'),
+            submitBtn: document.getElementById('submitBtn'),
+            formMsg: document.getElementById('formMsg'),
+            postForm: document.getElementById('postForm'),
+            feedGrid: document.getElementById('feedGrid'),
+            feedEmpty: document.getElementById('feedEmpty'),
+            rankList: document.getElementById('rankList'),
+            calHead: document.getElementById('calHead'),
+            calBody: document.getElementById('calBody'),
+        };
+
+        els.todayPill.textContent = formatDateLong(new Date()).toUpperCase();
+        if (state.me) els.userName.value = state.me;
+        if (state.myCity) els.userCity.value = state.myCity;
+
+        // ----- Foto -----
+        els.photoInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            els.formMsg.textContent = 'Comprimindo foto...';
+            els.formMsg.className = 'form-msg';
+            try {
+                const dataUrl = await compressImage(file);
+                state.photoDataUrl = dataUrl;
+                els.photoPreview.src = dataUrl;
+                els.photoDrop.classList.add('has-image');
+                els.formMsg.textContent = '';
+            } catch (err) {
+                console.error(err);
+                els.formMsg.textContent = 'Não foi possível processar a foto.';
+                els.formMsg.className = 'form-msg error';
+            }
+        });
+
+        // ----- Submit -----
+        els.postForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = els.userName.value.trim();
+            const city = els.userCity.value.trim();
+            if (!name) {
+                els.formMsg.textContent = 'Coloque seu nome.';
+                els.formMsg.className = 'form-msg error';
+                return;
+            }
+            if (!city) {
+                els.formMsg.textContent = 'Coloque sua cidade.';
+                els.formMsg.className = 'form-msg error';
+                return;
+            }
+            if (!state.photoDataUrl) {
+                els.formMsg.textContent = 'A foto da Bíblia é obrigatória.';
+                els.formMsg.className = 'form-msg error';
+                return;
+            }
+            const slug = buildSlug(name, city);
+            if (!slug) {
+                els.formMsg.textContent = 'Nome ou cidade inválidos.';
+                els.formMsg.className = 'form-msg error';
+                return;
+            }
+            const today = todayKey();
+            const docId = today + '_' + slug;
+
+            els.submitBtn.disabled = true;
+            els.formMsg.textContent = 'Enviando...';
+            els.formMsg.className = 'form-msg';
+
+            try {
+                await db.collection(POSTS_COL).doc(docId).set({
+                    user: name,
+                    city: city,
+                    userSlug: slug,
+                    date: today,
+                    photo: state.photoDataUrl,
+                    caption: els.caption.value.trim(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                }, { merge: true });
+
+                localStorage.setItem('tapago_me', name);
+                localStorage.setItem('tapago_city', city);
+                state.me = name;
+                state.myCity = city;
+                state.mySlug = slug;
+                els.formMsg.textContent = 'TÁ PAGO! +1 PONTO ✅';
+                els.formMsg.className = 'form-msg success';
+                els.caption.value = '';
+                state.photoDataUrl = null;
+                els.photoDrop.classList.remove('has-image');
+                els.photoInput.value = '';
+            } catch (err) {
+                console.error(err);
+                const msg = err && err.message ? err.message : 'Erro ao enviar.';
+                els.formMsg.textContent = '❌ ' + msg;
+                els.formMsg.className = 'form-msg error';
+            } finally {
+                els.submitBtn.disabled = false;
+            }
+        });
+
+        // ----- Renders -----
+        function renderMyStatus() {
+            if (!state.me || !state.myCity) {
+                els.whoLine.innerHTML = 'Preencha nome e cidade abaixo para começar.';
+                els.meBadge.textContent = 'PENDENTE';
+                els.meBadge.className = 'badge pending';
+                return;
+            }
+            const today = todayKey();
+            const paidToday = state.posts.some(p => p.userSlug === state.mySlug && p.date === today);
+            els.whoLine.innerHTML = `Postando como <span class="name">${escapeHtml(state.me)}</span> <span style="color:var(--text-dim)">· ${escapeHtml(state.myCity)}</span> · <button type="button" class="linkbtn" id="changeUserBtn">trocar</button>`;
+            const btn = document.getElementById('changeUserBtn');
+            if (btn) btn.addEventListener('click', () => {
+                localStorage.removeItem('tapago_me');
+                localStorage.removeItem('tapago_city');
+                state.me = '';
+                state.myCity = '';
+                state.mySlug = '';
+                els.userName.value = '';
+                els.userCity.value = '';
+                renderMyStatus();
+                els.userName.focus();
+            });
+            if (paidToday) {
+                els.meBadge.textContent = '✓ TÁ PAGO';
+                els.meBadge.className = 'badge done';
+            } else {
+                els.meBadge.textContent = 'PENDENTE';
+                els.meBadge.className = 'badge pending';
+            }
+        }
+
+        function escapeHtml(s) {
+            return String(s || '').replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
+
+        function computeStreak(datesSet) {
+            // Sequência atual contando hoje (ou ontem caso ainda não tenha postado hoje)
+            let streak = 0;
+            let cursor = new Date();
+            // Se ainda não postou hoje, começa de ontem para não zerar prematuramente
+            if (!datesSet.has(dateKey(cursor))) {
+                cursor.setDate(cursor.getDate() - 1);
+            }
+            while (datesSet.has(dateKey(cursor))) {
+                streak++;
+                cursor.setDate(cursor.getDate() - 1);
+            }
+            return streak;
+        }
+
+        function renderFeed() {
+            const today = todayKey();
+            const todayPosts = state.posts
+                .filter(p => p.date === today)
+                .sort((a, b) => {
+                    const ta = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
+                    const tb = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
+                    return tb - ta;
+                });
+
+            if (todayPosts.length === 0) {
+                els.feedEmpty.hidden = false;
+                els.feedEmpty.textContent = 'Ninguém leu ainda hoje. Bora ser o primeiro?';
+                els.feedGrid.hidden = true;
+                els.feedGrid.innerHTML = '';
+                return;
+            }
+
+            // Streak por slug (para mostrar no card)
+            const datesByUser = new Map();
+            state.posts.forEach(p => {
+                if (!datesByUser.has(p.userSlug)) datesByUser.set(p.userSlug, new Set());
+                datesByUser.get(p.userSlug).add(p.date);
+            });
+
+            els.feedEmpty.hidden = true;
+            els.feedGrid.hidden = false;
+            els.feedGrid.innerHTML = todayPosts.map(p => {
+                const streak = computeStreak(datesByUser.get(p.userSlug) || new Set());
+                const cityLabel = p.city ? `<span style="color:var(--text-dim); font-size:0.78rem; display:block;">${escapeHtml(p.city)}</span>` : '';
+                return `
+                <div class="post">
+                    <img class="photo" src="${p.photo}" alt="Post de ${escapeHtml(p.user)}" loading="lazy">
+                    <div class="body">
+                        <div class="who-row">
+                            <div>
+                                <span class="name">${escapeHtml(p.user)}</span>
+                                ${cityLabel}
+                            </div>
+                            <span class="time">${formatTime(p.createdAt)}</span>
+                        </div>
+                        ${p.caption ? `<div class="caption">${escapeHtml(p.caption)}</div>` : ''}
+                        ${streak > 1 ? `<span class="streak">🔥 ${streak} dias seguidos</span>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderRanking() {
+            // Agrupa por slug; pontos = dias únicos lidos
+            const byUser = new Map();
+            state.posts.forEach(p => {
+                if (!byUser.has(p.userSlug)) byUser.set(p.userSlug, { name: p.user, city: p.city || '', dates: new Set() });
+                const u = byUser.get(p.userSlug);
+                u.dates.add(p.date);
+                // Mantém metadados mais recentes
+                u.name = p.user;
+                if (p.city) u.city = p.city;
+            });
+
+            const rows = [];
+            byUser.forEach((v, k) => {
+                const streak = computeStreak(v.dates);
+                rows.push({ slug: k, name: v.name, city: v.city, points: v.dates.size, streak });
+            });
+            rows.sort((a, b) => b.points - a.points || b.streak - a.streak || a.name.localeCompare(b.name));
+
+            if (rows.length === 0) {
+                els.rankList.innerHTML = '<li class="empty-state">Ainda sem pontuação. Seja o primeiro a pagar.</li>';
+                return;
+            }
+            els.rankList.innerHTML = rows.map((r, i) => `
+                <li class="rank-row">
+                    <span class="pos">${i + 1}º</span>
+                    <div class="info">
+                        <span class="nm">${escapeHtml(r.name)}</span>
+                        <span class="city">${r.city ? escapeHtml(r.city) : '—'}</span>
+                    </div>
+                    <span class="points">${r.points}<span class="lbl">pts</span>${r.streak > 1 ? `<span class="streak">🔥 ${r.streak} dias seguidos</span>` : ''}</span>
+                </li>
+            `).join('');
+        }
+
+        function renderCalendar() {
+            // Eixo: últimos HISTORY_DAYS dias (mais antigo à esquerda, hoje à direita)
+            const days = [];
+            for (let i = HISTORY_DAYS - 1; i >= 0; i--) days.push(daysAgoKey(i));
+            const today = todayKey();
+
+            // Header
+            els.calHead.innerHTML = '<th class="user-col">Cadete</th>' +
+                days.map(d => {
+                    const [, m, day] = d.split('-');
+                    return `<th${d === today ? ' style="color:var(--neon)"' : ''}>${day}/${m}</th>`;
+                }).join('');
+
+            // Por usuário
+            const byUser = new Map();
+            state.posts.forEach(p => {
+                if (!byUser.has(p.userSlug)) byUser.set(p.userSlug, { name: p.user, city: p.city || '', dates: new Set() });
+                const u = byUser.get(p.userSlug);
+                u.dates.add(p.date);
+                u.name = p.user;
+                if (p.city) u.city = p.city;
+            });
+
+            if (byUser.size === 0) {
+                els.calBody.innerHTML = `<tr><td class="empty-state" colspan="${days.length + 1}">Sem dados ainda.</td></tr>`;
+                return;
+            }
+
+            const ordered = [...byUser.entries()]
+                .map(([slug, v]) => ({ slug, ...v, total: v.dates.size }))
+                .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name));
+
+            els.calBody.innerHTML = ordered.map(u => {
+                const cells = days.map(d => {
+                    const cls = ['cal-cell'];
+                    if (u.dates.has(d)) cls.push('done');
+                    if (d === today) cls.push('today');
+                    return `<td><span class="${cls.join(' ')}" title="${u.name} (${u.city || '?'}) · ${d}"></span></td>`;
+                }).join('');
+                const label = u.city ? `${escapeHtml(u.name)} <span style="color:var(--text-dim); font-size:0.78rem;">· ${escapeHtml(u.city)}</span>` : escapeHtml(u.name);
+                return `<tr><td class="user-col">${label}</td>${cells}</tr>`;
+            }).join('');
+        }
+
+        function renderAll() {
+            renderMyStatus();
+            renderFeed();
+            renderRanking();
+            renderCalendar();
+        }
+
+        // ----- Listener Firestore: posts dos últimos 30 dias -----
+        const sinceKey = daysAgoKey(29);
+        db.collection(POSTS_COL)
+            .where('date', '>=', sinceKey)
+            .onSnapshot(snap => {
+                state.posts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderAll();
+            }, err => {
+                console.error(err);
+                els.feedEmpty.textContent = 'Erro ao carregar feed: ' + err.message;
+            });
+
+        // Atualiza nome/cidade quando o usuário digitar (sem persistir até enviar)
+        function syncIdentityFromInputs() {
+            const name = els.userName.value.trim();
+            const city = els.userCity.value.trim();
+            state.me = name;
+            state.myCity = city;
+            state.mySlug = name && city ? buildSlug(name, city) : '';
+            renderMyStatus();
+        }
+        els.userName.addEventListener('input', syncIdentityFromInputs);
+        els.userCity.addEventListener('input', syncIdentityFromInputs);
+    </script>
+</body>
+
+</html>

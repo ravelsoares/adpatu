@@ -1,0 +1,131 @@
+/* Estilos gerais, baseados em projetos.css para consistência */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "DM Sans", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+}
+
+.top-banner {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(../images/backgroud-home.png) no-repeat center center;
+    background-size: cover;
+    text-align: center;
+    padding: 60px 20px;
+    color: white;
+}
+
+.logo {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.logo img {
+    height: 120px;
+    margin-bottom: 20px;
+}
+
+.logo h1 {
+    font-size: 2.5rem;
+    margin: 10px 0;
+}
+
+.logo .subtitle {
+    font-size: 1.2rem;
+    font-weight: 400;
+    opacity: 0.9;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.main-content {
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilos específicos para a página de doações */
+.donation-card {
+    background-color: #2c2c2c;
+    border-radius: 15px;
+    padding: 30px 40px;
+    text-align: center;
+    max-width: 450px;
+    width: 100%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid #444;
+}
+
+.donation-card h2 {
+    font-size: 2rem;
+    color: #a78bfa;
+    /* Um roxo suave para destaque */
+    margin-bottom: 15px;
+}
+
+.donation-card p {
+    font-size: 1rem;
+    color: #ccc;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.qr-code-image {
+    max-width: 100%;
+    height: auto;
+    width: 280px;
+    border-radius: 10px;
+    border: 5px solid white;
+    margin-bottom: 25px;
+}
+
+.pix-key-container {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.pix-key-container input {
+    flex-grow: 1;
+    padding: 12px;
+    border: 1px solid #555;
+    background-color: #333;
+    color: #f0f0f0;
+    border-radius: 8px 0 0 8px;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.pix-key-container button {
+    padding: 12px 20px;
+    border: none;
+    background-color: #a78bfa;
+    color: white;
+    cursor: pointer;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.pix-key-container button:hover {
+    background-color: #8b6fdf;
+}
+
+.copy-feedback {
+    color: #4ade80;
+    /* Verde para sucesso */
+    font-weight: 500;
+    height: 20px;
+    transition: opacity 0.3s ease;
+}
+
+.thank-you-message {
+    font-style: italic;
+    color: #aaa;
+    margin-top: 20px;
+}

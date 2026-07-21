@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<script>
+    // Proteção de rota: verifica se o usuário está logado
+    if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+        window.location.href = 'login-adpatu.html';
+    }
+</script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Eventos - Campo de Patu</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <link rel="stylesheet" href="styles/agenda-adpatu.css">
+    <link rel="stylesheet" href="styles/cadastro-adpatu.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="top-banner">
+        <div class="logo">
+            <img src="images/ieadern.png" alt="Logo">
+            <h1>Agenda do Campo de Patu</h1>
+            <h3 class="subtitle">Cadastro de Eventos</h3>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="agenda-container">
+                <div class="month-group">
+                    <div class="month-title-wrapper">
+                        <h2>Novo Evento</h2>
+                    </div>
+                    <form id="eventoForm" class="event-card">
+                        <div class="event-details">
+                            <label>
+                                <span>Título</span>
+                                <input type="text" id="titulo" placeholder="Ex.: Culto de Missões" required>
+                            </label>
+                            <label>
+                                <span>Local</span>
+                                <input type="text" id="local" placeholder="Ex.: Templo Sede" required>
+                            </label>
+                            <div class="form-row-split">
+                                <label>
+                                    <span>Data de Início</span>
+                                    <input type="date" id="dataInicio" required>
+                                </label>
+                                <label>
+                                    <span>Data de Fim (opcional)</span>
+                                    <input type="date" id="dataFim">
+                                </label>
+                            </div>
+                            <div id="formMessage" aria-live="polite"></div>
+                            <div class="form-actions">
+                                <button id="submitButton" type="submit">Salvar Evento</button>
+                                <button id="cancelEditButton" type="button" style="display: none;">Cancelar
+                                    edição</button>
+                                <a href="/agenda" class="btn-secondary">Ver Agenda</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="month-group">
+                    <div class="month-title-wrapper">
+                        <h2>Eventos Cadastrados</h2>
+                    </div>
+                    <div id="listaEventos"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+            authDomain: "umadcamp-patu.firebaseapp.com",
+            projectId: "umadcamp-patu",
+            storageBucket: "umadcamp-patu.firebasestorage.app",
+            messagingSenderId: "1043102355965",
+            appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+            measurementId: "G-S6N9R4F8Z8"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        let editingEventId = null;
+
+        function showLoading(show = true) {
+            const existingOverlay = document.getElementById('loadingOverlay');
+            if (existingOverlay) {
+                existingOverlay.remove();
+            }
+
+            if (show) {
+                const overlay = document.createElement('div');
+                overlay.className = 'loading-overlay';
+                overlay.id = 'loadingOverlay';
+                overlay.innerHTML = `
+                    <div class="loading-content">
+                        <div class="loading"></div>
+                        <p style="margin-top: 15px; color: #333;">Salvando evento...</p>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+            }
+        }
+
+        function getMesFromDateString(dateStr) {
+            const date = new Date(dateStr + 'T00:00:00');
+            return date.toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+        }
+
+        async function carregarEventos() {
+            const lista = document.getElementById('listaEventos');
+            if (!lista) return;
+            lista.innerHTML = '';
+            try {
+                const snap = await db.collection('agenda-adpatu').orderBy('dataInicio', 'asc').get();
+                if (snap.empty) {
+                    lista.innerHTML = '<div class="event-card"><div class="event-details"><p>Sem eventos cadastrados.</p></div></div>';
+                    return;
+                }
+
+                snap.forEach(doc => {
+                    const ev = doc.data();
+                    const id = doc.id;
+                    const monthDisplay = new Date(ev.dataInicio + 'T00:00:00').toLocaleString('pt-BR', { month: 'short' }).replace('.', '');
+                    const startDate = new Date(ev.dataInicio + 'T00:00:00');
+                    const startDay = startDate.getDate();
+                    const dateDisplay = ev.dataFim && ev.dataFim !== ev.dataInicio
+                        ? `${startDay} a ${new Date(ev.dataFim + 'T00:00:00').getDate()}`
+                        : `${startDay}`;
+
+                    const card = document.createElement('div');
+                    card.className = 'event-card';
+                    card.innerHTML = `
+                        <div class="event-date">
+                            <div class="day">${dateDisplay}</div>
+                            <div class="month">${monthDisplay}</div>
+                        </div>
+                        <div class="event-details">
+                            <h3>${ev.titulo}</h3>
+                            <p><strong>Local:</strong> ${ev.local}</p>
+                            <div class="card-actions">
+                                <button data-id="${id}" class="btn-editar">Editar</button>
+                                <button data-id="${id}" class="btn-excluir">Excluir</button>
+                            </div>
+                        </div>
+                    `;
+                    lista.appendChild(card);
+                });
+
+                lista.querySelectorAll('.btn-editar').forEach(btn => btn.addEventListener('click', onEditar));
+                lista.querySelectorAll('.btn-excluir').forEach(btn => btn.addEventListener('click', onExcluir));
+            } catch (err) {
+                console.error('Erro ao carregar eventos:', err);
+                lista.innerHTML = '<div class="event-card"><div class="event-details"><p>Erro ao carregar eventos.</p></div></div>';
+            }
+        }
+
+        function setEditingMode(enabled) {
+            const submitButton = document.getElementById('submitButton');
+            const cancelEditButton = document.getElementById('cancelEditButton');
+            if (enabled) {
+                submitButton.textContent = 'Salvar alterações';
+                cancelEditButton.style.display = 'inline-block';
+            } else {
+                submitButton.textContent = 'Salvar Evento';
+                cancelEditButton.style.display = 'none';
+                editingEventId = null;
+            }
+        }
+
+        function resetForm() {
+            (document.getElementById('eventoForm')).reset();
+            document.getElementById('formMessage').textContent = '';
+            setEditingMode(false);
+        }
+
+        async function onEditar(e) {
+            const id = e.currentTarget.getAttribute('data-id');
+            try {
+                const docSnap = await db.collection('agenda-adpatu').doc(id).get();
+                if (!docSnap.exists) return;
+                const ev = docSnap.data();
+                document.getElementById('titulo').value = ev.titulo || '';
+                document.getElementById('local').value = ev.local || '';
+                document.getElementById('dataInicio').value = ev.dataInicio || '';
+                document.getElementById('dataFim').value = ev.dataFim || '';
+                editingEventId = id;
+                setEditingMode(true);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (err) {
+                console.error('Erro ao carregar evento para edição:', err);
+            }
+        }
+
+        async function onExcluir(e) {
+            const id = e.currentTarget.getAttribute('data-id');
+            if (!confirm('Deseja realmente excluir este evento?')) return;
+            try {
+                showLoading(true);
+                await db.collection('agenda-adpatu').doc(id).delete();
+                if (editingEventId === id) {
+                    resetForm();
+                }
+                await carregarEventos();
+            } catch (err) {
+                console.error('Erro ao excluir evento:', err);
+                alert('Erro ao excluir. Tente novamente.');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        document.getElementById('cancelEditButton').addEventListener('click', () => {
+            resetForm();
+        });
+
+        document.getElementById('eventoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageEl = document.getElementById('formMessage');
+            messageEl.style.color = '#0a7d2b';
+            messageEl.textContent = '';
+
+            const titulo = document.getElementById('titulo').value.trim();
+            const local = document.getElementById('local').value.trim();
+            const dataInicio = document.getElementById('dataInicio').value;
+            const dataFim = document.getElementById('dataFim').value;
+
+            if (!titulo || !local || !dataInicio) {
+                messageEl.style.color = '#b00020';
+                messageEl.textContent = 'Preencha Título, Local e Data de Início.';
+                return;
+            }
+
+            // Validação simples de intervalo
+            if (dataFim && new Date(dataFim + 'T00:00:00') < new Date(dataInicio + 'T00:00:00')) {
+                messageEl.style.color = '#b00020';
+                messageEl.textContent = 'A data de fim não pode ser anterior ao início.';
+                return;
+            }
+
+            const mes = getMesFromDateString(dataInicio);
+            const payload = {
+                titulo,
+                local,
+                dataInicio, // formato YYYY-MM-DD
+                dataFim: dataFim || null,
+                mes
+            };
+
+            try {
+                showLoading(true);
+                if (editingEventId) {
+                    await db.collection('agenda-adpatu').doc(editingEventId).update(payload);
+                    messageEl.style.color = '#0a7d2b';
+                    messageEl.textContent = 'Evento atualizado com sucesso!';
+                    setEditingMode(false);
+                } else {
+                    await db.collection('agenda-adpatu').add(payload);
+                    messageEl.style.color = '#0a7d2b';
+                    messageEl.textContent = 'Evento salvo com sucesso!';
+                }
+                (document.getElementById('eventoForm')).reset();
+                await carregarEventos();
+            } catch (err) {
+                console.error('Erro ao salvar evento:', err);
+                messageEl.style.color = '#b00020';
+                messageEl.textContent = 'Erro ao salvar. Tente novamente.';
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        carregarEventos();
+    </script>
+</body>
+
+</html>

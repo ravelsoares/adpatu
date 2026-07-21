@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMADCAMP - Doações</title>
+    <link rel="stylesheet" href="/styles/doacoes.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="top-banner" style="position: relative;">
+        <div style="position: absolute; top: 20px; left: 20px;">
+            <a href="/umadcamp"
+                style="text-decoration: none; color: white; border: 1px solid white; padding: 5px 15px; border-radius: 5px; font-size: 14px; font-weight: bold; background: rgba(0,0,0,0.3);">←
+                Voltar</a>
+        </div>
+        <div class="logo">
+            <a href="/umadcamp"><img src="/images/logo.png" alt="Logo"></a>
+            <h1>Faça sua Doação</h1>
+            <h3 class="subtitle">Contribua com a obra do Senhor</h3>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="donation-card">
+                <h2>Doe com PIX</h2>
+                <p>Aponte a câmera do seu celular para o QR Code abaixo ou copie a chave PIX para contribuir.</p>
+
+                <!-- ATENÇÃO: Verifique se o caminho para a imagem do QR Code está correto -->
+                <img src="/images/qrcode-pix.png" alt="QR Code PIX para doação" class="qr-code-image">
+
+                <div class="pix-key-container">
+                    <!-- ATENÇÃO: Substitua 'SUA-CHAVE-PIX-AQUI' pela sua chave PIX real -->
+                    <input type="text" value="84998397969" id="pixKey" readonly>
+                    <button onclick="copyPixKey()">Copiar Chave</button>
+                </div>
+                <p id="copy-feedback" class="copy-feedback"></p>
+                <p class="thank-you-message">Sua contribuição é muito importante para nós. Que Deus te abençoe!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyPixKey() {
+            const pixKeyInput = document.getElementById('pixKey');
+            pixKeyInput.select();
+            pixKeyInput.setSelectionRange(0, 99999); // Para dispositivos móveis
+
+            try {
+                document.execCommand('copy');
+                const feedback = document.getElementById('copy-feedback');
+                feedback.textContent = 'Chave PIX copiada com sucesso!';
+                setTimeout(() => { feedback.textContent = ''; }, 3000);
+            } catch (err) {
+                alert('Não foi possível copiar a chave. Por favor, copie manualmente.');
+            }
+        }
+    </script>
+</body>
+
+</html>

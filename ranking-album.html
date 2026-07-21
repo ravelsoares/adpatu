@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/cadetes.css">
+    <title>Álbum dos Cadetes — Efésios</title>
+    <meta name="description"
+        content="Veja o progresso dos cadetes no álbum de Efésios.">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://adpatu.com.br/djad/ranking-album">
+    <meta property="og:title" content="Álbum dos Cadetes — Efésios">
+    <meta property="og:description" content="Acompanhe o progresso dos cadetes no álbum de Efésios.">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        :root {
+            --bg-color: #0a0a0a;
+            --card-bg: #111111;
+            --primary-gold: #d4af37;
+            --gold: #ffd700;
+            --gold-dark: #b8960c;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0;
+            padding: 0;
+            background-image:
+                linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        header h1 {
+            font-family: 'Press Start 2P', cursive;
+            color: var(--gold);
+            font-size: 1.1rem;
+            margin: 0 0 10px;
+            text-shadow: 0 0 14px rgba(212, 175, 55, 0.4);
+            line-height: 1.5;
+        }
+        header p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        header a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+        header a:hover { text-decoration: underline; }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            font-family: 'Press Start 2P', cursive;
+            color: var(--gold);
+            font-size: 0.85rem;
+            margin: 0 0 14px;
+            letter-spacing: 1px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+        .filter-bar input,
+        .filter-bar select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            padding: 8px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .filter-bar input { flex: 1; min-width: 200px; }
+        .filter-bar input:focus,
+        .filter-bar select:focus { border-color: var(--gold); }
+
+        /* Hall da Fama */
+        .hall-card {
+            background: linear-gradient(180deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.04) 100%);
+            border: 1px solid var(--gold);
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+            box-shadow: 0 0 18px rgba(255, 215, 0, 0.18);
+        }
+        .hall-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.78rem;
+            color: var(--gold);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            margin-bottom: 6px;
+            letter-spacing: 1.5px;
+        }
+        .hall-sub {
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            margin-bottom: 12px;
+        }
+        .hall-list {
+            display: grid;
+            gap: 6px;
+        }
+        .hall-row {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 10px;
+            align-items: center;
+            padding: 8px 10px;
+            background: rgba(255, 215, 0, 0.06);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            border-radius: 6px;
+        }
+        .hall-rank {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: var(--gold);
+            min-width: 28px;
+            text-align: center;
+        }
+        .hall-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+        }
+        .hall-date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--gold);
+            white-space: nowrap;
+        }
+
+        .cadete-list { display: grid; gap: 8px; margin-top: 14px; }
+        .cadete-row {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color 0.2s ease;
+        }
+        .cadete-row:hover { border-color: var(--gold); }
+        .cadete-row.completed {
+            border-color: var(--gold);
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.2);
+        }
+        .cadete-row.completed .cadete-progress {
+            color: var(--gold);
+            font-size: 0.6rem;
+        }
+
+        .cadete-head {
+            display: grid;
+            grid-template-columns: 1fr auto auto auto auto;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            cursor: pointer;
+        }
+
+        .cadete-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.65rem;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .cadete-progress {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            color: var(--gold);
+            min-width: 60px;
+            text-align: right;
+        }
+        .cadete-packs {
+            color: var(--text-secondary);
+            font-size: 0.72rem;
+            white-space: nowrap;
+        }
+        .cadete-lendaria {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: var(--gold);
+            background: rgba(255, 215, 0, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+        .cadete-lendaria.zero {
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.02);
+            border-color: var(--border-color);
+        }
+        .cadete-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .cadete-actions button,
+        .cadete-actions a {
+            background: rgba(255, 215, 0, 0.08);
+            border: 1px solid var(--border-color);
+            color: var(--gold);
+            padding: 6px 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            letter-spacing: 0.8px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.15s ease;
+        }
+        .cadete-actions button:hover,
+        .cadete-actions a:hover {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+        }
+        .cadete-details {
+            display: none;
+            padding: 0 14px 14px;
+            border-top: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.25);
+        }
+        .cadete-row.expanded .cadete-details { display: block; }
+
+        .figs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 6px;
+            margin-top: 12px;
+        }
+        .fig-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+        .fig-chip .fig-num {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.55rem;
+            color: var(--gold);
+            min-width: 28px;
+        }
+        .fig-chip .fig-dup {
+            color: var(--text-secondary);
+            font-size: 0.65rem;
+            margin-left: auto;
+        }
+        .empty-state {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 30px;
+            font-size: 0.88rem;
+        }
+        .spin {
+            width: 28px;
+            height: 28px;
+            border: 3px solid rgba(212, 175, 55, 0.15);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            margin: 8px auto;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 600px) {
+            .cadete-head {
+                grid-template-columns: auto 1fr auto;
+                gap: 8px;
+            }
+            .cadete-packs,
+            .cadete-lendaria { grid-column: 2; }
+            .cadete-actions { grid-column: 1 / -1; justify-content: flex-end; margin-top: 4px; }
+        }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>📖 ÁLBUM DOS CADETES</h1>
+            <p>Veja como os cadetes estão indo na coleção de Efésios.<br>
+                <a href="/djad/album">⟵ Voltar pro álbum</a>
+            </p>
+        </header>
+
+        <div class="card">
+            <h2>🎖️ CADETES</h2>
+            <div class="filter-bar">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar nome…">
+                <select id="sortSelect">
+                    <option value="progress-desc">Mais figurinhas →</option>
+                    <option value="lendaria-desc">Mais lendárias →</option>
+                    <option value="packs-desc">Mais pacotes abertos</option>
+                    <option value="name">Nome (A–Z)</option>
+                </select>
+            </div>
+            <div class="cadete-list" id="cadeteList">
+                <div class="empty-state">
+                    <div class="spin"></div>
+                    <p>Carregando ranking…</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+            authDomain: "umadcamp-patu.firebaseapp.com",
+            projectId: "umadcamp-patu",
+            storageBucket: "umadcamp-patu.firebasestorage.app",
+            messagingSenderId: "1043102355965",
+            appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+            measurementId: "G-S6N9R4F8Z8"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const COLLECTION = 'album-efesios';
+
+        // Lista completa de cadetes (espelha album-efesios.html — mantenha em sincronia).
+        const CADETES = {
+            'ELAINE':         'Elaine',
+            'JONAS':          'Jonas',
+            'SUZANA':         'Suzana',
+            'JONNAS':         'Jonnas',
+            'MIRIA':          'Mirià',
+            'SARA':           'Sara',
+            'ANA JULIA':      'Ana Júlia',
+            'MIKAEL':         'Mikael',
+            'NICOLAS CORTEZ': 'Nicolas Cortez',
+            'NATALIA':        'Natália',
+            'SIMONE':         'Simone',
+            'ELIAS':          'Elias',
+            'RITINHA':        'Ritinha',
+            'RAYSSA':         'Rayssa',
+            'ASAFE':          'Asafe',
+            'SYLLAS':         'Syllas',
+            'MOISES':         'Moisés',
+            'SILVIA':         'Silvia',
+            'OLGA':           'Olga',
+            'ANIELY':         'Aniely',
+            'JUDSON':         'Judson',
+            'SHEMILLA':       'Shemilla',
+            'ALVARO':         'Álvaro',
+            'ISADORA':        'Isadora',
+            'ITALWAN':        'Italwan',
+            'THIAGO':         'Thiago',
+            'VITORIA':        'Vitória',
+            'NICOLAS LEITE':  'Nicolas Leite',
+            'DANIEL':         'Daniel',
+            'RAVEL':          'Ravel',
+            'LUCIANO':        'Luciano',
+            'KEYLLHA':        'Keyllha',
+            'ABINOA':         'Abinoã',
+            'GERLANY':        'Gerlany',
+            'PEDRO LUCAS':    'Pedro Lucas',
+            'TESTE':          'Teste'
+        };
+
+        const LENDARIAS = new Set([1, 23, 50]);
+
+        const FIG_TITLES = {
+            1: 'Paulo, o Apóstolo', 2: 'Tíquico', 3: 'Onésimo', 4: 'Timóteo',
+            5: 'Áquila', 6: 'Priscila', 7: 'Apolo', 8: 'João, o Apóstolo',
+            9: 'Cidade de Éfeso', 10: 'Templo de Ártemis', 11: 'Teatro de Éfeso',
+            12: 'Biblioteca de Celso', 13: 'Escola de Tirano', 14: 'Porto de Éfeso',
+            15: 'Roma — Paulo Preso', 16: 'Ásia Menor',
+            17: 'Eleitos em Cristo', 18: 'Predestinados à Adoção', 19: 'Redenção pelo Sangue',
+            20: 'Mistério Revelado', 21: 'Selo do Espírito', 22: 'Mortos em Delitos',
+            23: 'Salvos pela Graça', 24: 'Feitura de Deus (Poiema)', 25: 'Cidadãos do Céu',
+            26: 'Templo Santo no Senhor', 27: 'Mistério dos Gentios',
+            28: 'Poder para Compreender', 29: 'Plenitude de Deus',
+            30: 'Unidade do Espírito', 31: 'Cinco Dons Ministeriais',
+            32: 'Edificação do Corpo', 33: 'Novo Homem', 34: 'Não Entristecer o Espírito',
+            35: 'Imitadores de Deus', 36: 'Filhos da Luz', 37: 'Remir o Tempo',
+            38: 'Cheios do Espírito', 39: 'Casamento — Cristo e Igreja',
+            40: 'Filhos e Pais', 41: 'Servos e Senhores', 42: 'Oração no Espírito',
+            43: 'Embaixador em Cadeias',
+            44: 'Cinturão da Verdade', 45: 'Couraça da Justiça', 46: 'Sapatos do Evangelho',
+            47: 'Escudo da Fé', 48: 'Capacete da Salvação', 49: 'Espada do Espírito',
+            50: 'Soldado de Cristo'
+        };
+
+        const $ = id => document.getElementById(id);
+        let _cadetes = [];
+
+        function escapeHtml(s) {
+            return String(s).replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[c]);
+        }
+
+        async function load() {
+            try {
+                const snap = await db.collection(COLLECTION).get();
+                const byUid = {};
+                snap.forEach(doc => { byUid[doc.id] = doc.data() || {}; });
+
+                _cadetes = [];
+                Object.entries(CADETES).forEach(([uid, display]) => {
+                    const data = byUid[uid];
+                    if (!data) return; // ainda não acessou — fora do ranking
+                    const figs = data.figurinhas || [];
+                    const packs = data.packsAbertos || 0;
+                    if (packs === 0 && figs.length === 0) return; // não abriu pacote — fora do ranking
+                    _cadetes.push({
+                        uid,
+                        nome: data.nome || display,
+                        figurinhas: figs,
+                        repeats: data.repeats || {},
+                        packsAbertos: packs,
+                        completedAt: data.completedAt || null
+                    });
+                });
+                render();
+            } catch (e) {
+                console.error(e);
+                $('cadeteList').innerHTML = '<div class="empty-state">Erro ao carregar. Tente recarregar.</div>';
+            }
+        }
+
+        function render() {
+            const search = $('searchInput').value.toLowerCase().trim();
+            const sort = $('sortSelect').value;
+
+            const countLendarias = c => c.figurinhas.filter(id => LENDARIAS.has(id)).length;
+
+            let list = _cadetes.filter(c => {
+                if (!search) return true;
+                return c.nome.toLowerCase().includes(search);
+            });
+
+            list.sort((a, b) => {
+                if (sort === 'progress-desc') return b.figurinhas.length - a.figurinhas.length;
+                if (sort === 'lendaria-desc') return countLendarias(b) - countLendarias(a);
+                if (sort === 'packs-desc') return b.packsAbertos - a.packsAbertos;
+                return a.nome.localeCompare(b.nome, 'pt-BR');
+            });
+
+            const container = $('cadeteList');
+            if (list.length === 0) {
+                container.innerHTML = '<div class="empty-state">Nenhum cadete encontrado.<br>Seja o primeiro a abrir um pacote!</div>';
+                return;
+            }
+
+            const fmtDate = (iso) => {
+                if (!iso) return '';
+                const d = new Date(iso);
+                const date = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+                const time = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                return `${date} ${time}`;
+            };
+
+            // Hall da Fama: quem completou, em ordem da data
+            const completos = _cadetes
+                .filter(c => c.completedAt)
+                .sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
+
+            const hallHtml = completos.length > 0
+                ? `<div class="hall-card">
+                        <div class="hall-title">🏆 HALL DA FAMA</div>
+                        <div class="hall-sub">${completos.length} cadete${completos.length > 1 ? 's' : ''} completou o álbum</div>
+                        <div class="hall-list">${completos.map((c, i) => `
+                            <div class="hall-row">
+                                <span class="hall-rank">${i === 0 ? '👑' : `${i + 1}º`}</span>
+                                <span class="hall-name">${escapeHtml(c.nome)}</span>
+                                <span class="hall-date">${fmtDate(c.completedAt)}</span>
+                            </div>`).join('')}</div>
+                    </div>`
+                : '';
+
+            container.innerHTML = hallHtml + list.map((c, idx) => {
+                const total = c.figurinhas.length;
+                const lendariaCount = countLendarias(c);
+                const completed = !!c.completedAt;
+                const sortedFigs = [...c.figurinhas].sort((a, b) => a - b);
+                const figsHtml = sortedFigs.length > 0
+                    ? `<div class="figs-grid">${sortedFigs.map(id => {
+                        const dups = c.repeats[id] || 0;
+                        return `<div class="fig-chip">
+                            <span class="fig-num">#${String(id).padStart(2, '0')}</span>
+                            <span>${FIG_TITLES[id] || '—'}</span>
+                            ${dups > 0 ? `<span class="fig-dup">x${dups + 1}</span>` : ''}
+                        </div>`;
+                    }).join('')}</div>`
+                    : '<div class="empty-state">Nenhuma figurinha ainda.</div>';
+
+                return `
+                    <div class="cadete-row${completed ? ' completed' : ''}" data-uid="${c.uid}">
+                        <div class="cadete-head">
+                            <div class="cadete-name">${completed ? '🏆 ' : ''}${escapeHtml(c.nome)}</div>
+                            <div class="cadete-packs">${c.packsAbertos} pacote${c.packsAbertos !== 1 ? 's' : ''}</div>
+                            <div class="cadete-lendaria${lendariaCount === 0 ? ' zero' : ''}" title="Lendárias distintas">👑 ${lendariaCount}/3</div>
+                            <div class="cadete-progress">${completed ? 'COMPLETO' : `${total}/50`}</div>
+                            <div class="cadete-actions">
+                                <button data-action="expand">DETALHES</button>
+                                <a href="/djad/album?view=${encodeURIComponent(c.uid)}" target="_blank" rel="noopener">VER ÁLBUM</a>
+                            </div>
+                        </div>
+                        <div class="cadete-details">${figsHtml}</div>
+                    </div>
+                `;
+            }).join('');
+
+            container.querySelectorAll('[data-action="expand"]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    btn.closest('.cadete-row').classList.toggle('expanded');
+                });
+            });
+            container.querySelectorAll('.cadete-head').forEach(head => {
+                head.addEventListener('click', (e) => {
+                    if (e.target.closest('a') || e.target.closest('button')) return;
+                    head.closest('.cadete-row').classList.toggle('expanded');
+                });
+            });
+        }
+
+        $('searchInput').addEventListener('input', render);
+        $('sortSelect').addEventListener('change', render);
+
+        load();
+    </script>
+</body>
+
+</html>

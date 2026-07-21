@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/cadetes.css">
+    <title>Admin Pontos Cadetes - DJAD</title>
+    <meta name="description" content="Painel admin para gerenciar pontos dos Cadetes de Cristo">
+    <meta name="robots" content="noindex,nofollow">
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;700&display=swap');
+:root {
+  --bg-color: #0a0a0a; --card-bg: #111111; --primary-gold: #d4af37;
+  --gold: #ffd700; --gold-light: #f0d060; --gold-dark: #b8960c;
+  --text-primary: #ffffff; --text-secondary: #888888;
+  --border-color: rgba(212, 175, 55, 0.3); --glow-gold: 0 0 20px rgba(212, 175, 55, 0.4);
+  --team-red: #c41e3a; --team-red-glow: rgba(196, 30, 58, 0.4);
+  --team-green: #228b22; --team-green-glow: rgba(34, 139, 34, 0.4);
+  --team-blue: #1e90ff; --team-blue-glow: rgba(30, 144, 255, 0.4);
+}
+* { box-sizing: border-box; }
+body { background-color: var(--bg-color); color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin: 0; padding: 0; background-image: linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px); background-size: 40px 40px; font-size: 16px; line-height: 1.6; }
+.container { width: 90%; max-width: 900px; margin: 0 auto; padding: 20px 0; }
+nav { display: flex; flex-direction: column; align-items: center; padding: 20px 5%; background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%); border-bottom: 3px solid var(--primary-gold); gap: 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), var(--glow-gold); position: sticky; top: 0; z-index: 100; }
+nav .logo { font-family: 'Press Start 2P', cursive; font-size: 14px; color: var(--text-primary); text-shadow: 0 0 10px var(--primary-gold); }
+nav .logo span { color: var(--primary-gold); }
+.nav-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
+.nav-links a { color: var(--text-secondary); text-decoration: none; font-family: 'Press Start 2P', cursive; font-size: 9px; padding: 8px 14px; border: 1px solid transparent; transition: all 0.3s ease; text-transform: uppercase; }
+.nav-links a:hover, .nav-links a.active { color: var(--primary-gold); border: 1px solid var(--primary-gold); background: rgba(212, 175, 55, 0.1); text-shadow: 0 0 5px var(--primary-gold); }
+.hero { text-align: center; padding: 50px 20px; position: relative; background: radial-gradient(ellipse at center top, rgba(212, 175, 55, 0.15) 0%, transparent 50%), linear-gradient(180deg, #0d0d0d 0%, #0a0a0a 100%); border-bottom: 1px solid var(--border-color); margin-bottom: 30px; }
+.hero h1 { font-family: 'Press Start 2P', cursive; font-size: 1.5rem; color: var(--primary-gold); margin: 0 0 10px; text-shadow: 0 0 20px rgba(212, 175, 55, 0.5); line-height: 1.6; }
+.hero .subtitle { color: var(--text-secondary); font-size: 0.95rem; max-width: 500px; margin: 0 auto; }
+.round-indicator { display: inline-block; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--primary-gold); color: var(--gold); padding: 8px 20px; font-family: 'Press Start 2P', cursive; font-size: 10px; letter-spacing: 2px; margin-top: 15px; border-radius: 4px; }
+footer { text-align: center; padding: 40px 20px; margin-top: 50px; border-top: 1px solid var(--border-color); color: var(--text-secondary); font-size: 0.8rem; }
+footer .cross { font-size: 1.5rem; margin-bottom: 15px; opacity: 0.5; }
+@media (min-width: 768px) {
+  nav { flex-direction: row; justify-content: space-between; padding: 20px 5%; }
+  .nav-links a { font-size: 10px; }
+  .hero h1 { font-size: 1.8rem; }
+  .container { padding: 40px 0; }
+}
+.ranking-hero { padding: 30px 20px 20px; }
+.ranking-hero h1 { font-size: 1.3rem; }
+.section-title { font-family: 'Press Start 2P', cursive; color: var(--gold); font-size: 0.95rem; text-align: center; letter-spacing: 1.5px; margin: 40px 0 20px; text-shadow: 0 0 10px rgba(212, 175, 55, 0.4); }
+.state-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 30px; text-align: center; color: var(--text-secondary); margin: 30px auto; max-width: 500px; }
+.state-card h3 { color: var(--gold); margin-bottom: 12px; font-family: 'Press Start 2P', cursive; font-size: 0.85rem; }
+.link-btn { display: inline-block; margin-top: 10px; padding: 10px 20px; background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%); color: #000; text-decoration: none; border-radius: 4px; font-family: 'Press Start 2P', cursive; font-size: 9px; letter-spacing: 1px; transition: all 0.2s ease; }
+.link-btn:hover { transform: translateY(-2px); box-shadow: 0 0 14px var(--primary-gold); }
+button.link-btn { border: none; cursor: pointer; }
+button.link-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.link-inline { color: var(--gold); text-decoration: underline; }
+.seed-status { margin-top: 12px; font-size: 0.85rem; min-height: 20px; color: var(--text-secondary); }
+.seed-status.loading { color: var(--gold); }
+.seed-status.success { color: #4ade80; }
+.seed-status.error { color: #ff6b6b; }
+.admin-toast { position: fixed; top: 20px; right: 20px; background: var(--card-bg); border: 1px solid var(--border-color); border-left: 4px solid var(--gold); color: var(--text-primary); padding: 12px 20px; border-radius: 6px; font-size: 0.9rem; z-index: 1000; opacity: 0; transform: translateX(20px); transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none; }
+.admin-toast.show { opacity: 1; transform: translateX(0); }
+.admin-toast.success { border-left-color: #4ade80; }
+.admin-toast.error { border-left-color: #ff6b6b; }
+.admin-section { margin-top: 20px; }
+.admin-quick-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 18px 20px; margin-bottom: 30px; }
+.admin-quick-card h3 { color: var(--gold); font-family: 'Press Start 2P', cursive; font-size: 0.75rem; margin-bottom: 8px; }
+.admin-help { color: var(--text-secondary); font-size: 0.82rem; margin-bottom: 14px; }
+.admin-quick-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.bonus-cell { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-top-width: 4px; border-radius: 8px; padding: 12px; text-align: center; }
+.bonus-cell.red { border-top-color: var(--team-red); }
+.bonus-cell.green { border-top-color: var(--team-green); }
+.bonus-cell.blue { border-top-color: var(--team-blue); }
+.bonus-logo { width: 40px; height: 40px; object-fit: contain; margin-bottom: 6px; }
+.bonus-team-name { font-family: 'Press Start 2P', cursive; font-size: 0.55rem; color: var(--text-primary); margin-bottom: 10px; min-height: 18px; line-height: 1.3; }
+.bonus-controls { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
+.admin-teams { display: grid; gap: 18px; }
+.admin-team-card { background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 10px; overflow: hidden; }
+.admin-team-card.red { border-color: var(--team-red); }
+.admin-team-card.green { border-color: var(--team-green); }
+.admin-team-card.blue { border-color: var(--team-blue); }
+.admin-team-header { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; padding: 14px 18px; background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid var(--border-color); }
+.admin-team-logo { width: 48px; height: 48px; object-fit: contain; }
+.admin-team-name { font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: var(--text-primary); line-height: 1.3; }
+.admin-team-meta { color: var(--text-secondary); font-size: 0.78rem; margin-top: 4px; }
+.admin-team-total { font-family: 'Press Start 2P', cursive; font-size: 1.3rem; color: var(--gold); text-align: right; }
+.admin-team-total span { display: block; font-size: 0.55rem; color: var(--text-secondary); margin-top: 4px; }
+.admin-cadetes-list { list-style: none; margin: 0; padding: 6px 0; }
+.admin-cadete-row { display: grid; grid-template-columns: 24px 1fr auto; gap: 10px; align-items: center; padding: 8px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+.admin-cadete-row:last-child { border-bottom: none; }
+.admin-cadete-row:hover { background: rgba(212, 175, 55, 0.04); }
+.admin-cadete-row.captain { background: linear-gradient(90deg, rgba(212, 175, 55, 0.18) 0%, rgba(212, 175, 55, 0.04) 100%); border-left: 3px solid var(--gold); }
+.admin-cadete-row.captain .cadete-name { color: var(--gold); font-weight: 700; }
+.captain-badge { display: inline-block; margin-left: 6px; padding: 2px 6px; background: var(--gold); color: #000; font-family: 'Press Start 2P', cursive; font-size: 0.45rem; letter-spacing: 1px; border-radius: 3px; vertical-align: middle; }
+.cadete-gender { color: var(--gold); text-align: center; font-size: 1rem; }
+.cadete-name { color: var(--text-primary); font-size: 0.95rem; }
+.cadete-controls { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.pt-btn { background: rgba(255, 255, 255, 0.04); color: var(--text-primary); border: 1px solid var(--border-color); padding: 6px 10px; font-family: 'Press Start 2P', cursive; font-size: 9px; border-radius: 4px; cursor: pointer; transition: all 0.15s ease; min-width: 36px; }
+.pt-btn.sm { padding: 5px 8px; font-size: 8px; min-width: 30px; }
+.pt-btn:hover { transform: translateY(-1px); }
+.pt-btn.pos { border-color: rgba(74, 222, 128, 0.5); color: #4ade80; }
+.pt-btn.pos:hover { background: rgba(74, 222, 128, 0.15); box-shadow: 0 0 8px rgba(74, 222, 128, 0.3); }
+.pt-btn.pos.big { background: linear-gradient(135deg, #228b22 0%, #4ade80 100%); color: #000; border-color: #4ade80; }
+.pt-btn.neg { border-color: rgba(255, 107, 107, 0.5); color: #ff6b6b; }
+.pt-btn.neg:hover { background: rgba(255, 107, 107, 0.15); box-shadow: 0 0 8px rgba(255, 107, 107, 0.3); }
+.pt-input { width: 60px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-color); color: var(--gold); font-family: 'Press Start 2P', cursive; font-size: 10px; padding: 6px 4px; border-radius: 4px; text-align: center; }
+.pt-input.sm { width: 50px; font-size: 9px; padding: 5px 4px; }
+.admin-cadete-row { cursor: pointer; }
+.admin-cadete-row .cadete-controls { cursor: default; }
+.admin-cadete-row .chev { color: var(--text-secondary); font-size: 0.9rem; transition: transform 0.2s ease; user-select: none; }
+.admin-cadete-row.expanded .chev { transform: rotate(90deg); color: var(--gold); }
+.cadete-total-pill { font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: var(--gold); padding: 4px 10px; border: 1px solid var(--border-color); border-radius: 999px; background: rgba(212, 175, 55, 0.06); white-space: nowrap; }
+.remove-cadete-btn { background: transparent; border: 1px solid rgba(255, 107, 107, 0.4); color: #ff6b6b; padding: 4px 8px; font-size: 0.85rem; border-radius: 4px; cursor: pointer; line-height: 1; transition: all 0.15s ease; }
+.remove-cadete-btn:hover { background: rgba(255, 107, 107, 0.15); box-shadow: 0 0 8px rgba(255, 107, 107, 0.3); }
+.move-cadete-btn { background: transparent; border: 1px solid rgba(212, 175, 55, 0.4); color: var(--gold); padding: 4px 8px; font-size: 0.85rem; border-radius: 4px; cursor: pointer; line-height: 1; transition: all 0.15s ease; }
+.move-cadete-btn:hover { background: rgba(212, 175, 55, 0.15); box-shadow: 0 0 8px rgba(212, 175, 55, 0.3); }
+.move-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.78); display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+.move-modal { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 24px; max-width: 420px; width: 100%; box-shadow: var(--glow-gold); }
+.move-modal h3 { font-family: 'Press Start 2P', cursive; font-size: 0.8rem; color: var(--gold); margin: 0 0 8px; line-height: 1.5; }
+.move-modal p { color: var(--text-secondary); font-size: 0.85rem; margin: 0 0 18px; line-height: 1.5; }
+.move-team-btn { display: flex; align-items: center; gap: 12px; width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; cursor: pointer; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; transition: all 0.15s ease; text-align: left; }
+.move-team-btn:hover { background: rgba(212, 175, 55, 0.1); border-color: var(--gold); }
+.move-team-btn img { width: 36px; height: 36px; object-fit: contain; flex-shrink: 0; }
+.move-cancel-btn { display: block; width: 100%; margin-top: 6px; background: transparent; border: 1px solid var(--text-secondary); color: var(--text-secondary); padding: 10px; border-radius: 6px; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; transition: all 0.15s ease; }
+.move-cancel-btn:hover { color: var(--text-primary); border-color: var(--text-primary); }
+.cadete-summary-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.cat-chip { display: inline-flex; align-items: center; gap: 3px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 4px; padding: 2px 6px; font-size: 0.7rem; color: var(--text-secondary); }
+.cat-chip strong { color: var(--gold); font-family: 'Press Start 2P', cursive; font-size: 0.65rem; }
+.cadete-categories { display: none; padding: 6px 18px 14px; background: rgba(0, 0, 0, 0.25); border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+.admin-cadete-row.expanded + .cadete-categories { display: block; }
+.cat-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.04); }
+.cat-row:last-child { border-bottom: none; }
+.cat-row .cat-label { color: var(--text-primary); font-size: 0.85rem; display: flex; align-items: center; gap: 6px; }
+.cat-row .cat-label .cat-emoji { font-size: 1.05rem; }
+.cat-row .cat-controls { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 520px) {
+  .cat-row { grid-template-columns: 1fr; }
+  .cat-row .cat-controls { justify-content: flex-start; }
+}
+.pt-input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 6px rgba(212, 175, 55, 0.3); }
+.adjust-row { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); }
+.adjust-label { font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+.adjust-label span { text-transform: none; letter-spacing: 0; opacity: 0.7; }
+.adjust-input { max-width: 90px; text-align: center; }
+.team-delete-zone { padding: 12px 16px; text-align: center; border-top: 1px dashed rgba(255, 107, 107, 0.3); }
+.delete-team-btn { background: transparent; color: #ff6b6b; border: 1px dashed rgba(255, 107, 107, 0.5); padding: 8px 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; border-radius: 4px; cursor: pointer; transition: all 0.2s ease; }
+.delete-team-btn:hover { background: rgba(255, 107, 107, 0.1); border-style: solid; box-shadow: 0 0 12px rgba(255, 107, 107, 0.3); }
+.admin-danger-zone { margin-top: 30px; text-align: center; }
+.reset-all-btn { background: transparent; color: #ff6b6b; border: 1px dashed rgba(255, 107, 107, 0.5); padding: 10px 18px; font-family: 'Press Start 2P', cursive; font-size: 9px; border-radius: 4px; cursor: pointer; transition: all 0.2s ease; }
+.reset-all-btn:hover { background: rgba(255, 107, 107, 0.1); border-style: solid; box-shadow: 0 0 12px rgba(255, 107, 107, 0.3); }
+@media (max-width: 720px) {
+  .admin-team-header { grid-template-columns: auto 1fr; grid-template-rows: auto auto; }
+  .admin-team-total { grid-column: 1 / -1; text-align: center; padding-top: 8px; border-top: 1px solid var(--border-color); }
+  .admin-quick-row { grid-template-columns: 1fr; }
+  .admin-cadete-row { grid-template-columns: 22px 1fr; grid-template-rows: auto auto; }
+  .cadete-controls { grid-column: 1 / -1; justify-content: flex-start; }
+}
+    </style>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">CADETES<span>DE</span>CRISTO</div>
+        <div class="nav-links">
+            <a href="/djad/cadetes">INÍCIO</a>
+            <a href="/djad/sorteio">SORTEIO</a>
+            <a href="/djad/ranking">RANKING</a>
+            <a href="#" class="active">ADMIN</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero ranking-hero">
+        <h1>⚙️ ADMIN — PONTOS</h1>
+        <p class="subtitle">Adicione ou remova pontos dos cadetes e equipes</p>
+        <div class="round-indicator" id="updatedAtIndicator">CARREGANDO...</div>
+    </section>
+
+    <div class="container">
+        <!-- Estado vazio -->
+        <div class="state-card" id="emptyCard" hidden>
+            <h3>📋 Nenhuma equipe cadastrada</h3>
+            <p>Clique abaixo para carregar a composição oficial do sorteio:</p>
+            <p><button class="link-btn" id="seedBtn">📥 Carregar composição oficial</button></p>
+            <p class="seed-status" id="seedStatus"></p>
+        </div>
+
+        <!-- Estado de carregamento -->
+        <div class="state-card" id="loadingCard">
+            <p>⏳ Carregando dados...</p>
+        </div>
+
+        <!-- Mensagem global -->
+        <div class="admin-toast" id="toast"></div>
+
+        <!-- Painel de admin -->
+        <div class="admin-section" id="adminSection" hidden>
+            <!-- Quick add -->
+            <div class="admin-quick-card">
+                <h3>⚡ AÇÃO RÁPIDA</h3>
+                <p class="admin-help">Adicione pontos a uma equipe inteira (bônus). Vai somar ao total da equipe sem afetar pontos individuais.</p>
+                <div class="admin-quick-row" id="bonusRow"></div>
+            </div>
+
+            <!-- Equipes -->
+            <div class="admin-teams" id="adminTeams"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="cross">✝️</div>
+        <p>DJAD - Painel Admin</p>
+    </footer>
+
+    <script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+        authDomain: "umadcamp-patu.firebaseapp.com",
+        projectId: "umadcamp-patu",
+        storageBucket: "umadcamp-patu.firebasestorage.app",
+        messagingSenderId: "1043102355965",
+        appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+        measurementId: "G-S6N9R4F8Z8"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const docRef = db.collection('cadetes_pontuacao').doc('equipes');
+
+    let currentData = null;
+    let saving = false;
+    const expandedRows = new Set(); // keys "teamIdx:memberIdx"
+
+    // ---- Categorias (apenas no admin; ranking publico le m.points) ----
+    const CATEGORIES = [
+        { key: 'encontros', label: 'Encontros Oficiais', emoji: '🎯' },
+        { key: 'ensaios',   label: 'Ensaios',           emoji: '🎶' },
+        { key: 'oracao',    label: 'Oração',            emoji: '🙏' },
+        { key: 'ebd',       label: 'EBD',               emoji: '📖' },
+        { key: 'cultos',    label: 'Cultos',            emoji: '⛪' },
+        { key: 'doutrina',  label: 'Culto de Doutrina', emoji: '📜' },
+        { key: 'extra',     label: 'Extra',             emoji: '⭐' },
+    ];
+    const EMPTY_CATS = () => CATEGORIES.reduce((o, c) => (o[c.key] = 0, o), {});
+
+    function ensureCategories(m) {
+        if (!m.categories || typeof m.categories !== 'object') {
+            m.categories = EMPTY_CATS();
+            // Migra pontuacao legada: joga em "encontros" pra nao perder pontos ja dados
+            const legacy = m.points || 0;
+            if (legacy > 0) m.categories.encontros = legacy;
+        } else {
+            // Garante todas as chaves
+            CATEGORIES.forEach(c => {
+                if (typeof m.categories[c.key] !== 'number') m.categories[c.key] = 0;
+            });
+        }
+        return m.categories;
+    }
+
+    function memberTotal(m) {
+        const c = ensureCategories(m);
+        return CATEGORIES.reduce((s, cat) => s + (c[cat.key] || 0), 0);
+    }
+
+    function teamTotal(team) {
+        const memberSum = (team.members || []).reduce((s, m) => s + memberTotal(m), 0);
+        return memberSum + (team.bonus || 0) + (team.adjust || 0);
+    }
+
+    const CAPTAINS = new Set(['Jonas', 'Suzana', 'Elaine']);
+    function isCaptain(name) { return CAPTAINS.has(name); }
+
+    function showToast(msg, type = 'success') {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = `admin-toast show ${type}`;
+        clearTimeout(t._timer);
+        t._timer = setTimeout(() => { t.className = 'admin-toast'; }, 2500);
+    }
+
+    function formatDate(ts) {
+        if (!ts) return '';
+        const d = ts.toDate ? ts.toDate() : new Date(ts);
+        return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    }
+
+    async function persist(updatedTeams) {
+        if (saving) return;
+        saving = true;
+        try {
+            await docRef.update({
+                teams: updatedTeams,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            showToast('✓ Salvo');
+        } catch (err) {
+            console.error(err);
+            showToast('❌ Erro: ' + err.message, 'error');
+        } finally {
+            saving = false;
+        }
+    }
+
+    function adjustCategory(teamIdx, memberIdx, catKey, delta) {
+        if (!currentData) return;
+        const teams = JSON.parse(JSON.stringify(currentData.teams));
+        const m = teams[teamIdx].members[memberIdx];
+        ensureCategories(m);
+        m.categories[catKey] = Math.max(0, (m.categories[catKey] || 0) + delta);
+        m.points = memberTotal(m); // mantem sincronizado para o ranking publico
+        currentData = { ...currentData, teams };
+        persist(teams);
+    }
+
+    function setCategory(teamIdx, memberIdx, catKey, value) {
+        if (!currentData) return;
+        const v = parseInt(value, 10);
+        if (isNaN(v) || v < 0) return;
+        const teams = JSON.parse(JSON.stringify(currentData.teams));
+        const m = teams[teamIdx].members[memberIdx];
+        ensureCategories(m);
+        m.categories[catKey] = v;
+        m.points = memberTotal(m);
+        currentData = { ...currentData, teams };
+        persist(teams);
+    }
+
+    function adjustBonus(teamIdx, delta) {
+        if (!currentData) return;
+        const teams = JSON.parse(JSON.stringify(currentData.teams));
+        teams[teamIdx].bonus = Math.max(0, (teams[teamIdx].bonus || 0) + delta);
+        currentData = { ...currentData, teams };
+        persist(teams);
+    }
+
+    function setBonus(teamIdx, value) {
+        if (!currentData) return;
+        const v = parseInt(value, 10);
+        if (isNaN(v) || v < 0) return;
+        const teams = JSON.parse(JSON.stringify(currentData.teams));
+        teams[teamIdx].bonus = v;
+        currentData = { ...currentData, teams };
+        persist(teams);
+    }
+
+    // Ajuste manual do total da equipe (aceita negativo). NÃO é o bônus e
+    // NÃO altera os pontos individuais dos cadetes — só o total da equipe.
+    function setAdjust(teamIdx, value) {
+        if (!currentData) return;
+        const v = parseInt(value, 10);
+        if (isNaN(v)) return;
+        const teams = JSON.parse(JSON.stringify(currentData.teams));
+        teams[teamIdx].adjust = v;
+        currentData = { ...currentData, teams };
+        persist(teams);
+    }
+
+    function removeMember(teamIdx, memberIdx) {
+        if (!currentData) return;
+        const teams = JSON.parse(JSON.stringify(currentData.teams));
+        const team = teams[teamIdx];
+        const m = team.members[memberIdx];
+        if (!m) return;
+        const points = memberTotal(m);
+        const role = isCaptain(m.name) ? (m.gender === 'F' ? 'CAPITÃ' : 'CAPITÃO') : 'cadete';
+        const msg = `Remover ${role} ${m.name}?\n\n` +
+            (points > 0
+                ? `Os ${points} pontos conquistados serão transferidos para o bônus do time (${team.name}).`
+                : `Sem pontos a transferir.`);
+        if (!confirm(msg)) return;
+        team.bonus = (team.bonus || 0) + points;
+        team.members.splice(memberIdx, 1);
+        // Indices dos cadetes desse time mudam; limpa estado de expansao
+        expandedRows.clear();
+        currentData = { ...currentData, teams };
+        persist(teams);
+        showToast(points > 0 ? `✓ ${m.name} removido · +${points} no bônus` : `✓ ${m.name} removido`);
+    }
+
+    function openMoveModal(fromIdx, memberIdx) {
+        if (!currentData) return;
+        const teams = currentData.teams || [];
+        const from = teams[fromIdx];
+        const m = from && from.members && from.members[memberIdx];
+        if (!m) return;
+        closeMoveModal();
+        const dests = teams.map((t, idx) => ({ t, idx })).filter(o => o.idx !== fromIdx);
+        if (dests.length === 0) { showToast('Não há outra equipe para mover', 'error'); return; }
+        const pts = memberTotal(m);
+        const overlay = document.createElement('div');
+        overlay.className = 'move-overlay';
+        overlay.id = 'moveOverlay';
+        overlay.innerHTML = `
+            <div class="move-modal">
+                <h3>Mover cadete</h3>
+                <p>Para qual equipe deseja mover <strong style="color:#fff">${m.name}</strong>?${pts > 0 ? ` Os <strong style="color:var(--gold)">${pts} pts</strong> vão junto.` : ''}</p>
+                ${dests.map(o => `
+                    <button class="move-team-btn" data-action="move-to" data-from="${fromIdx}" data-member="${memberIdx}" data-to="${o.idx}">
+                        <img src="${o.t.logo}" alt="${o.t.name}">
+                        <span>${o.t.name}</span>
+                    </button>
+                `).join('')}
+                <button class="move-cancel-btn" data-action="move-cancel">Cancelar</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+
+    function closeMoveModal() {
+        const o = document.getElementById('moveOverlay');
+        if (o) o.remove();
+    }
+
+    function moveMember(fromIdx, memberIdx, toIdx) {
+        if (!currentData || fromIdx === toIdx) return;
+        const teams = JSON.parse(JSON.stringify(currentData.teams));
+        const from = teams[fromIdx];
+        const to = teams[toIdx];
+        if (!from || !to) return;
+        const m = from.members[memberIdx];
+        if (!m) return;
+        ensureCategories(m);
+        m.points = memberTotal(m);
+        from.members.splice(memberIdx, 1);
+        to.members.push(m);
+        expandedRows.clear(); // os índices mudam após mover
+        currentData = { ...currentData, teams };
+        persist(teams);
+        showToast(`✓ ${m.name} → ${to.name}`);
+    }
+
+    function deleteTeam(teamIdx) {
+        if (!currentData) return;
+        const teams = JSON.parse(JSON.stringify(currentData.teams));
+        const team = teams[teamIdx];
+        if (!team) return;
+        if ((team.members || []).length > 0) {
+            showToast('Mova ou remova os cadetes antes de excluir', 'error');
+            return;
+        }
+        if (!confirm(`Excluir a equipe ${team.name}?\n\nO bônus de ${team.bonus || 0} pts dessa equipe será descartado. Essa ação não pode ser desfeita.`)) return;
+        teams.splice(teamIdx, 1);
+        expandedRows.clear();
+        currentData = { ...currentData, teams };
+        persist(teams);
+        showToast(`✓ Equipe ${team.name} excluída`);
+    }
+
+    function resetAllPoints() {
+        if (!currentData) return;
+        if (!confirm('Tem certeza que deseja ZERAR TODOS os pontos? Essa ação não pode ser desfeita.')) return;
+        const teams = JSON.parse(JSON.stringify(currentData.teams));
+        teams.forEach(t => {
+            t.bonus = 0;
+            t.adjust = 0;
+            (t.members || []).forEach(m => {
+                m.categories = EMPTY_CATS();
+                m.points = 0;
+            });
+        });
+        persist(teams);
+    }
+
+    function renderBonusRow(teams) {
+        const row = document.getElementById('bonusRow');
+        row.innerHTML = teams.map((t, idx) => `
+            <div class="bonus-cell ${t.id}">
+                <img src="${t.logo}" alt="${t.name}" class="bonus-logo">
+                <div class="bonus-team-name">${t.name}</div>
+                <div class="bonus-controls">
+                    <button class="pt-btn neg" data-action="bonus" data-team="${idx}" data-delta="-5">−5</button>
+                    <button class="pt-btn neg" data-action="bonus" data-team="${idx}" data-delta="-1">−1</button>
+                    <input type="number" class="pt-input" data-action="bonus-set" data-team="${idx}" value="${t.bonus || 0}" min="0">
+                    <button class="pt-btn pos" data-action="bonus" data-team="${idx}" data-delta="1">+1</button>
+                    <button class="pt-btn pos" data-action="bonus" data-team="${idx}" data-delta="5">+5</button>
+                    <button class="pt-btn pos big" data-action="bonus" data-team="${idx}" data-delta="10">+10</button>
+                </div>
+                <div class="adjust-row">
+                    <label class="adjust-label">Ajuste no total <span>(pode ser negativo)</span></label>
+                    <input type="number" class="pt-input adjust-input" data-action="adjust-set" data-team="${idx}" value="${t.adjust || 0}">
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderCategoriesPanel(tIdx, m) {
+        const cats = ensureCategories(m);
+        return `
+            <li class="cadete-categories">
+                ${CATEGORIES.map(cat => `
+                    <div class="cat-row">
+                        <div class="cat-label"><span class="cat-emoji">${cat.emoji}</span>${cat.label}</div>
+                        <div class="cat-controls">
+                            <button class="pt-btn neg sm" data-action="cat" data-team="${tIdx}" data-member="${m.originalIdx}" data-cat="${cat.key}" data-delta="-1">−1</button>
+                            <input type="number" class="pt-input sm" data-action="cat-set" data-team="${tIdx}" data-member="${m.originalIdx}" data-cat="${cat.key}" value="${cats[cat.key] || 0}" min="0">
+                            <button class="pt-btn pos sm" data-action="cat" data-team="${tIdx}" data-member="${m.originalIdx}" data-cat="${cat.key}" data-delta="1">+1</button>
+                            <button class="pt-btn pos sm" data-action="cat" data-team="${tIdx}" data-member="${m.originalIdx}" data-cat="${cat.key}" data-delta="5">+5</button>
+                            <button class="pt-btn pos sm big" data-action="cat" data-team="${tIdx}" data-member="${m.originalIdx}" data-cat="${cat.key}" data-delta="10">+10</button>
+                        </div>
+                    </div>
+                `).join('')}
+            </li>
+        `;
+    }
+
+    function renderTeams(teams) {
+        const wrap = document.getElementById('adminTeams');
+        wrap.innerHTML = teams.map((t, tIdx) => {
+            const total = teamTotal(t);
+            const members = [...(t.members || [])]
+                .map((m, originalIdx) => ({ ...m, originalIdx }))
+                .sort((a, b) => {
+                    const ca = isCaptain(a.name) ? 1 : 0;
+                    const cb = isCaptain(b.name) ? 1 : 0;
+                    if (ca !== cb) return cb - ca;
+                    return memberTotal(b) - memberTotal(a);
+                });
+            return `
+                <div class="admin-team-card ${t.id}">
+                    <div class="admin-team-header">
+                        <img src="${t.logo}" alt="${t.name}" class="admin-team-logo">
+                        <div class="admin-team-info">
+                            <div class="admin-team-name">${t.name}</div>
+                            <div class="admin-team-meta">${(t.members || []).length} cadetes · Bônus: <strong>${t.bonus || 0}</strong>${t.adjust ? ` · Ajuste: <strong>${t.adjust}</strong>` : ''}</div>
+                        </div>
+                        <div class="admin-team-total">${total}<span>pts</span></div>
+                    </div>
+                    ${(t.members || []).length === 0 ? `
+                    <div class="team-delete-zone">
+                        <button class="delete-team-btn" data-action="delete-team" data-team="${tIdx}">🗑️ Excluir equipe ${t.name}</button>
+                    </div>` : ''}
+                    <ul class="admin-cadetes-list">
+                        ${members.map(m => {
+                            const cap = isCaptain(m.name);
+                            const total = memberTotal(m);
+                            const cats = ensureCategories(m);
+                            const expanded = expandedRows.has(`${tIdx}:${m.originalIdx}`);
+                            const chips = CATEGORIES
+                                .filter(cat => (cats[cat.key] || 0) > 0)
+                                .map(cat => `<span class="cat-chip">${cat.emoji} <strong>${cats[cat.key]}</strong></span>`)
+                                .join('');
+                            return `
+                            <li class="admin-cadete-row${cap ? ' captain' : ''}${expanded ? ' expanded' : ''}" data-toggle="${tIdx}:${m.originalIdx}">
+                                <span class="cadete-gender">${cap ? '👑' : (m.gender === 'M' ? '♂' : '♀')}</span>
+                                <div>
+                                    <span class="cadete-name">${m.name}${cap ? ` <span class="captain-badge">${m.gender === 'F' ? 'CAPITÃ' : 'CAPITÃO'}</span>` : ''}</span>
+                                    ${chips ? `<div class="cadete-summary-chips">${chips}</div>` : ''}
+                                </div>
+                                <div class="cadete-controls">
+                                    <span class="cadete-total-pill">${total} pts</span>
+                                    <button class="move-cadete-btn" data-action="move-member" data-team="${tIdx}" data-member="${m.originalIdx}" title="Mover cadete para outra equipe (os pontos vão junto)">⇄</button>
+                                    <button class="remove-cadete-btn" data-action="remove-member" data-team="${tIdx}" data-member="${m.originalIdx}" title="Remover cadete (transfere pontos para o bônus do time)">✕</button>
+                                    <span class="chev">▶</span>
+                                </div>
+                            </li>
+                            ${renderCategoriesPanel(tIdx, m)}
+                            `;
+                        }).join('')}
+                    </ul>
+                </div>
+            `;
+        }).join('');
+
+        // Botão de reset global
+        wrap.innerHTML += `
+            <div class="admin-danger-zone">
+                <button class="reset-all-btn" id="resetAllBtn">⚠️ ZERAR TODOS OS PONTOS</button>
+            </div>
+        `;
+    }
+
+    function bindHandlers() {
+        document.addEventListener('click', e => {
+            const btn = e.target.closest('button');
+            if (btn) {
+                if (btn.id === 'resetAllBtn') {
+                    resetAllPoints();
+                    return;
+                }
+                const action = btn.dataset.action;
+                if (action === 'cat') {
+                    adjustCategory(+btn.dataset.team, +btn.dataset.member, btn.dataset.cat, +btn.dataset.delta);
+                    return;
+                } else if (action === 'bonus') {
+                    adjustBonus(+btn.dataset.team, +btn.dataset.delta);
+                    return;
+                } else if (action === 'remove-member') {
+                    removeMember(+btn.dataset.team, +btn.dataset.member);
+                    return;
+                } else if (action === 'move-member') {
+                    openMoveModal(+btn.dataset.team, +btn.dataset.member);
+                    return;
+                } else if (action === 'move-to') {
+                    moveMember(+btn.dataset.from, +btn.dataset.member, +btn.dataset.to);
+                    closeMoveModal();
+                    return;
+                } else if (action === 'move-cancel') {
+                    closeMoveModal();
+                    return;
+                } else if (action === 'delete-team') {
+                    deleteTeam(+btn.dataset.team);
+                    return;
+                }
+            }
+            // Clicar no fundo do modal fecha
+            if (e.target.classList.contains('move-overlay')) {
+                closeMoveModal();
+                return;
+            }
+            // Toggle expand do cadete (clicar fora dos controles/inputs)
+            const row = e.target.closest('.admin-cadete-row[data-toggle]');
+            if (row && !e.target.closest('.cadete-controls input, .cadete-controls button')) {
+                const key = row.dataset.toggle;
+                if (expandedRows.has(key)) expandedRows.delete(key);
+                else expandedRows.add(key);
+                row.classList.toggle('expanded');
+            }
+        });
+        document.addEventListener('change', e => {
+            const inp = e.target;
+            if (!inp.matches('input.pt-input')) return;
+            const action = inp.dataset.action;
+            if (action === 'cat-set') {
+                setCategory(+inp.dataset.team, +inp.dataset.member, inp.dataset.cat, inp.value);
+            } else if (action === 'bonus-set') {
+                setBonus(+inp.dataset.team, inp.value);
+            } else if (action === 'adjust-set') {
+                setAdjust(+inp.dataset.team, inp.value);
+            }
+        });
+    }
+
+    function render(data) {
+        currentData = data;
+        const teams = data.teams || [];
+        if (teams.length === 0) {
+            document.getElementById('emptyCard').hidden = false;
+            document.getElementById('adminSection').hidden = true;
+            return;
+        }
+        document.getElementById('emptyCard').hidden = true;
+        document.getElementById('adminSection').hidden = false;
+        renderBonusRow(teams);
+        renderTeams(teams);
+
+        const ind = document.getElementById('updatedAtIndicator');
+        if (data.updatedAt) ind.textContent = `ATUALIZADO EM ${formatDate(data.updatedAt)}`;
+        else ind.textContent = 'AO VIVO';
+    }
+
+    // =========================================================================
+    // SEEDING — composição oficial do sorteio (fixa)
+    // =========================================================================
+    const SEED_TEAMS_DATA = [
+        {
+            id: 'red',
+            name: 'FALCÕES DO REI',
+            logo: '/images/cadetes/logo-vermelho.png',
+            bonus: 0,
+            members: [
+                { name: 'Jonas',          gender: 'M', points: 0 },
+                { name: 'Jonnas',         gender: 'M', points: 0 },
+                { name: 'Nicolas Cortez', gender: 'M', points: 0 },
+                { name: 'Syllas',         gender: 'M', points: 0 },
+                { name: 'Natália',        gender: 'F', points: 0 },
+                { name: 'Ritinha',        gender: 'F', points: 0 },
+                { name: 'Olga',           gender: 'F', points: 0 },
+                { name: 'Shemilla',       gender: 'F', points: 0 },
+                { name: 'Vitória',        gender: 'F', points: 0 },
+                { name: 'Mirià',          gender: 'F', points: 0 },
+                { name: 'Silvia',         gender: 'F', points: 0 }
+            ]
+        },
+        {
+            id: 'blue',
+            name: 'ÁGUIAS DA ALIANÇA',
+            logo: '/images/cadetes/logo-azul.png',
+            bonus: 0,
+            members: [
+                { name: 'Asafe',     gender: 'M', points: 0 },
+                { name: 'Moisés',    gender: 'M', points: 0 },
+                { name: 'Judson',    gender: 'M', points: 0 },
+                { name: 'Thiago',    gender: 'M', points: 0 },
+                { name: 'Daniel',    gender: 'M', points: 0 },
+                { name: 'Mikael',    gender: 'M', points: 0 },
+                { name: 'Suzana',    gender: 'F', points: 0 },
+                { name: 'Sara',      gender: 'F', points: 0 },
+                { name: 'Ana Júlia', gender: 'F', points: 0 },
+                { name: 'Simone',    gender: 'F', points: 0 },
+                { name: 'Isadora',   gender: 'F', points: 0 },
+                { name: 'Rayssa',    gender: 'F', points: 0 },
+                { name: 'Aniely',    gender: 'F', points: 0 }
+            ]
+        }
+    ];
+
+    async function seedTeams() {
+        const status = document.getElementById('seedStatus');
+        const btn = document.getElementById('seedBtn');
+        btn.disabled = true;
+        status.textContent = 'Salvando equipes...';
+        status.className = 'seed-status loading';
+
+        try {
+            await docRef.set({
+                teams: SEED_TEAMS_DATA,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            status.textContent = '✓ Equipes salvas!';
+            status.className = 'seed-status success';
+        } catch (err) {
+            console.error(err);
+            status.textContent = '❌ Erro: ' + err.message;
+            status.className = 'seed-status error';
+            btn.disabled = false;
+        }
+    }
+
+    document.getElementById('seedBtn').addEventListener('click', seedTeams);
+
+    bindHandlers();
+
+    docRef.onSnapshot(doc => {
+        document.getElementById('loadingCard').hidden = true;
+        if (!doc.exists) {
+            document.getElementById('emptyCard').hidden = false;
+            document.getElementById('adminSection').hidden = true;
+            document.getElementById('updatedAtIndicator').textContent = 'SEM DADOS';
+            return;
+        }
+        // Não re-renderizar tudo se a alteração veio do próprio admin (input ativo)
+        const active = document.activeElement;
+        const isEditingInput = active && active.matches('input.pt-input');
+        if (isEditingInput && !active.dataset._committed) {
+            currentData = doc.data();
+            return;
+        }
+        render(doc.data());
+    }, err => {
+        console.error(err);
+        document.getElementById('loadingCard').innerHTML = '<p>❌ Erro ao carregar: ' + err.message + '</p>';
+    });
+    </script>
+</body>
+
+</html>

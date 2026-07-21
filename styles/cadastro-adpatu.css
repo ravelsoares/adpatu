@@ -1,0 +1,258 @@
+/* Estilos específicos da página de cadastro */
+
+:root {
+    --primary-700: #162542;
+    --primary-600: #203359;
+    --primary-500: #294170;
+    --primary-400: #3f5b8f;
+    --primary-300: #5575af;
+    --danger-500: #b00020;
+}
+
+/* Container principal de largura */
+.agenda-container {
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+/* Blocos de seção (reaproveita aparência de mês como seção) */
+.month-group {
+    background: transparent;
+    border-radius: 16px;
+    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.35);
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.month-title-wrapper h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin: 8px 0 12px 0;
+}
+
+/* Cartões (formulário e itens) */
+.event-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+    padding: 16px;
+}
+
+/* Para o formulário, queremos linha única */
+form.event-card {
+    grid-template-columns: 1fr;
+}
+
+.event-details h3 {
+    margin: 0 0 4px 0;
+    color: #fff;
+}
+
+.event-details p {
+    color: #fff;
+}
+
+
+/* Bloco de data à esquerda dos itens listados */
+.event-date {
+    display: grid;
+    place-content: center;
+    width: 72px;
+    border-right: 1px dashed #e5e7eb;
+    padding-right: 12px;
+}
+
+.top-banner {
+    background-image: linear-gradient(rgba(1, 18, 52, 0.8), rgba(1, 18, 52, 0.4)), url(../images/background-censo.png);
+}
+
+.event-date .day {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.event-date .month {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #cbd5e1;
+}
+
+/* Inputs e labels do formulário */
+label span {
+    display: block;
+    font-size: 13px;
+    color: #e5e7eb;
+    margin-bottom: 6px;
+    margin-top: 6px;
+}
+
+input[type="text"],
+input[type="date"] {
+    width: 100%;
+    padding: 10px 12px;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    color: #e5e7eb;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(37, 49, 72, 0.25);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+/* Layout do formulário */
+.form-row-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+/* Ações dentro de um card (Editar/Excluir) */
+.card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+/* Mensagens de feedback do formulário */
+#formMessage {
+    min-height: 20px;
+}
+
+/* Botões */
+button {
+    font-family: inherit;
+}
+
+#submitButton {
+    background: var(--primary-500);
+    color: #fff;
+    border: 0;
+    border-radius: 8px;
+    padding: 11px 16px;
+    cursor: pointer;
+    transition: filter .2s ease, transform .02s ease;
+}
+
+#cancelEditButton {
+    background: #838f9e;
+    color: #fff;
+    border: 0;
+    border-radius: 8px;
+    padding: 11px 16px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background: #f0f2f5;
+    color: #1f2a37;
+    text-decoration: none;
+    border: 0;
+    border-radius: 8px;
+    padding: 11px 16px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-editar {
+    height: 50;
+    background: var(--primary-700);
+    color: #fff;
+    border: 0;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: filter .2s ease, transform .02s ease;
+}
+
+.btn-excluir {
+    height: 50;
+    background: var(--danger-500);
+    color: #fff;
+    border: 0;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: filter .2s ease, transform .02s ease;
+}
+
+#submitButton:hover,
+.btn-editar:hover {
+    filter: brightness(1.1);
+}
+
+#submitButton:active,
+.btn-editar:active {
+    transform: translateY(1px);
+}
+
+.btn-excluir:hover {
+    filter: brightness(1.05) saturate(1.05);
+}
+
+.btn-excluir:active {
+    transform: translateY(1px);
+}
+
+/* Loading overlay (caso não exista no css global) */
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.7);
+    display: grid;
+    place-items: center;
+    z-index: 9999;
+}
+
+.loading-content .loading {
+    width: 36px;
+    height: 36px;
+    border: 3px solid #cbd5e1;
+    border-top-color: var(--primary-500);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+    .event-card {
+        grid-template-columns: 1fr;
+    }
+
+    .event-date {
+        width: 100%;
+        border-right: 0;
+        border-bottom: 1px dashed #e5e7eb;
+        padding: 0 0 12px 0;
+        margin-bottom: 8px;
+    }
+
+    .form-row-split {
+        grid-template-columns: 1fr;
+    }
+}

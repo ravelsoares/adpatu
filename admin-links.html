@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Links - UMADCAMP</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Press Start 2P (Pixel) e Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Press+Start+2P&display=swap"
+        rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neon-orange': '#FF6600',
+                        'deep-red': '#4A0404',
+                        'dark-bg': '#050505',
+                        'card-bg': '#0a0a0a',
+                        'glass-border': 'rgba(255, 102, 0, 0.2)'
+                    },
+                    fontFamily: {
+                        'pixel': ['"Press Start 2P"', 'cursive'],
+                        'body': ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050505;
+            background-image: linear-gradient(rgba(255, 102, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 102, 0, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: white;
+            min-height: 100vh;
+        }
+
+        .scanline {
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(255, 102, 0, 0.05) 50%, rgba(0, 0, 0, 0) 100%);
+            opacity: 0.1;
+            position: fixed;
+            top: -100px;
+            animation: scanline 10s linear infinite;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        @keyframes scanline {
+            0% {
+                top: -100px;
+            }
+
+            100% {
+                top: 100%;
+            }
+        }
+
+        .pixel-card {
+            background: var(--card-bg);
+            border: 2px solid var(--glass-border);
+            box-shadow: 4px 4px 0px 0px var(--glass-border);
+        }
+
+        .admin-input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        .admin-input:focus {
+            outline: none;
+            border-color: #FF6600;
+            box-shadow: 0 0 10px rgba(255, 102, 0, 0.2);
+        }
+
+        .btn-pixel {
+            background: #FF6600;
+            color: black;
+            font-family: 'Press Start 2P', cursive;
+            padding: 12px 24px;
+            transition: all 0.2s;
+            box-shadow: 4px 4px 0px 0px #ffffff;
+        }
+
+        .btn-pixel:hover {
+            background: white;
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px 0px #FF6600;
+        }
+
+        .btn-pixel:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px 0px #FF6600;
+        }
+    </style>
+</head>
+
+<body class="font-body">
+    <div class="scanline"></div>
+
+    <!-- Login Overlay -->
+    <div id="loginOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm">
+        <div class="pixel-card p-8 w-full max-w-md mx-4">
+            <div class="text-center mb-8">
+                <h1 class="font-pixel text-neon-orange text-lg mb-2">RESTRICTED AREA</h1>
+                <p class="text-gray-500 text-xs">INSIRA A SENHA PARA CONTINUAR</p>
+            </div>
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <input type="password" id="adminPassword" placeholder="PASSWORD"
+                        class="admin-input font-pixel text-center text-xs tracking-widest uppercase">
+                    <p id="loginError" class="text-red-500 text-[10px] mt-2 hidden text-center font-pixel">SENHA
+                        INCORRETA!</p>
+                </div>
+                <button type="submit" class="btn-pixel w-full text-xs">ACCESS SYSTEM</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContainer" class="hidden container mx-auto px-4 py-12 max-w-4xl">
+        <div class="flex justify-between items-center mb-12">
+            <div>
+                <h1 class="font-pixel text-2xl text-neon-orange mb-2">ADMIN LINKS</h1>
+                <p class="text-gray-500 text-sm">GERENCIAMENTO DE PASTAS DO GOOGLE DRIVE</p>
+            </div>
+            <a href="/umadcamp/fotos-crj" class="text-gray-400 hover:text-white transition text-xs font-pixel">VOLTAR
+                PARA
+                FOTOS</a>
+        </div>
+
+        <div id="saveStatus" class="fixed top-8 right-8 z-50 hidden">
+            <div class="bg-green-500 text-black font-pixel text-[10px] px-6 py-3 shadow-[4px_4px_0px_0px_white]">
+                SISTEMA ATUALIZADO COM SUCESSO!
+            </div>
+        </div>
+
+        <div class="space-y-8" id="dayCards">
+            <!-- Dinamicamente preenchido: um card por dia -->
+        </div>
+
+        <div class="flex justify-end pt-8">
+            <button onclick="saveLinks()" id="saveButton" class="btn-pixel">
+                SALVAR ALTERAÇÕES
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+            authDomain: "umadcamp-patu.firebaseapp.com",
+            projectId: "umadcamp-patu",
+            storageBucket: "umadcamp-patu.firebasestorage.app",
+            messagingSenderId: "1043102355965",
+            appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+            measurementId: "G-S6N9R4F8Z8"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const DAYS = ['sexta', 'sabado', 'domingo', 'segunda', 'terca'];
+        const SHIFTS = ['manha', 'tarde', 'noite'];
+        const DAY_LABELS = {
+            sexta: 'SEXTA-FEIRA',
+            sabado: 'SÁBADO',
+            domingo: 'DOMINGO',
+            segunda: 'SEGUNDA-FEIRA',
+            terca: 'TERÇA-FEIRA'
+        };
+
+        // IDs padrão por dia/turno (servirão como fallback se o Firestore estiver vazio)
+        const DEFAULT_LINKS = {
+            sexta: {
+                manha: [],
+                tarde: [],
+                noite: [
+                    '1r7m0DtWVl63xdJ_kVMtUxRJN6qWs2R77',
+                    '1w4wyktrH_T3ZoOukQ2D06V8xNhK7Ve0V',
+                    '1uU9mNaWAXI6DNXbW2dCCjINq9vYuJ8j4'
+                ]
+            },
+            sabado: {
+                manha: ['1fnGxi8PgDb1yeQCRgovQ4dYTQzcEMChc'],
+                tarde: [
+                    '1_zc60AamTCCDNCeuZXSII2mwpflPBiVC',
+                    '1NrS4IdSBMhLxqjbeLuaK2ZkiB3DWEaiG'
+                ],
+                noite: [
+                    '1BkONm2t_c4OUEZWPx6zbZhJaELROlWde',
+                    '1SuCHQll9Au4rji0rACAhzzvApDVOJ1y'
+                ]
+            },
+            domingo: {
+                manha: [
+                    '1h5Bp_TAszj9PG_B7r-2qUw2efS8A6B-N',
+                    '1D2XSgArpVOi6swSpWdlwFoGrkwcHO7IV'
+                ],
+                tarde: [
+                    '1EbeXymNAz0GpbhQaMT2S634HrA9LxDaz',
+                    '1ElLMkJouwXx1djBtht_x4WEmqEe2hcBi'
+                ],
+                noite: [
+                    '1vjrsZiby_QkOFTVUiebdZpqH5pOEpnqa',
+                    '1YXuiEGzQ2frYcATZXpJsTBuCJ5yseu93'
+                ]
+            },
+            segunda: {
+                manha: [
+                    '1dpfCbh7D0cwpLkWtygG6oOVAam5vlz9Y',
+                    '17toQRsXGmIjYUXc3ync-A4IrvVI7yAXx'
+                ],
+                tarde: ['1F0zPJ2dDYK6TsaxRP-n7aoEWhAuxfjC2'],
+                noite: [
+                    '1SJqdmgmy3hxyzNz5vJMDZzsFU4_HzxUO',
+                    '1SC635MusSvOJlUFCvdXrwdpVyVxuuQoZ'
+                ]
+            },
+            terca: {
+                manha: [
+                    '168xkyjHNFxdRqYRTs4GJ20MsI8mROr65',
+                    '1yxjgMxz1zO5pNLKIjMw05b9zzl66Ychv'
+                ],
+                tarde: ['1wXuA9rztw2axZAfIokgUC_S2jngjSWdR'],
+                noite: ['1PvuY8_pGwrL20b9G365UA_VjsMfT8wz1']
+            }
+        };
+
+        // Helper to extract folder ID from a Google Drive URL
+        function extractFolderId(input) {
+            const url = input.trim();
+            if (!url) return "";
+            const match = url.match(/[-\w]{25,}/);
+            return match ? match[0] : url;
+        }
+
+        // Helper to format ID as a full Google Drive link
+        function formatDriveLink(id) {
+            if (!id || id.length < 10) return id;
+            if (id.startsWith('http')) return id;
+            return `https://drive.google.com/drive/folders/${id}`;
+        }
+
+        // Login Logic
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+            if (password === "crj@2026") {
+                document.getElementById('loginOverlay').classList.add('hidden');
+                document.getElementById('mainContainer').classList.remove('hidden');
+                loadData();
+            } else {
+                const error = document.getElementById('loginError');
+                error.classList.remove('hidden');
+                setTimeout(() => error.classList.add('hidden'), 3000);
+            }
+        });
+
+        // Generate Form Inputs - one card per day with shift textareas
+        function generateInputs() {
+            const container = document.getElementById('dayCards');
+
+            DAYS.forEach(day => {
+                let html = `
+                    <div class="pixel-card p-6">
+                        <h2 class="font-pixel text-sm text-neon-orange mb-6 flex items-center gap-2">
+                            📅 ${DAY_LABELS[day]}
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                `;
+
+                SHIFTS.forEach(shift => {
+                    html += `
+                        <div class="space-y-2">
+                            <label class="text-[10px] text-gray-600 font-pixel">${shift.toUpperCase()}</label>
+                            <textarea id="links-${day}-${shift}" placeholder="Um link por linha" class="admin-input text-xs h-24"></textarea>
+                        </div>
+                    `;
+                });
+
+                html += `</div></div>`;
+                container.innerHTML += html;
+            });
+        }
+
+        async function loadData() {
+            try {
+                const doc = await db.collection('config').doc('links').get();
+                let data = doc.exists ? doc.data() : null;
+
+                DAYS.forEach(day => {
+                    SHIFTS.forEach(shift => {
+                        // Tentar carregar do Firestore (novo formato)
+                        let ids = (data && data.links && data.links[day] && data.links[day][shift]) || [];
+
+                        // Fallback: juntar folders antigos + extra_folders antigos
+                        if (ids.length === 0 && data) {
+                            const mainId = data.folders && data.folders[day];
+                            const extras = data.extra_folders && data.extra_folders[day] && data.extra_folders[day][shift];
+                            if (mainId || extras) {
+                                ids = [];
+                                if (extras) ids.push(...extras);
+                            }
+                        }
+
+                        // Fallback: padrão hardcoded
+                        if (ids.length === 0) {
+                            ids = (DEFAULT_LINKS[day] && DEFAULT_LINKS[day][shift]) || [];
+                        }
+
+                        const links = ids.map(id => formatDriveLink(id));
+                        document.getElementById(`links-${day}-${shift}`).value = links.join('\n');
+                    });
+                });
+            } catch (error) {
+                console.error("Error loading links:", error);
+            }
+        }
+
+        async function saveLinks() {
+            const saveBtn = document.getElementById('saveButton');
+            const status = document.getElementById('saveStatus');
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = "PROCESSANDO...";
+
+            const links = {};
+
+            DAYS.forEach(day => {
+                links[day] = {};
+                SHIFTS.forEach(shift => {
+                    const rawText = document.getElementById(`links-${day}-${shift}`).value;
+                    const lines = rawText.split(/[,\n]/);
+                    links[day][shift] = lines
+                        .map(line => extractFolderId(line))
+                        .filter(id => id !== "");
+                });
+            });
+
+            try {
+                await db.collection('config').doc('links').set({
+                    links,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                status.classList.remove('hidden');
+                loadData();
+                setTimeout(() => status.classList.add('hidden'), 3000);
+            } catch (error) {
+                console.error("Error saving links:", error);
+                alert("Erro ao salvar! Verifique o console.");
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = "SALVAR ALTERAÇÕES";
+            }
+        }
+
+        // Init
+        generateInputs();
+    </script>
+</body>
+
+</html>

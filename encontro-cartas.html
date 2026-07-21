@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Encontro: As 3 Primeiras Cartas — Guia do Líder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1b1b1b;
+    --ink-soft:#5a5147;
+    --laranja:#FF6600;
+    --brasa:#b3300a;
+    --ouro:#8a6d3b;
+    --linha:rgba(120,80,35,.30);
+    --bg-soft:#faf6f0;
+  }
+  *{ box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    font-family:"EB Garamond","Georgia",serif;
+    color:var(--ink);
+    background:#ffffff;
+    margin:0; padding:24px 16px 60px;
+    line-height:1.55; font-size:17px;
+  }
+
+  .folha{ max-width:820px; margin:0 auto; }
+
+  /* ---------- CABEÇALHO ---------- */
+  .selo-topo{
+    font-family:"Cinzel",serif; font-size:11px; letter-spacing:4px;
+    text-transform:uppercase; color:var(--brasa); font-weight:600;
+    text-align:center; margin-bottom:6px;
+  }
+  .ornamento{ text-align:center; color:var(--ouro); font-size:15px; letter-spacing:6px; margin:4px 0 2px; }
+  h1{
+    font-family:"Cinzel",serif; font-weight:700;
+    font-size:28px; line-height:1.14; text-align:center;
+    margin:0 0 4px; color:#111;
+  }
+  h1 .sub{
+    display:block; font-family:"EB Garamond",serif; font-style:italic; font-weight:500;
+    font-size:16px; letter-spacing:.3px; color:var(--ink-soft); margin-top:8px;
+  }
+
+  .destaque-topo{
+    background:linear-gradient(160deg,#161210,#241a12);
+    color:#f4e6cf; padding:16px 20px; border-radius:6px; margin:18px 0;
+    border-left:4px solid var(--laranja); font-size:15.5px; line-height:1.6;
+  }
+  .destaque-topo b{ color:var(--laranja); }
+
+  .intro-arco{ font-size:16px; color:#33291d; margin:14px 2px; }
+  .intro-arco b{ color:var(--brasa); }
+
+  /* ---------- TÍTULOS DE SEÇÃO ---------- */
+  h2{
+    font-family:"Cinzel",serif; font-weight:600; font-size:15px; letter-spacing:2px;
+    text-transform:uppercase; color:var(--brasa); text-align:center;
+    margin:34px 0 14px; position:relative;
+  }
+  h2::before, h2::after{
+    content:"✦"; color:var(--ouro); font-size:11px; vertical-align:middle; margin:0 14px;
+  }
+
+  /* ---------- TABELA DE TEMPO ---------- */
+  table.tempo{ border-collapse:collapse; width:100%; margin:10px 0; font-size:15px; }
+  table.tempo td{ border:1px solid var(--linha); padding:7px 12px; }
+  table.tempo td:first-child{ width:80px; text-align:center; font-family:"Cinzel",serif;
+    font-size:13px; color:var(--brasa); white-space:nowrap; background:var(--bg-soft); }
+  table.tempo tr td:last-child b{ color:#111; }
+
+  /* ---------- CARTÃO DE CARTA ---------- */
+  .carta{
+    border:1px solid var(--linha); border-radius:8px; margin:24px 0;
+    overflow:hidden; box-shadow:0 3px 12px rgba(0,0,0,.07);
+  }
+  .carta > header{
+    background:linear-gradient(135deg, var(--laranja), var(--brasa));
+    color:#fff; padding:14px 20px;
+  }
+  .carta > header .num{ font-family:"Cinzel",serif; font-size:12px; letter-spacing:3px;
+    text-transform:uppercase; opacity:.9; }
+  .carta > header .tit{ font-family:"Cinzel",serif; font-size:21px; font-weight:700; display:block; margin-top:2px; }
+  .carta .corpo{ padding:18px 22px; }
+
+  .bloco-titulo{
+    font-family:"Cinzel",serif; font-size:13px; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--brasa); margin:20px 0 8px; display:flex; align-items:center; gap:8px;
+  }
+  .bloco-titulo .ic{ font-size:16px; }
+  .carta .corpo > p:first-child .bloco-titulo{ margin-top:0; }
+
+  .resumo{ font-size:16px; color:#2c2419; }
+  .resumo b{ color:#111; }
+
+  .trechos{ font-size:14px; color:var(--ink-soft); font-style:italic;
+    border-left:3px solid var(--ouro); padding:4px 0 4px 12px; margin:10px 0; }
+
+  /* dinâmica */
+  .box{
+    background:var(--bg-soft); border:1px solid var(--linha); border-radius:6px;
+    padding:14px 16px; margin:10px 0; font-size:15.5px;
+  }
+  .box .seta{ color:var(--brasa); }
+
+  /* perguntas */
+  ol.perguntas{ margin:6px 0 6px; padding-left:22px; }
+  ol.perguntas li{ margin:7px 0; font-size:16px; }
+
+  /* repertório */
+  .versos{ list-style:none; padding:0; margin:6px 0; }
+  .versos li{ padding:8px 0 8px 14px; border-left:3px solid var(--laranja);
+    margin:8px 0; font-size:15.5px; background:linear-gradient(90deg, rgba(255,102,0,.05), transparent 70%); }
+  .versos b{ font-family:"Cinzel",serif; font-size:13px; letter-spacing:.5px; color:var(--brasa); }
+
+  /* frase âncora */
+  .ancora{
+    background:linear-gradient(160deg,#161210,#241a12);
+    color:#f4e6cf; padding:14px 18px; border-radius:6px; margin:16px 0 4px;
+    text-align:center; font-size:16px; font-style:italic; line-height:1.5;
+    border:1px solid var(--brasa);
+  }
+  .ancora b{ color:var(--laranja); font-style:normal; }
+
+  /* citação solta */
+  .cit{ text-align:center; font-style:italic; color:var(--ink-soft); font-size:15px; margin:10px 0; }
+
+  /* lista do contexto */
+  ul.quemequem{ list-style:none; padding:0; margin:8px 0; }
+  ul.quemequem li{ padding:6px 0 6px 14px; border-left:3px solid var(--ouro); margin:6px 0; font-size:16px; }
+  ul.quemequem b{ color:var(--brasa); }
+
+  /* oração final */
+  .oracao{ counter-reset:o; }
+  .oracao .item{ padding:8px 0 8px 14px; border-left:3px solid var(--laranja); margin:8px 0; font-size:16px; }
+  .oracao .item b{ color:var(--brasa); }
+
+  .rodape-nota{ font-size:15px; color:#33291d; background:var(--bg-soft);
+    border:1px solid var(--linha); border-radius:6px; padding:14px 16px; margin:18px 0; }
+  .rodape-nota b{ color:var(--brasa); }
+
+  .pergunta-abre{ font-size:16px; color:#2c2419; font-style:italic;
+    border-left:3px solid var(--laranja); padding:6px 0 6px 14px; margin:10px 0; }
+
+  /* botão imprimir */
+  .acoes{ text-align:center; margin:18px 0 4px; }
+  .btn-print{
+    font-family:"Cinzel",serif; font-size:12px; letter-spacing:2px; text-transform:uppercase;
+    background:var(--laranja); color:#fff; border:none; border-radius:30px;
+    padding:11px 26px; cursor:pointer; box-shadow:0 4px 12px rgba(255,102,0,.35);
+  }
+  .btn-print:hover{ background:var(--brasa); }
+
+  @media print{
+    @page{ size:A4; margin:12mm; }
+    body{ padding:0; font-size:12pt; }
+    .acoes{ display:none; }
+    .carta{ break-inside:avoid; box-shadow:none; }
+    .ancora,.destaque-topo,.carta>header{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
+</style>
+</head>
+<body>
+<div class="folha">
+
+  <div class="selo-topo">CRJ 2026 · Encontro de Jovens</div>
+  <div class="ornamento">✦ ⟡ ✦</div>
+  <h1>As 3 Primeiras Cartas
+    <span class="sub">Guia do líder · leitura coletiva &amp; bate-papo · ~1h30<br>“Cartas de um Diabo a Seu Aprendiz” — C. S. Lewis</span>
+  </h1>
+
+  <div class="destaque-topo">
+    <b>A grande sacada do livro:</b> quem narra é o demônio <b>Maldanado</b> (o “tio”) ensinando o sobrinho
+    <b>Vermelindo</b> a destruir a fé de um rapaz comum (chamado só de <i>“o paciente”</i>). Tudo é dito <b>ao contrário</b>
+    — quando o diabo comemora, é porque perdemos; quando se irrita, é porque estamos no caminho certo. E
+    <b>“o Inimigo”</b>, no livro inteiro, é <b>Deus</b>. Essa inversão é a mágica: a gente se vê retratado pelos
+    olhos de quem quer nos derrubar.
+  </div>
+
+  <p class="intro-arco">
+    <b>O arco das 3 cartas:</b> o ataque do inferno não é dramático. É <b>distração</b> (Carta 1),
+    <b>decepção com a igreja</b> (Carta 2) e <b>rancor dentro de casa</b> (Carta 3). Coisas pequenas.
+    O encontro inteiro caminha pra essa frase do livro: <i>“o caminho mais seguro para o Inferno é o gradual.”</i>
+  </p>
+
+  <h2>Linha do Tempo</h2>
+  <table class="tempo">
+    <tr><td>10 min</td><td><b>Acolhida</b> + quebra-gelo</td></tr>
+    <tr><td>7 min</td><td><b>Contexto</b>: quem é quem no livro</td></tr>
+    <tr><td>20 min</td><td><b>Carta 1</b> — a guerra pela sua atenção</td></tr>
+    <tr><td>20 min</td><td><b>Carta 2</b> — a igreja que decepciona</td></tr>
+    <tr><td>20 min</td><td><b>Carta 3</b> — o santo que falha em casa</td></tr>
+    <tr><td>13 min</td><td><b>Costura final</b> + oração</td></tr>
+  </table>
+
+  <div class="box">
+    <b>Dica de leitura:</b> o livro é uma carta sarcástica. Funciona muito melhor lido <b>em voz alta e com “veneno”</b>
+    — escolha um jovem com voz boa pra ser a “voz do Maldanado”. Lê-se um trecho, para, conversa. Não precisa ler a
+    carta inteira: marque os parágrafos-chave (indicados em cada bloco).
+  </div>
+
+  <!-- ACOLHIDA -->
+  <h2>🧊 Acolhida + Quebra-gelo · 10 min</h2>
+  <p><b>Dinâmica “O conselho do contra”:</b> em duplas, cada um dá ao outro um <b>“conselho do mal”</b> bem-humorado
+  pra sabotar algo banal (ex.: “como chegar atrasado em tudo”, “como brigar com o irmão por nada”). Depois, 2 ou 3 leem pro grupo.</p>
+  <p><span class="box" style="display:block"><b>Por que isso:</b> sem perceberem, eles já entram na chave do livro — <i>ensinar a fazer o
+  errado de propósito</i>. Você fecha: “Esse é exatamente o tom do livro. Só que o aluno é um demônio, e o alvo é um rapaz parecido com a gente.”</span></p>
+
+  <!-- CONTEXTO -->
+  <h2>📖 Contexto · 7 min</h2>
+  <ul class="quemequem">
+    <li><b>Maldanado</b> (o tio): demônio experiente, cínico, escreve as cartas. <i>(No original, Screwtape.)</i></li>
+    <li><b>Vermelindo</b> (o sobrinho): demônio iniciante, atrapalhado, que está “cuidando” do rapaz. <i>(Wormwood.)</i></li>
+    <li><b>O paciente</b>: um homem comum de Londres, em plena 2ª Guerra. É “paciente” como quem está sendo <i>tratado</i> — só que pra piorar.</li>
+    <li><b>O Inimigo</b>: é <b>Deus</b>. Para um demônio, Deus é o adversário. Toda vez que ler “o Inimigo”, troque por “Deus” na cabeça.</li>
+  </ul>
+  <p class="pergunta-abre">Pergunta de abertura: “Se um demônio fosse designado pra te derrubar, por onde ele começaria?
+  Pela dúvida grande sobre Deus… ou por outra coisa?” (deixe no ar — as cartas vão responder)</p>
+
+  <!-- CARTA 1 -->
+  <div class="carta">
+    <header><span class="num">Carta 1 · 20 min</span><span class="tit">A guerra é pela sua atenção</span></header>
+    <div class="corpo">
+      <div class="bloco-titulo"><span class="ic">🧭</span> Resumo pro líder</div>
+      <p class="resumo">Vermelindo tentou usar <b>argumentos e lógica</b> pra afastar o rapaz de Deus. Maldanado o repreende:
+      <i>isso é perigoso</i> — raciocinar de verdade pode <b>levar</b> a pessoa a Deus. A arma certa não é a discussão, é a
+      <b>distração</b>. Mantenha o sujeito preso ao que ele chama de <b>“vida real”</b>: o almoço, o barulho da rua, o
+      jornaleiro, a próxima coisa. Quando ele começou a pensar em algo profundo na biblioteca, bastou sussurrar
+      <i>“isso é importante demais pra resolver agora — hora do almoço”</i> e levá-lo de volta às sensações do dia a dia.
+      Pensamento profundo, encerrado.</p>
+      <p class="trechos">📌 Ler: o caso do homem na biblioteca que começa a pensar e é “salvo” pela fome e pelo barulho da rua (“vida real”).</p>
+
+      <div class="bloco-titulo"><span class="ic">🎲</span> Dinâmica — “2 minutos de silêncio”</div>
+      <div class="box">Peça que <b>todos guardem o celular</b> e fiquem <b>2 minutos em silêncio total</b>, tentando segurar uma única
+      pergunta na cabeça: <i>“O que Deus quer de mim hoje?”</i> Cronometre. Depois pergunte: “Quantos conseguiram ficar nessa
+      pergunta sem a mente fugir?”<br><span class="seta">→</span> Em seguida, cada um escreve as <b>3 coisas que mais roubam sua atenção de Deus</b> na semana. Partilham se quiserem.</div>
+
+      <div class="bloco-titulo"><span class="ic">💬</span> Bate-papo</div>
+      <ol class="perguntas">
+        <li>Por que o diabo tem <b>medo</b> de que a pessoa pense fundo, mas adora que ela viva no “piloto automático”?</li>
+        <li>Qual é a sua <b>“vida real”</b> — o que te puxa de volta toda vez que você tenta parar pra rezar ou refletir? (feed, joguinho, ansiedade, pressa…)</li>
+        <li>Distração é pecado? Ou é só… a coisa mais eficiente que existe pra te manter raso?</li>
+      </ol>
+
+      <div class="bloco-titulo"><span class="ic">📜</span> Repertório espiritual</div>
+      <ul class="versos">
+        <li><b>Salmo 46:10</b> — “Aquietai-vos e sabei que eu sou Deus.” A primeira ordem é <b>parar</b>.</li>
+        <li><b>1 Reis 19:11-13</b> — Deus não estava no vento, no terremoto nem no fogo, mas numa <b>brisa suave</b>. Só ouve quem aquieta.</li>
+        <li><b>Lucas 10:38-42</b> — Marta, “ansiosa com muitas coisas”; Maria escolheu “a melhor parte”. O diabo não precisa te fazer ateu — basta te deixar <b>ocupado demais</b>.</li>
+        <li><b>Romanos 12:2</b> — “transformai-vos pela renovação da vossa mente.” A fé exige uma mente acordada, não anestesiada.</li>
+      </ul>
+
+      <div class="ancora">🎯 <b>Frase-âncora:</b> “O inferno não precisa que você negue Deus. Só precisa que você nunca tenha tempo de pensar nele.”</div>
+    </div>
+  </div>
+
+  <!-- CARTA 2 -->
+  <div class="carta">
+    <header><span class="num">Carta 2 · 20 min</span><span class="tit">A igreja que decepciona</span></header>
+    <div class="corpo">
+      <div class="bloco-titulo"><span class="ic">🧭</span> Resumo pro líder</div>
+      <p class="resumo">O rapaz <b>se converteu</b> (Maldanado fica furioso — bom sinal!). Como não dá pra impedir, a estratégia
+      vira <b>explorar a decepção</b>. Maldanado manda focar a atenção do rapaz na <b>distância entre a Igreja gloriosa</b>
+      (que ele imaginava) <b>e a congregação real</b>: o prédio meio acabado, o vizinho de banco com a roupa esquisita e o
+      sapato que range, o sujeito que ele <i>suspeita</i> ser hipócrita. Transforme-o num <b>crítico</b>, um “connoisseur” de cultos.
+      E o segredo: <b>não deixe ele perceber</b> que aquele vizinho ridículo pode ser, aos olhos de Deus, um santo muito mais avançado que ele.</p>
+      <p class="trechos">📌 Ler: a descrição dos fiéis “esquisitos” no banco ao lado e a ideia de que a Igreja real sempre parece menor do que a Igreja que se imaginava.</p>
+
+      <div class="bloco-titulo"><span class="ic">🎲</span> Dinâmica — “A crítica anônima”</div>
+      <div class="box">Distribua papeizinhos. Cada um escreve <b>uma decepção real que já teve com a igreja/comunidade</b> (sem nomes, sem fofoca).
+      Recolha, embaralhe e leia algumas em voz alta. Pergunte: “Quantas dessas o Maldanado usaria contra a gente agora mesmo?”<br>
+      <span class="seta">→</span> Vira o jogo: “E se alguém escrevesse um papelzinho sobre as <b>minhas</b> esquisitices na igreja — o que estaria escrito?”</div>
+
+      <div class="bloco-titulo"><span class="ic">💬</span> Bate-papo</div>
+      <ol class="perguntas">
+        <li>Qual foi a sua maior <b>decepção com a igreja</b> ou com alguém da fé? O que ela fez com a sua vontade de estar ali?</li>
+        <li>A frase “a igreja é cheia de hipócritas” — é mentira, ou é verdade usada como <b>desculpa</b>?</li>
+        <li>O diabo quer você <b>sozinho</b>. Por que a comunidade, mesmo bagunçada, é uma ameaça pra ele?</li>
+      </ol>
+
+      <div class="bloco-titulo"><span class="ic">📜</span> Repertório espiritual</div>
+      <ul class="versos">
+        <li><b>Mateus 13:24-30</b> (joio e trigo) — crescem <b>juntos</b> até a colheita. Arrancar não é tarefa nossa.</li>
+        <li><b>1 Coríntios 12:12-27</b> — somos um <b>corpo</b>; o membro “esquisito” também é membro. Você não escolhe só as partes bonitas.</li>
+        <li><b>Hebreus 10:24-25</b> — “não deixemos de congregar.” Exatamente o que o inimigo mais quer que você largue.</li>
+        <li><b>Romanos 14:4</b> — “Quem és tu que julgas o servo alheio?”</li>
+      </ul>
+      <p class="cit">“Se você encontrar a igreja perfeita, não entre — você vai estragá-la.” <span style="opacity:.7">(atribuída a Spurgeon)</span></p>
+
+      <div class="ancora">🎯 <b>Frase-âncora:</b> “A igreja te decepciona porque é real. E é por ser real que ela te salva — sozinho você só tem razão.”</div>
+    </div>
+  </div>
+
+  <!-- CARTA 3 -->
+  <div class="carta">
+    <header><span class="num">Carta 3 · 20 min</span><span class="tit">O santo que falha em casa</span></header>
+    <div class="corpo">
+      <div class="bloco-titulo"><span class="ic">🧭</span> Resumo pro líder</div>
+      <p class="resumo">Agora o alvo é a <b>relação do rapaz com a mãe</b>, com quem ele mora. Maldanado ensina três truques geniais:</p>
+      <ol class="perguntas">
+        <li><b>Orações “espirituais” demais:</b> que ele reze pela <i>alma</i> da mãe enquanto ignora a mulher real do café da manhã — orações vagas que <b>nunca viram gentileza</b> no dia a dia.</li>
+        <li><b>O duplo padrão:</b> julgar a mãe pelo que ela <b>diz</b> (no pior sentido possível) e a si mesmo pelas <b>boas intenções</b>. Ele acha que está “só sendo razoável”; é o <b>tom de voz</b> dela que é insuportável.</li>
+        <li><b>As implicâncias domésticas:</b> o jeito de ler o jornal, a xícara de chá, a frase repetida. Pequenas farpas que viram mágoa acumulada — e os dois se sentindo a vítima.</li>
+      </ol>
+      <p class="resumo"><b>O ponto de Lewis:</b> a santidade é testada <b>na mesa do café</b>, não nos gestos grandiosos. Dá pra ser super “espiritual” no domingo e um <b>tirano em casa</b> na segunda.</p>
+      <p class="trechos">📌 Ler: o “duplo retrato” (ele ouve a mãe sempre na pior interpretação) e as orações espirituais que não tocam a convivência.</p>
+
+      <div class="bloco-titulo"><span class="ic">🎲</span> Dinâmica — “O tom carrega o veneno”</div>
+      <div class="box">Escreva uma frase neutra num papel: <b>“Você de novo?”</b> ou <b>“Tá bom, faz como você quiser.”</b> Peça pra duas
+      pessoas lerem: uma em tom <b>carinhoso</b>, outra em tom <b>ríspido/irônico</b>. Mesma frase, sentido oposto. Conclua: “O
+      Maldanado não muda suas palavras — ele tempera o seu tom.”<br>
+      <span class="seta">→</span> <b>Desafio pra fazer ali:</b> cada um pensa no último desentendimento com pai/mãe/irmão e reconta a cena
+      <b>pelos olhos do outro</b>. (Se houver abertura: mandar agora uma mensagem de carinho ou um “desculpa” pra alguém de casa.)</div>
+
+      <div class="bloco-titulo"><span class="ic">💬</span> Bate-papo</div>
+      <ol class="perguntas">
+        <li>É mais fácil ser paciente com <b>estranhos/amigos</b> do que com a <b>própria família</b>. Por quê?</li>
+        <li>Onde está o seu <b>duplo padrão</b> — você cobra dos outros o que se perdoa?</li>
+        <li>Se a sua fé fosse medida <b>só pelo jeito que você trata sua mãe/seu pai</b>, que nota ela teria?</li>
+      </ol>
+
+      <div class="bloco-titulo"><span class="ic">📜</span> Repertório espiritual</div>
+      <ul class="versos">
+        <li><b>1 João 4:20</b> — “Quem não ama o irmão a quem vê, como amará a Deus a quem não vê?” — o versículo-resumo da carta.</li>
+        <li><b>Mateus 7:3-5</b> — o <b>cisco</b> no olho do outro e a <b>trave</b> no seu.</li>
+        <li><b>Tiago 1:26</b> — “se alguém não refreia a língua… a sua religião é vã.”</li>
+        <li><b>Colossenses 3:12-14</b> — “revesti-vos de compaixão, mansidão, paciência, suportando uns aos outros.”</li>
+        <li><b>Êxodo 20:12 / Efésios 6:1-3</b> — honrar pai e mãe (a única ordem dos Dez Mandamentos com uma <b>promessa</b> junto).</li>
+      </ul>
+
+      <div class="ancora">🎯 <b>Frase-âncora:</b> “Você não vira santo na adoração de domingo. Você vira santo (ou não) no café da manhã de segunda.”</div>
+    </div>
+  </div>
+
+  <!-- COSTURA FINAL -->
+  <h2>🙏 Costura Final + Oração · 13 min</h2>
+  <p class="resumo"><b>Junte os fios.</b> Pergunte: “Vocês esperavam que o ataque do diabo fosse mais… assustador?” Mostre o padrão:</p>
+  <ul class="quemequem">
+    <li>Carta 1 → te quer <b>distraído</b></li>
+    <li>Carta 2 → te quer <b>decepcionado e sozinho</b></li>
+    <li>Carta 3 → te quer <b>ressentido com quem está mais perto</b></li>
+  </ul>
+  <p class="resumo">Nenhum ataque foi sobre dúvida teológica. Foi tudo <b>pequeno e cotidiano</b>. Leia em voz alta:
+  <i>“o caminho mais seguro para o Inferno é o gradual — o declive suave, sob os pés, sem curvas bruscas, sem marcos, sem placas.”</i></p>
+  <p class="resumo"><b>O virar de chave:</b> o “Inimigo” é Deus — e Ele luta pelo lado contrário ao do Maldanado. Deus <b>se importa</b>
+  com a sua atenção, com a sua comunidade e com o seu café da manhã. Ele está nas coisas pequenas que o diabo tentou usar contra você.</p>
+
+  <div class="bloco-titulo"><span class="ic">🤝</span> Oração final em trios — cada trio reza por uma frente</div>
+  <div class="oracao">
+    <div class="item"><b>1. Atenção:</b> “Senhor, me ensina a parar e te ouvir na brisa suave.”</div>
+    <div class="item"><b>2. Comunidade:</b> “Cura a minha decepção; me dá olhos pra enxergar santos onde só vejo defeitos.”</div>
+    <div class="item"><b>3. Casa:</b> “Que minha fé chegue até a minha família — no meu tom de voz, hoje.”</div>
+  </div>
+  <p class="resumo">Feche com um <b>minuto de silêncio</b> (amarrando com a Carta 1) — desta vez, sem fugir da presença de Deus.</p>
+
+  <div class="rodape-nota">
+    <b>Material de apoio do projeto:</b> entregue o <b>enigma das cartas</b> no início e deixe os jovens preenchendo conforme
+    leem o livro nas semanas seguintes — as Cartas 1, 2 e 3 já têm pistas lá (argumento, igreja, rancor).<br>
+    <b>Nomes desta edição:</b> tio = <b>Maldanado</b> · sobrinho = <b>Vermelindo</b>.
+  </div>
+
+  <div class="acoes">
+    <button class="btn-print" onclick="window.print()">Imprimir / Salvar PDF</button>
+  </div>
+
+</div>
+</body>
+</html>

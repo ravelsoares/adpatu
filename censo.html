@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMADCAMP - Home</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <link rel="stylesheet" href="/styles/censo.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="top-banner">
+        <div class="logo">
+            <img src="/images/logo.png" alt="Logo">
+            <h1>UMADCAMP</h1>
+            <h3 class="subtitle">União de Mocidade AD/Campo de Patu</h3>
+        </div>
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalMembros">0</div>
+                <div class="stat-label">Total de Membros</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="idadeMedia">0</div>
+                <div class="stat-label">Idade Média</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="maisJovem">-</div>
+                <div class="stat-label">Mais Jovem</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="maisVelho">-</div>
+                <div class="stat-label">Mais Velho</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção da tabela -->
+    <div class="members-section">
+        <h2>Membros Cadastrados</h2>
+        <div class="filters-container">
+            <input type="text" id="searchInput" class="search-box" placeholder="Pesquisar por nome...">
+            <select id="cityFilter" class="search-box">
+                <option value="">Todas as cidades</option>
+            </select>
+            <select id="roleFilter" class="search-box">
+                <option value="">Todos os cargos</option>
+                <option value="Líder">Líder</option>
+                <option value="Vice-líder">Vice-líder</option>
+                <option value="sem_cargo">Sem Cargo</option>
+            </select>
+            <button class="btn-clean" onclick="limparFiltros()">🔄 Limpar Filtros</button>
+        </div>
+        <table class="members-table">
+            <thead>
+                <tr>
+                    <th data-sort="numero">Nº<span class="sort-indicator"></span></th>
+                    <th data-sort="nome">Nome<span class="sort-indicator"></span></th>
+                    <th data-sort="dataNascimento">Data Nascimento<span class="sort-indicator"></span></th>
+                    <th>Idade</th>
+                    <th data-sort="cidade">Cidade<span class="sort-indicator"></span></th>
+                </tr>
+            </thead>
+            <tbody id="membersTableBody">
+                <tr class="no-members">
+                    <td colspan="5">Carregando membros...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+            authDomain: "umadcamp-patu.firebaseapp.com",
+            projectId: "umadcamp-patu",
+            storageBucket: "umadcamp-patu.firebasestorage.app",
+            messagingSenderId: "1043102355965",
+            appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+            measurementId: "G-S6N9R4F8Z8"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let membros = [];
+        let isLoading = false;
+        let sortState = { column: 'numero', direction: 'asc' };
+
+        // Funções de utilidade
+        function showLoading(show = true) {
+            const existingOverlay = document.getElementById('loadingOverlay');
+            if (existingOverlay) {
+                existingOverlay.remove();
+            }
+
+            if (show) {
+                const overlay = document.createElement('div');
+                overlay.className = 'loading-overlay';
+                overlay.id = 'loadingOverlay';
+                overlay.innerHTML = `
+                    <div class="loading-content">
+                        <div class="loading"></div>
+                        <p style="margin-top: 15px; color: #333;">Carregando...</p>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+            }
+        }
+
+        function calcularIdade(dataNascimento) {
+            const hoje = new Date();
+            const nascimento = parseDateLocal(dataNascimento);
+            let idade = hoje.getFullYear() - nascimento.getFullYear();
+            const mes = hoje.getMonth() - nascimento.getMonth();
+
+            if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+                idade--;
+            }
+
+            return idade;
+        }
+
+        function parseDateLocal(dateStr) {
+            if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                const [y, m, d] = dateStr.split('-').map(Number);
+                return new Date(y, m - 1, d);
+            }
+            return new Date(dateStr);
+        }
+
+        function formatarData(data) {
+            const dt = parseDateLocal(data);
+            return dt.toLocaleDateString('pt-BR');
+        }
+
+        function criarCargoTag(cargo) {
+            if (!cargo) return '';
+
+            const cargoClass = cargo.toLowerCase() === 'líder' ? 'role-tag-lider' : 'role-tag-vice-lider';
+            return `<span class="role-tag ${cargoClass}">${cargo}</span>`;
+        }
+
+        function atualizarTabela(membrosParaExibir = membros) {
+            const tbody = document.getElementById('membersTableBody');
+
+            if (membrosParaExibir.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">Nenhum membro encontrado</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = membrosParaExibir.map(membro => `
+                <tr>
+                    <td>${membro.numero}</td>
+                    <td>${membro.nome}${criarCargoTag(membro.cargo)}</td>
+                    <td>${formatarData(membro.dataNascimento)}</td>
+                    <td>${membro.idade}</td>
+                    <td>${membro.cidade}</td>
+                </tr>
+            `).join('');
+        }
+
+        function atualizarEstatisticas(membrosParaCalcular = membros) {
+            const total = membrosParaCalcular.length;
+            document.getElementById('totalMembros').textContent = total;
+
+            if (total > 0) {
+                const idades = membrosParaCalcular.map(m => m.idade);
+                const idadeMedia = Math.round(idades.reduce((a, b) => a + b, 0) / total);
+                const maisJovem = Math.min(...idades);
+                const maisVelho = Math.max(...idades);
+
+                document.getElementById('idadeMedia').textContent = idadeMedia;
+                document.getElementById('maisJovem').textContent = maisJovem;
+                document.getElementById('maisVelho').textContent = maisVelho;
+            } else {
+                document.getElementById('idadeMedia').textContent = '0';
+                document.getElementById('maisJovem').textContent = '-';
+                document.getElementById('maisVelho').textContent = '-';
+            }
+        }
+
+        function atualizarFiltroCidades() {
+            const cityFilter = document.getElementById('cityFilter');
+            const cidades = [...new Set(membros.map(membro => membro.cidade))].sort();
+
+            // Manter a opção "Todas as cidades" e limpar as outras
+            cityFilter.innerHTML = '<option value="">Todas as cidades</option>';
+
+            cidades.forEach(cidade => {
+                const option = document.createElement('option');
+                option.value = cidade;
+                option.textContent = cidade;
+                cityFilter.appendChild(option);
+            });
+        }
+
+        function pesquisarMembros() {
+            const termoLower = document.getElementById('searchInput').value.toLowerCase();
+            const cidadeSelecionada = document.getElementById('cityFilter').value;
+            const cargoSelecionado = document.getElementById('roleFilter').value;
+
+            let resultados = membros.filter(membro =>
+                membro.nome.toLowerCase().includes(termoLower)
+            );
+
+            if (cidadeSelecionada) {
+                resultados = resultados.filter(membro =>
+                    membro.cidade === cidadeSelecionada
+                );
+            }
+
+            if (cargoSelecionado) {
+                if (cargoSelecionado === 'sem_cargo') {
+                    resultados = resultados.filter(membro => !membro.cargo);
+                } else {
+                    resultados = resultados.filter(membro => membro.cargo === cargoSelecionado);
+                }
+            }
+
+            atualizarTabela(resultados);
+            atualizarEstatisticas(resultados);
+        }
+
+        function aplicarFiltros() {
+            pesquisarMembros();
+        }
+
+        function limparFiltros() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('cityFilter').value = '';
+            document.getElementById('roleFilter').value = '';
+            atualizarTabela();
+            atualizarEstatisticas();
+        }
+
+        function sortMembros() {
+            const { column, direction } = sortState;
+            const modifier = direction === 'asc' ? 1 : -1;
+
+            membros.sort((a, b) => {
+                const valA = a[column];
+                const valB = b[column];
+
+                if (column === 'nome' || column === 'cidade') {
+                    return (valA || '').localeCompare(valB || '', 'pt-BR', { sensitivity: 'base' }) * modifier;
+                }
+
+                if (column === 'dataNascimento') {
+                    const dateA = parseDateLocal(valA);
+                    const dateB = parseDateLocal(valB);
+                    if (dateA > dateB) return 1 * modifier;
+                    if (dateA < dateB) return -1 * modifier;
+                    return 0;
+                }
+
+                if (column === 'numero') {
+                    return (valA - valB) * modifier;
+                }
+
+                return 0;
+            });
+        }
+
+        function handleSort(column) {
+            if (isLoading) return;
+
+            if (sortState.column === column) {
+                sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortState.column = column;
+                sortState.direction = 'asc';
+            }
+
+            sortMembros();
+            pesquisarMembros(); // Re-render with filters
+            updateSortIndicators();
+        }
+
+        function updateSortIndicators() {
+            document.querySelectorAll('.members-table th[data-sort]').forEach(th => {
+                th.classList.remove('sorted-asc', 'sorted-desc');
+                if (th.dataset.sort === sortState.column) {
+                    th.classList.add(sortState.direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
+                }
+            });
+        }
+
+        async function carregarMembros() {
+            if (isLoading) return;
+
+            isLoading = true;
+            showLoading(true);
+
+            try {
+                const snapshot = await db.collection('membros').orderBy('numero', 'asc').get();
+
+                membros = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    membros.push({
+                        id: doc.id,
+                        ...data,
+                        idade: calcularIdade(data.dataNascimento)
+                    });
+                });
+
+                // Atualizar interface
+                atualizarTabela();
+                atualizarEstatisticas();
+                updateSortIndicators();
+                atualizarFiltroCidades();
+
+            } catch (error) {
+                console.error('Erro ao carregar membros:', error);
+                const tbody = document.getElementById('membersTableBody');
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #ff6b6b;">Erro ao carregar dados. Tente novamente.</td></tr>';
+                alert('Erro ao carregar dados. Verifique sua conexão e tente recarregar a página.');
+            } finally {
+                isLoading = false;
+                showLoading(false);
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function () {
+            carregarMembros();
+
+            document.getElementById('searchInput').addEventListener('input', function () {
+                pesquisarMembros();
+            });
+
+            document.getElementById('cityFilter').addEventListener('change', function () {
+                aplicarFiltros();
+            });
+
+            document.getElementById('roleFilter').addEventListener('change', function () {
+                aplicarFiltros();
+            });
+
+            document.querySelector('.members-table thead').addEventListener('click', (event) => {
+                const header = event.target.closest('th[data-sort]');
+                if (!header) return;
+
+                const column = header.dataset.sort;
+                handleSort(column);
+            });
+        });
+    </script>
+</body>
+
+</html>

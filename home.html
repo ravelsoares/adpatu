@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMADCAMP - Home</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "DM Sans", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            background: url(/images/backgroud-home.png) no-repeat center center;
+            background-size: cover;
+            /* fundo sólido no lugar da imagem */
+            color: white;
+            text-align: center;
+
+
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            margin: 0;
+            /* font-size: 50px; */
+        }
+
+        h1 {
+            font-size: 50px;
+            margin: 10px 0;
+            max-width: 600px;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: normal;
+            margin: 5px 0 30px;
+        }
+
+        p.versiculo {
+            font-size: 1rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .menu a {
+            display: block;
+            padding: 12px;
+            border: 1px solid white;
+            border-radius: 5px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .menu a:hover {
+            background-color: white;
+            color: #1a1a1a;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 35px;
+            }
+
+            .container {
+                max-width: 90%;
+                padding: 15px;
+            }
+
+            .menu {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 28px;
+            }
+
+            .logo img {
+                height: 120px !important;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="container">
+        <!-- Logo (pode substituir por uma imagem depois) -->
+        <div class="logo"><img src="/images/logo.png" height="170px"></div>
+
+        <h1>União de Mocidade AD<br>Campo de Patu</h1>
+        <p class="versiculo">UNIDOS COM UM PROPÓSITO<br>Atos 4.32</p>
+
+        <div class="menu">
+            <a href="/umadcamp/agenda">Agenda/Eventos do Campo</a>
+            <a href="/umadcamp/tapago">🔥 Desafio TÁ PAGO</a>
+            <a href="/umadcamp/desafio">📖 Desafio 1 Coríntios (16 dias)</a>
+            <a href="/umadcamp/album">📖 Álbum de Efésios</a>
+            <a href="/umadcamp/fotos-crj">Fotos do CRJ 2026</a>
+            <a href="/umadcamp/projetos">Projetos</a>
+            <!-- <a href="censo.html">Membros Cadastrados</a> -->
+            <a href="/umadcamp/estatisticas">Estatísticas e Gráficos</a>
+            <a href="/umadcamp/doacoes">Faça uma Doação</a>
+            <!-- <a href="#">Notícias e anúncios</a> -->
+        </div>
+
+        <div class="footer">
+            <p>📷 Siga <a href="https://instagram.com/umadcamp_" target="_blank">@umadcamp_</a></p>
+        </div>
+    </div>
+</body>
+
+</html>

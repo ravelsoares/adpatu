@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Central do Amor · Estatísticas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rosa:#FF4D6D; --rosa-vibr:#FF1F57; --rosa-claro:#FFC2D1; --vinho:#6A040F;
+  --cereja:#C9184A; --creme:#FFF0F3; --texto:#3A0A12; --linha:#f3d6de;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',system-ui,sans-serif;color:var(--texto);background:#fff6f8;padding:18px;max-width:1000px;margin:0 auto}
+h1,h2{font-family:'Playfair Display',serif}
+a{color:var(--cereja)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.top h1{font-size:1.7rem;color:var(--vinho)}
+.top .sub{font-size:.8rem;color:#9a5b69;letter-spacing:.08em;text-transform:uppercase}
+.btn{background:linear-gradient(135deg,var(--rosa-vibr),var(--cereja));color:#fff;font-weight:600;border:none;
+  padding:10px 16px;border-radius:24px;cursor:pointer;font-size:.88rem}
+.btn.ghost{background:#fff;color:var(--cereja);border:2px solid var(--rosa-claro)}
+.btn:active{transform:scale(.97)}
+.userbar{display:flex;align-items:center;gap:8px;font-size:.82rem;color:#7a3a48}
+.userbar img{width:30px;height:30px;border-radius:50%}
+
+.center{max-width:420px;margin:60px auto;text-align:center;background:#fff;border-radius:18px;padding:34px 24px;box-shadow:0 12px 30px rgba(106,4,15,.12)}
+.center .h{font-size:3rem}
+.center h2{color:var(--vinho);margin:8px 0}
+.center p{color:#7a3a48;font-size:.92rem;margin-bottom:18px;line-height:1.5}
+.center code{background:var(--creme);padding:2px 7px;border-radius:6px;font-size:.85rem}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:22px}
+.kpi{background:#fff;border-radius:16px;padding:16px;box-shadow:0 6px 16px rgba(106,4,15,.08);border-left:4px solid var(--rosa)}
+.kpi b{display:block;font-family:'Playfair Display',serif;font-size:2rem;color:var(--cereja);line-height:1}
+.kpi span{font-size:.74rem;color:#8a3a48;text-transform:uppercase;letter-spacing:.06em}
+
+.card{background:#fff;border-radius:18px;padding:20px;box-shadow:0 6px 16px rgba(106,4,15,.08);margin-bottom:18px}
+.card > h2{font-size:1.15rem;color:var(--vinho);margin-bottom:4px}
+.card .hint{font-size:.78rem;color:#a86;margin-bottom:14px}
+.q{margin:18px 0 6px;font-weight:600;color:var(--vinho);font-size:.95rem}
+.q .tot{font-weight:400;color:#a86;font-size:.8rem}
+
+.bar{display:flex;align-items:center;gap:10px;margin:6px 0}
+.bar .lbl{flex:0 0 42%;font-size:.85rem;color:#41121b}
+.bar .track{flex:1;background:var(--creme);border-radius:20px;height:22px;overflow:hidden;position:relative}
+.bar .fill{height:100%;background:linear-gradient(90deg,var(--rosa),var(--cereja));border-radius:20px;min-width:2px;transition:width .5s}
+.bar .val{flex:0 0 64px;text-align:right;font-size:.82rem;color:#7a3a48;font-variant-numeric:tabular-nums}
+
+.txtlist{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.txtlist .item{background:var(--creme);border-radius:12px;padding:10px 12px;font-size:.9rem;font-style:italic;color:#41121b}
+.txtlist .item b{font-style:normal;color:var(--cereja);font-size:.74rem;display:block;margin-bottom:2px}
+.muted{color:#a86;font-size:.85rem;font-style:italic}
+
+.rank{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--linha)}
+.rank:last-child{border-bottom:none}
+.rank .pos{flex:none;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-weight:700;background:var(--creme);color:var(--cereja);font-family:'Playfair Display',serif}
+.rank .t{flex:1;font-style:italic;font-size:.92rem}
+.rank .t small{display:block;font-style:normal;color:#a86;font-size:.72rem}
+.rank .lk{flex:none;font-weight:700;color:var(--cereja);font-size:.9rem}
+.tabsplit{display:grid;grid-template-columns:1fr;gap:18px}
+@media(min-width:760px){.tabsplit{grid-template-columns:1fr 1fr}}
+.subt{font-size:1rem;color:var(--cereja);font-weight:600;margin-bottom:8px;border-bottom:2px solid var(--rosa-claro);padding-bottom:6px}
+</style>
+</head>
+<body>
+
+<div id="app" style="display:none">
+  <div class="top">
+    <div>
+      <div class="sub">UMADCAMP · Central do Amor</div>
+      <h1>📊 Estatísticas das respostas</h1>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="userbar"><img id="me-photo" src=""><span id="me-name"></span></div>
+      <button class="btn ghost" onclick="exportarCSV()">⬇️ CSV</button>
+      <button class="btn ghost" onclick="carregar()">↻ Atualizar</button>
+      <button class="btn ghost" onclick="auth.signOut()">Sair</button>
+    </div>
+  </div>
+  <div id="content"></div>
+</div>
+
+<div id="login" class="center" style="display:none">
+  <div class="h">📊💘</div>
+  <h2>Estatísticas da Central do Amor</h2>
+  <p>Área restrita. Entre com uma conta autorizada para ver os resultados.</p>
+  <button class="btn" onclick="entrar()">Entrar com Google</button>
+</div>
+
+<div id="denied" class="center" style="display:none">
+  <div class="h">🔒</div>
+  <h2>Sem permissão</h2>
+  <p>A conta <code id="denied-email"></code> não está autorizada.<br>
+     Adicione esse e-mail em <code>ADMIN_EMAILS</code> no topo do arquivo <code>admin-central-amor.html</code>.</p>
+  <button class="btn ghost" onclick="auth.signOut()">Trocar de conta</button>
+</div>
+
+<div id="loading" class="center"><div class="h">⏳</div><h2>Carregando…</h2></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script>
+// ============================================================
+//  CONFIG — quem pode ver as estatísticas
+// ============================================================
+const ADMIN_EMAILS = [
+  'ravelsoares64@gmail.com',
+  'miriaqueziaoli@gmail.com',
+  'jonnasazevedo201819@gmail.com',
+  // adicione aqui outros e-mails autorizados…
+  // '*'  // <- descomente para liberar a QUALQUER pessoa logada
+];
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+  authDomain: "umadcamp-patu.firebaseapp.com",
+  projectId: "umadcamp-patu",
+  storageBucket: "umadcamp-patu.firebasestorage.app",
+  messagingSenderId: "1043102355965",
+  appId: "1:1043102355965:web:734bcffb30d37a7d2b8994"
+};
+
+const USERS = 'central-amor-usuarios';
+const CANTADAS = 'central-amor-cantadas';
+
+// Rótulos do questionário principal (mesma ordem do site)
+const QUESTIONS = [
+  { q:'Como você chega na Central do Amor?', a:['Solteiro(a)','Namorando','Noivo(a)','Casado(a) · líder de jovens'] },
+  { q:'O que mais te conquista numa pessoa?', a:['Um sorriso sincero','O jeito de conversar','A fé e o caráter','O senso de humor'] },
+  { q:'Qual seria o date dos seus sonhos?', a:['Pôr do sol num lugar bonito','Cinema e pipoca','Um café e boa conversa','Culto + lanche depois'] },
+  { q:'Sua linguagem do amor é…', a:['Palavras de afirmação','Tempo de qualidade','Toque / abraço','Presentes'] },
+  { q:'O que você procura de verdade?', a:['Algo sério','Companheirismo','Alguém que me entenda','Paz no coração'] },
+  { q:'Pra você, o amor de verdade é…', a:['Paciência','Entrega','Uma escolha diária','Sacrifício'] },
+  { q:'O que te faz se sentir amado(a)?', a:['Ser ouvido(a)','Ser cuidado(a)','Ser escolhido(a)','Ser aceito(a) como sou'] },
+  { q:'Qualidade inegociável no seu par?', a:['Honestidade','Fidelidade','Bondade','Fé em Deus'] },
+  { q:'Como está o seu coração hoje?', a:['Esperançoso(a)','Sonhador(a)','Meio carente','Cansado(a) de procurar'] },
+];
+
+// Perguntas de texto aberto (listadas, não viram gráfico)
+const TEXT_QS = new Set([
+  'O que você busca encontrar em outra pessoa?',
+  'Se pudesse pedir a Deus uma coisa sobre o seu futuro afetivo, o que seria?',
+  'O que você mais valoriza nessa pessoa hoje?',
+]);
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+let usuarios = [], cantadas = [];
+
+function showOnly(id){ ['app','login','denied','loading'].forEach(s=>document.getElementById(s).style.display = (s===id)?(s==='app'?'block':'block'):'none'); }
+
+function entrar(){
+  const p = new firebase.auth.GoogleAuthProvider();
+  p.setCustomParameters({prompt:'select_account'});
+  auth.signInWithPopup(p).catch(e=>{ if(e.code && e.code.includes('popup')) auth.signInWithRedirect(p); });
+}
+function isAdmin(email){ return ADMIN_EMAILS.includes('*') || ADMIN_EMAILS.includes((email||'').toLowerCase()); }
+
+auth.onAuthStateChanged(u=>{
+  if(!u){ showOnly('login'); return; }
+  if(!isAdmin(u.email)){ document.getElementById('denied-email').textContent = u.email; showOnly('denied'); return; }
+  document.getElementById('me-photo').src = u.photoURL||'';
+  document.getElementById('me-name').textContent = (u.displayName||u.email);
+  carregar();
+});
+
+async function carregar(){
+  showOnly('loading');
+  try{
+    const [us, ca] = await Promise.all([
+      db.collection(USERS).get(),
+      db.collection(CANTADAS).get()
+    ]);
+    usuarios = us.docs.map(d=>({id:d.id, ...d.data()}));
+    cantadas = ca.docs.map(d=>({id:d.id, ...d.data()}));
+    render();
+    showOnly('app');
+  }catch(e){
+    console.error(e);
+    document.getElementById('loading').innerHTML = '<div class="h">⚠️</div><h2>Erro ao carregar</h2><p>'+escapeHtml(e.message||'')+'</p>';
+  }
+}
+
+// ============================================================
+//  RENDER
+// ============================================================
+function render(){
+  const fezQuiz = usuarios.filter(u=>u.quizDone);
+  const fezDet  = usuarios.filter(u=>u.detalhadoFeito);
+  const likes   = cantadas.reduce((s,c)=>s+(c.likes||0),0);
+  const revel   = usuarios.filter(u=>u.revealed).length;
+
+  let h = `<div class="kpis">
+    ${kpi(usuarios.length,'Entraram (login)')}
+    ${kpi(fezQuiz.length,'Fizeram o quiz')}
+    ${kpi(fezDet.length,'Quiz detalhado')}
+    ${kpi(cantadas.length,'Cantadas')}
+    ${kpi(likes,'Curtidas')}
+    ${kpi(revel,'Descobriram o par')}
+  </div>`;
+
+  // Questionário principal
+  h += `<div class="card"><h2>💞 Questionário do amor</h2><div class="hint">Respostas de ${fezQuiz.length} ${fezQuiz.length===1?'pessoa':'pessoas'}.</div>`;
+  QUESTIONS.forEach((qq,qi)=>{
+    const counts = {};
+    fezQuiz.forEach(u=>{ const a=(u.quizAnswers||[])[qi]; if(a) counts[a]=(counts[a]||0)+1; });
+    const total = Object.values(counts).reduce((s,n)=>s+n,0);
+    h += `<div class="q">${escapeHtml(qq.q)} <span class="tot">(${total})</span></div>`;
+    const labels = [...qq.a];
+    Object.keys(counts).forEach(k=>{ if(!labels.includes(k)) labels.push(k); });
+    labels.forEach(lbl=> h += barRow(lbl, counts[lbl]||0, total));
+  });
+  h += `</div>`;
+
+  // Detalhado — Solteiros
+  const solt = fezDet.filter(u=>u.detalhadoTipo==='Solteiro(a)');
+  const rela = fezDet.filter(u=>u.detalhadoTipo && u.detalhadoTipo!=='Solteiro(a)');
+  h += `<div class="card"><h2>🔎 Questionário detalhado</h2>
+    <div class="hint">Solteiros: ${solt.length} · Em relacionamento: ${rela.length}</div>
+    <div class="tabsplit">
+      <div><div class="subt">🦋 Solteiros</div>${renderDetalhe(solt)}</div>
+      <div><div class="subt">💞 Em relacionamento</div>${renderDetalhe(rela)}</div>
+    </div></div>`;
+
+  // Ranking de cantadas
+  const top = [...cantadas].sort((a,b)=>(b.likes||0)-(a.likes||0)).slice(0,15);
+  h += `<div class="card"><h2>🏆 Cantadas mais curtidas</h2>`;
+  if(!top.length) h += `<div class="muted">Nenhuma cantada ainda.</div>`;
+  else top.forEach((c,i)=> h += `<div class="rank"><div class="pos">${i+1}</div>
+    <div class="t">"${escapeHtml(c.text)}"<small>— ${escapeHtml(firstName(c.author))}</small></div>
+    <div class="lk">❤️ ${c.likes||0}</div></div>`);
+  h += `</div>`;
+
+  document.getElementById('content').innerHTML = h;
+}
+
+function renderDetalhe(group){
+  if(!group.length) return `<div class="muted">Ninguém ainda.</div>`;
+  const order=[], map={};
+  group.forEach(u=> (u.detalhadoAnswers||[]).forEach(({q,a})=>{
+    if(!map[q]){ map[q]={list:[], counts:{}}; order.push(q); }
+    if(a && a!=='—'){ map[q].list.push({a, name:firstName(u.name)}); map[q].counts[a]=(map[q].counts[a]||0)+1; }
+  }));
+  let h='';
+  order.forEach(q=>{
+    const data = map[q];
+    const total = Object.values(data.counts).reduce((s,n)=>s+n,0);
+    h += `<div class="q">${escapeHtml(q)} <span class="tot">(${total})</span></div>`;
+    if(TEXT_QS.has(q)){
+      if(!data.list.length){ h += `<div class="muted">Sem respostas.</div>`; return; }
+      h += `<div class="txtlist">` + data.list.map(it=>
+        `<div class="item"><b>${escapeHtml(it.name)}</b>"${escapeHtml(it.a)}"</div>`).join('') + `</div>`;
+    } else {
+      const labels = Object.keys(data.counts).sort((a,b)=>data.counts[b]-data.counts[a]);
+      if(!labels.length){ h += `<div class="muted">Sem respostas.</div>`; return; }
+      labels.forEach(lbl=> h += barRow(lbl, data.counts[lbl], total));
+    }
+  });
+  return h;
+}
+
+function kpi(n,l){ return `<div class="kpi"><b>${n}</b><span>${l}</span></div>`; }
+function barRow(lbl, n, total){
+  const pct = total? Math.round(n/total*100) : 0;
+  return `<div class="bar"><div class="lbl">${escapeHtml(lbl)}</div>
+    <div class="track"><div class="fill" style="width:${pct}%"></div></div>
+    <div class="val">${n} · ${pct}%</div></div>`;
+}
+
+// ============================================================
+//  EXPORT CSV
+// ============================================================
+function exportarCSV(){
+  const rows = [['nome','email','estado_civil','fez_quiz','fez_detalhado','quiz_respostas','detalhado_respostas','descobriu_par']];
+  usuarios.forEach(u=>{
+    const det = (u.detalhadoAnswers||[]).map(x=>`${x.q} => ${x.a}`).join(' | ');
+    rows.push([
+      u.name||'', u.email||'', (u.quizAnswers||[])[0]||'',
+      u.quizDone?'sim':'não', u.detalhadoFeito?'sim':'não',
+      (u.quizAnswers||[]).join(' | '), det, u.revealed?'sim':'não'
+    ]);
+  });
+  baixar('central-amor-usuarios.csv', toCSV(rows));
+
+  const cr = [['cantada','autor','curtidas']];
+  [...cantadas].sort((a,b)=>(b.likes||0)-(a.likes||0)).forEach(c=> cr.push([c.text||'', c.author||'', c.likes||0]));
+  baixar('central-amor-cantadas.csv', toCSV(cr));
+}
+function toCSV(rows){
+  return rows.map(r=> r.map(v=>{
+    const s = String(v).replace(/"/g,'""');
+    return /[",\n;]/.test(s) ? `"${s}"` : s;
+  }).join(';')).join('\n');
+}
+function baixar(nome, conteudo){
+  const blob = new Blob(['﻿'+conteudo], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = nome; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+
+function firstName(n){ return (n||'Anônimo').split(' ').slice(0,2).join(' '); }
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+</script>
+</body>
+</html>

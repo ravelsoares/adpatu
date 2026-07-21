@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quem você é quando ninguém está olhando? — Cartas 9 e 10 + Daniel 1 e 8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1b1b1b;
+    --ink-soft:#5a5147;
+    --laranja:#FF6600;
+    --brasa:#b3300a;
+    --ouro:#8a6d3b;
+    --linha:rgba(120,80,35,.30);
+    --bg-soft:#faf6f0;
+  }
+  *{ box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    font-family:"EB Garamond","Georgia",serif;
+    color:var(--ink); background:#ffffff;
+    margin:0; padding:24px 16px 60px;
+    line-height:1.55; font-size:17px;
+  }
+  .folha{ max-width:820px; margin:0 auto; }
+
+  .selo-topo{ font-family:"Cinzel",serif; font-size:11px; letter-spacing:4px;
+    text-transform:uppercase; color:var(--brasa); font-weight:600; text-align:center; margin-bottom:6px; }
+  .ornamento{ text-align:center; color:var(--ouro); font-size:15px; letter-spacing:6px; margin:4px 0 2px; }
+  h1{ font-family:"Cinzel",serif; font-weight:700; font-size:27px; line-height:1.16; text-align:center; margin:0 0 4px; color:#111; }
+  h1 .sub{ display:block; font-family:"EB Garamond",serif; font-style:italic; font-weight:500;
+    font-size:15px; letter-spacing:.3px; color:var(--ink-soft); margin-top:8px; }
+
+  .destaque-topo{ background:linear-gradient(160deg,#161210,#241a12); color:#f4e6cf;
+    padding:16px 20px; border-radius:6px; margin:18px 0; border-left:4px solid var(--laranja); font-size:15.5px; line-height:1.6; }
+  .destaque-topo b{ color:var(--laranja); }
+  .tema-linha{ font-size:15.5px; font-style:italic; color:#33291d; text-align:center; margin:12px 6px; }
+
+  h2{ font-family:"Cinzel",serif; font-weight:600; font-size:15px; letter-spacing:2px;
+    text-transform:uppercase; color:var(--brasa); text-align:center; margin:34px 0 14px; position:relative; }
+  h2::before, h2::after{ content:"✦"; color:var(--ouro); font-size:11px; vertical-align:middle; margin:0 14px; }
+
+  table.tempo{ border-collapse:collapse; width:100%; margin:10px 0; font-size:15px; }
+  table.tempo td{ border:1px solid var(--linha); padding:7px 12px; }
+  table.tempo td:first-child{ width:96px; text-align:center; font-family:"Cinzel",serif;
+    font-size:12px; color:var(--brasa); white-space:nowrap; background:var(--bg-soft); }
+  table.tempo b{ color:#111; }
+
+  .carta{ border:1px solid var(--linha); border-radius:8px; margin:24px 0; overflow:hidden; box-shadow:0 3px 12px rgba(0,0,0,.07); }
+  .carta > header{ background:linear-gradient(135deg, var(--laranja), var(--brasa)); color:#fff; padding:14px 20px; }
+  .carta > header .num{ font-family:"Cinzel",serif; font-size:12px; letter-spacing:3px; text-transform:uppercase; opacity:.92; }
+  .carta > header .tit{ font-family:"Cinzel",serif; font-size:20px; font-weight:700; display:block; margin-top:3px; line-height:1.2; }
+  .carta .corpo{ padding:18px 22px; }
+
+  .bloco-titulo{ font-family:"Cinzel",serif; font-size:13px; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--brasa); margin:22px 0 8px; display:flex; align-items:center; gap:8px; }
+  .bloco-titulo .ic{ font-size:16px; }
+
+  .resumo{ font-size:15.5px; color:#2c2419; }
+  .resumo b{ color:#111; }
+  .trechos{ font-size:15px; color:#33291d; border-left:3px solid var(--ouro); padding:6px 0 6px 14px; margin:10px 0; background:linear-gradient(90deg, rgba(138,109,59,.06), transparent 70%); }
+  .trechos b{ color:var(--brasa); }
+
+  .box{ background:var(--bg-soft); border:1px solid var(--linha); border-radius:6px; padding:14px 16px; margin:10px 0; font-size:15.5px; }
+  .box .seta{ color:var(--brasa); font-weight:700; }
+
+  .callout{ background:#fff7ed; border:1px solid rgba(255,102,0,.35); border-left:4px solid var(--laranja);
+    border-radius:6px; padding:11px 14px; margin:12px 0; font-size:14.5px; color:#4a3a28; line-height:1.55; }
+  .callout b{ color:var(--brasa); }
+  .callout .lab{ font-family:"Cinzel",serif; font-size:10.5px; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--brasa); display:block; margin-bottom:4px; }
+
+  ol.passos{ margin:6px 0; padding-left:22px; }
+  ol.passos li{ margin:8px 0; font-size:15px; }
+  .nome-dyn{ font-style:italic; color:var(--brasa); font-size:16px; margin:2px 0 8px; }
+
+  .debrief .d{ padding:7px 0 7px 14px; border-left:3px solid var(--ouro); margin:7px 0; font-size:15px; }
+
+  ol.perguntas{ margin:6px 0; padding-left:22px; }
+  ol.perguntas li{ margin:8px 0; font-size:15.5px; }
+  .ancora-q{ background:linear-gradient(90deg, rgba(255,102,0,.10), transparent 78%); border-left:3px solid var(--laranja);
+    padding:9px 12px; margin:9px 0; color:#2a1d10; font-size:15.5px; }
+  .ancora-q .tag, .debrief .tag{ display:inline-block; font-family:"Cinzel",serif; font-size:9px; letter-spacing:1px; color:#fff;
+    background:var(--brasa); padding:1px 8px; border-radius:10px; margin-right:6px; vertical-align:middle; }
+  .meta-nota{ font-size:13px; color:var(--ink-soft); font-style:italic; margin:4px 0 6px; }
+
+  .versos{ list-style:none; padding:0; margin:6px 0; }
+  .versos li{ padding:9px 0 9px 14px; border-left:3px solid var(--laranja); margin:9px 0; font-size:15px;
+    background:linear-gradient(90deg, rgba(255,102,0,.05), transparent 72%); }
+  .versos .ref{ font-family:"Cinzel",serif; font-size:12.5px; letter-spacing:.5px; color:var(--brasa); display:block; margin-bottom:2px; }
+
+  .ancora{ background:linear-gradient(160deg,#161210,#241a12); color:#f4e6cf; padding:14px 18px; border-radius:6px;
+    margin:18px 0 4px; text-align:center; font-size:16px; font-style:italic; line-height:1.5; border:1px solid var(--brasa); }
+  .ancora b{ color:var(--laranja); font-style:normal; }
+
+  .daniel-card{ border:1px solid var(--linha); border-radius:8px; padding:14px 18px; margin:14px 0; background:var(--bg-soft); }
+  .daniel-card h3{ font-family:"Cinzel",serif; color:var(--brasa); font-size:15px; margin:0 0 6px; letter-spacing:1px; }
+  .daniel-card p{ font-size:15px; color:#2c2419; margin:0; }
+  .daniel-sintese{ border-left:4px solid var(--laranja); }
+
+  .desafio{ background:linear-gradient(160deg,#161210,#241a12); color:#f4e6cf; border:1px solid var(--brasa);
+    border-radius:8px; padding:16px 18px; margin:16px 0; font-size:15.5px; line-height:1.6; }
+  .desafio .lab{ font-family:"Cinzel",serif; color:var(--laranja); font-size:13px; letter-spacing:2px; display:block; margin-bottom:8px; }
+  .desafio b{ color:var(--laranja); }
+
+  .oracao .item{ padding:8px 0 8px 14px; border-left:3px solid var(--laranja); margin:9px 0; font-size:15.5px; }
+
+  ul.dicas{ list-style:none; padding:0; margin:6px 0; }
+  ul.dicas li{ padding:10px 0 10px 14px; border-left:3px solid var(--laranja); margin:10px 0; font-size:14.5px; line-height:1.55; }
+  ul.dicas b{ color:var(--brasa); }
+
+  .rodape-nota{ font-size:15px; color:#33291d; background:var(--bg-soft); border:1px solid var(--linha);
+    border-radius:6px; padding:14px 16px; margin:18px 0; }
+  .rodape-nota b{ color:var(--brasa); }
+
+  .acoes{ text-align:center; margin:24px 0 4px; }
+  .btn-print{ font-family:"Cinzel",serif; font-size:12px; letter-spacing:2px; text-transform:uppercase;
+    background:var(--laranja); color:#fff; border:none; border-radius:30px; padding:11px 26px; cursor:pointer; box-shadow:0 4px 12px rgba(255,102,0,.35); }
+  .btn-print:hover{ background:var(--brasa); }
+
+  @media print{
+    @page{ size:A4; margin:12mm; }
+    body{ padding:0; font-size:11.5pt; }
+    .acoes{ display:none; }
+    .carta{ break-inside:avoid; box-shadow:none; }
+  }
+</style>
+</head>
+<body>
+<div class="folha">
+
+  <div class="selo-topo">CRJ 2026 · Encontro de Jovens · Guia do Líder</div>
+  <div class="ornamento">✦ ⟡ ✦</div>
+  <h1>Quem você é quando ninguém está olhando?
+    <span class="sub">Cartas 9 e 10 · ancorado em Daniel 1 e 8 · ~1h30 a 2h<br>“Cartas de um Diabo a Seu Aprendiz” — C. S. Lewis</span>
+  </h1>
+
+  <div class="destaque-topo">
+    <b>A ideia da noite:</b> você não é quem performa no palco quando todos aplaudem; você é quem decide ser no escuro,
+    quando ninguém olha — nem você mesmo está sentindo nada. E essa integridade não nasce de medo nem de “se esforçar mais”:
+    ela brota do amor de um Deus que <b>já te vê em secreto e já te ama por inteiro</b>. A identidade não é conquistada num
+    teste — ela é dada de graça (“amado, chamado, perdoado, teu”), e a integridade é só você vivendo à vontade nesse amor.
+  </div>
+  <p class="tema-linha">Tema: integridade no oculto — o caráter que se forma no segredo, no vale sem sentimento e na coragem de ser uma pessoa só em toda roda. Tudo brotando da graça, não do esforço.</p>
+
+  <h2>Linha do Tempo</h2>
+  <table class="tempo">
+    <tr><td>0–12 min</td><td><b>Abertura</b> — “Dois lados da sala”: você lê frases e cada um anda pro lado que é a sua verdade</td></tr>
+    <tr><td>12–20 min</td><td><b>Contexto</b> — a obra e a inversão (Maldanado / Vermelindo / o Inimigo = Deus, lido ao contrário)</td></tr>
+    <tr><td>20–42 min</td><td><b>Carta 9</b> — o vale, o sentimento e a fórmula do escapismo</td></tr>
+    <tr><td>42–64 min</td><td><b>Carta 10</b> — a vida dupla, a máscara que vira rosto, o prazer vaidoso</td></tr>
+    <tr><td>64–78 min</td><td><b>Daniel 1 e 8</b> — a decisão secreta + o fardo carregado a sós</td></tr>
+    <tr><td>78–95 min</td><td><b>Encerramento</b> — síntese da graça, desafio da semana e oração</td></tr>
+  </table>
+  <p class="meta-nota">95 min é o tempo “limpo”. Reserve a janela de 2h contando chegada, acomodação e partilha que estica.</p>
+
+  <!-- ABERTURA -->
+  <h2>🧊 Abertura · Duas Rodas, Duas Vidas</h2>
+  <div class="box">
+    <b>Sem preparo, sem material.</b> Aponte dois lados da sala: <b>“SOU O MESMO”</b> e <b>“DEPENDE DA RODA”</b>. Você lê uma
+    frase e, na hora, cada um anda para o lado que é a sua verdade — rápido, sem pensar demais, sem julgar ninguém.<br><br>
+    Use 4–6 frases: “Eu falo de Deus na escola/trabalho do mesmo jeito que falo na igreja.” · “Eu posto no story público a
+    mesma coisa que mando no close friends.” · “Eu rio das mesmas piadas na frente dos meus pais e na frente da galera.” ·
+    “Eu sou a mesma pessoa no domingo de manhã e no sábado à noite.” · “Quem me conhece da igreja reconheceria fácil o meu eu da escola.”<br><br>
+    <span class="seta">→</span> Depois de algumas frases, pergunte com leveza a 1 ou 2 do lado <b>“DEPENDE”</b>: “o que muda?” Ninguém é obrigado a falar — participar já é andar pro lado.
+  </div>
+  <p class="resumo"><b>Transição:</b> sem julgar ninguém (todos nós trocamos de roda no automático), pergunte:
+  <i>“Em qual roda você se sentiu mais VOCÊ MESMO?”</i> Segure a pergunta no ar e diga: “Hoje a gente vai descobrir, com a
+  ajuda de um demônio muito esperto e de um jovem chamado Daniel, quem a gente realmente é quando ninguém — ou quando todo
+  mundo — está olhando. E o spoiler é graça: você não vai sair daqui com mais uma lista de cobranças, vai sair sabendo que já é amado por inteiro.”</p>
+
+  <!-- CONTEXTO -->
+  <h2>📖 Contexto · 7 min</h2>
+  <p class="resumo">“Cartas de um Diabo a Seu Aprendiz”, de C. S. Lewis, é um livro escrito de cabeça pra baixo: são cartas
+  de um demônio veterano, o tio <b>Maldanado</b>, treinando o sobrinho aprendiz, <b>Vermelindo</b>, sobre como derrubar um
+  cristão (chamado de “o paciente”). A genialidade é a <b>inversão</b>: quem eles chamam de “o Inimigo” é <b>Deus</b>, e
+  “Nosso Pai” é Satanás. Como tudo é visto pelos olhos do inferno, está tudo trocado: quando o demônio comemora, o cristão
+  <b>perdeu</b>; quando ele se irrita, o cristão <b>avançou</b>. Então cada tática maligna, lida ao contrário, denuncia uma
+  verdade do Evangelho. Hoje abrimos duas cartas — a 9 e a 10 — e percebemos que as duas atacam o mesmo ponto: a pessoa que
+  você é quando a plateia some. E colocamos ao lado um jovem real, Daniel, que viveu num império montado pra apagá-lo e mesmo assim continuou sendo uma pessoa só.</p>
+  <div class="callout"><span class="lab">Nota ao líder</span>
+    Sempre que disser “o Inimigo = Deus”, diga junto <b>“na voz do demônio, lido ao contrário”</b>. Fora desse enquadramento
+    a frase choca e confunde quem não conhece a obra — <b>nunca</b> a deixe circular solta em story, slide ou flyer.
+  </div>
+
+  <!-- CARTA 9 -->
+  <div class="carta">
+    <header><span class="num">Carta 9 · 22 min</span><span class="tit">O Vale Sem Plateia: quem você é quando nem você está sentindo nada</span></header>
+    <div class="corpo">
+
+      <div class="bloco-titulo"><span class="ic">🧭</span> Resumo pro líder</div>
+      <p class="resumo">A <b>Lei da Ondulação</b> Maldanado a apresenta e nomeia já na <b>Carta 8</b>; a Carta 9 ensina o
+      inferno a <b>abusar</b> dela, transformando o cansaço espiritual normal — o “vale” — em armadilha permanente. A vida com
+      Deus tem picos e vales que se alternam; isso é natural, não é termômetro da salvação. Maldanado manda esconder isso, pra
+      o jovem presumir duas mentiras: que a euforia do começo <b>deveria</b> durar pra sempre, e que a secura de agora <b>nunca</b>
+      vai passar. Aí ele conclui “minha fé era fake”, quando só perdeu o sentimento. Há uma tática gêmea: fazer o jovem ver a
+      conversão inicial como uma “fase” já superada, tratando a fé com um jargão condescendente (“era bom, mas não tanto quanto
+      eu esperava”). Invertida, a tática denuncia algo lindo: a fé não se mede pela novidade do sentimento.</p>
+      <p class="resumo">No vale, com o mundo interior “pobre, apagado e frio”, entra o <b>escapismo</b>: o prazer buscado não
+      como alegria, mas como anestesia do tédio. Lewis enuncia a fórmula sobre os prazeres em geral (o sexo é o exemplo-mestre
+      da carta): <b>“um anseio cada vez maior por uma satisfação cada vez menor”</b>. E confessa que o inferno <b>nunca</b>
+      produziu um único prazer — todo prazer é invenção boa de Deus; o pecado é só um bem Dele roubado e torcido. A ironia
+      mordaz que não se pode achatar: o que de fato alegra o coração de “Nosso Pai” é <b>“capturar a alma e não dar nada em
+      troca”</b> — a gratuidade da crueldade do inferno é o espelho invertido da gratuidade da graça de Deus, que dá tudo sem cobrar nada.</p>
+      <div class="callout"><span class="lab">Atenção pastoral</span>
+        Trate a parte sensual/vício como <b>escapismo e compulsão</b> (telas, scroll infinito, pornografia sem detalhe gráfico,
+        comida por ansiedade, substância), sem linguagem explícita, sem pedir relato público. E lembre: nem toda secura é o
+        “vale natural” da Ondulação — às vezes sinaliza <b>pecado a confessar</b> (Sl 32:3-4) ou um <b>quadro clínico</b>
+        (depressão/ansiedade) a cuidar. A graça não dispensa o arrependimento quando ele é o caminho, nem substitui o cuidado
+        de saúde mental. A fidelidade no vale também não vale <i>mais</i> que a alegria no pico — as duas são dons da graça.
+      </div>
+
+      <div class="bloco-titulo"><span class="ic">📣</span> Para ler em voz alta</div>
+      <p class="trechos">Leia devagar, da Carta 9. <b>Convenção:</b> «aspas angulares» = ler como está.<br>
+      (1) «Mantenha-o ignorante da Lei da Ondulação; faça-o supor que o primeiro fervor poderia ter durado para sempre.»<br>
+      (2) O ataque tem mais chance quando o mundo interior está «pobre, apagado e frio».<br>
+      (3) A frase-chave: «A fórmula é: um anseio cada vez maior por uma satisfação cada vez menor.» E a confissão: «Jamais
+      produzimos um único prazer — só podemos incentivar os humanos a desfrutá-los de modos que o Inimigo proibiu.»<br>
+      (4) A ironia: o que alegra o coração de “Nosso Pai” é «capturar a alma do homem e não lhe dar nada em troca».
+      Contraste na hora: <b>Deus dá tudo de graça; o inferno tira tudo de graça.</b></p>
+
+      <div class="bloco-titulo"><span class="ic">🎲</span> Dinâmica</div>
+      <p class="nome-dyn">O Braço Cansa, o Peso Não Muda</p>
+      <ol class="passos">
+        <li><b>Material:</b> o próprio celular de cada um (ou qualquer objeto leve). Zero preparo.</li>
+        <li>Todos esticam o braço reto pra frente, segurando o celular, e <b>seguram</b>. Nos primeiros segundos é fácil (o “pico”: tudo empolgante). Deixe o tempo correr em silêncio.</li>
+        <li>Em 30–60 segundos o braço começa a tremer e pesar. Pergunte: “O celular ficou mais pesado?” Não — <b>você cansou</b>. Esse é o “vale”: a fé não ficou falsa; o sentimento é que cansou.</li>
+        <li>Mandem baixar. Diga: Maldanado quer que, no instante em que o braço pesa, você conclua “acabou, era tudo fake”. Mentira — é só a Lei da Ondulação, e ela passa.</li>
+        <li>Emende a fórmula do vício <b>só com a memória deles</b>: “Lembra a empolgação do 1º episódio de uma série? E o 8º maratonado de madrugada? O 1º doce e o 10º? O 1º like e o centésimo scroll?” Eles vão rindo e concordando — esse é o “anseio cada vez maior por satisfação cada vez menor”.</li>
+        <li>Feche: a saída do vale (e do escapismo) não é “fazer mais força com o braço”, é <b>receber</b> — <b>João 8:36</b>. Quem te segura é a graça, não o seu esforço.</li>
+      </ol>
+      <div class="debrief">
+        <div class="d"><span class="tag">âncora</span> Por que o inimigo prefere te atacar quando “o braço pesa” (o tédio, o domingo à noite) e não na empolgação da fogueira?</div>
+        <div class="d"><i>Se sobrar tempo:</i> que escapismo você procura quando bate o vale — e ele te deixa mais cheio ou mais vazio depois?</div>
+      </div>
+
+      <div class="bloco-titulo"><span class="ic">💬</span> Bate-papo</div>
+      <p class="meta-nota">Use <b>ou</b> o debrief da dinâmica <b>ou</b> estas perguntas — não as duas listas. A âncora é obrigatória.</p>
+      <ol class="perguntas">
+        <li><i>(raso)</i> Você já voltou de um acampamento ou culto “pegando fogo”, prometeu mil coisas, e três semanas depois a empolgação tinha sumido? Como foi?</li>
+        <li><i>(médio)</i> Quando a oração fica “seca” e o louvor “não bate” mais, qual é a sua reação no automático: insistir ou concluir que esfriou de vez? Chamar o fervor do começo de “só uma fase” não é uma mentira que te faz largar a fé?</li>
+      </ol>
+      <div class="ancora-q"><span class="tag">âncora</span> Por que será que o inimigo prefere te atacar no vale (no tédio, no vazio de domingo à noite) e não no pico (na euforia da fogueira)?</div>
+      <ol class="perguntas" start="3">
+        <li><i>(o fundo, com graça)</i> Lewis sugere que a fidelidade no vale é o que o inferno mais teme. Isso não significa que sofrer vale mais que ter alegria — secura e alegria são dons da graça. Mas o que muda na sua cabeça saber que, nos dias em que você “não sente nada”, a secura <b>não te desqualifica</b> diante de Deus?</li>
+      </ol>
+
+      <div class="bloco-titulo"><span class="ic">📜</span> Repertório espiritual</div>
+      <ul class="versos">
+        <li><span class="ref">João 10:4-5</span> As ovelhas seguem o Pastor porque conhecem a <b>voz</b> dele, não porque estão “sentindo” algo. No vale, você caminha pela voz conhecida, não pela emoção do momento.</li>
+        <li><span class="ref">Salmo 42:5-6</span> “Por que estás abatida, ó minha alma?” O salmista fala com a própria tristeza e decide esperar em Deus na seca. A Bíblia tem espaço pro vale. <i>(Cuidado: nem toda secura é o vale natural — às vezes é pecado a confessar, Sl 32, ou quadro clínico. Não espiritualize tudo.)</i></li>
+        <li><span class="ref">Hebreus 3:13 / Tiago 1:14-15</span> Para o “gradualismo do mal”, a fonte certa não é Daniel 8: o coração endurece “pelo engano do pecado” e o desejo “concebe e dá à luz o pecado”. É o declive “sem placas” que Lewis descreve na própria Carta 9.</li>
+        <li><span class="ref">João 8:36</span> “Se o Filho vos libertar, verdadeiramente sereis livres.” A saída da compulsão não é força de vontade sozinha: é libertação que vem de Cristo, recebida na graça.</li>
+        <li><span class="ref">Tiago 1:17</span> “Toda boa dádiva vem do alto.” Se todo prazer real é invenção de Deus, o desejo bom não se mata, se redireciona ao lugar que de fato sacia. (Equilíbrio: o desejo já torcido pelo pecado o NT manda mortificar — Cl 3:5. Redirecionar o bom, matar o corrompido.)</li>
+      </ul>
+
+      <div class="bloco-titulo"><span class="ic">🎯</span> Aplicação</div>
+      <p class="resumo">Aqui o tema fica interior: quem você é quando <b>nem você</b> está sentindo nada? O pico — a fogueira, o
+      louvor que arrepia, a plateia que aplaude o jovem “on fire” — é a hora em que até o hipócrita parece santo, porque o
+      sentimento faz o trabalho. O vale é o verdadeiro teste: a oração seca, a Bíblia aberta sem emoção, a pureza guardada no
+      quarto escuro de domingo à noite, quando nenhum líder, nenhum seguidor e nenhuma fogueira estão olhando — e nem seu
+      coração está vibrando. A boa notícia não é “aguente firme sozinho”: é que a <b>graça</b> de Deus segura você exatamente
+      quando o sentimento solta. E como Daniel em 8:27 — esmagado por um peso que “ninguém ao redor entendeu” e mesmo assim de
+      pé na rotina anônima — fidelidade no vale é carregar o fardo a sós sabendo que não se está sozinho.</p>
+
+      <div class="ancora">🎯 <b>Frase-âncora:</b> “Fé não é o clima do peito; é a direção dos passos. E quem te segura no vale é a graça, não a sua força.”</div>
+    </div>
+  </div>
+
+  <!-- CARTA 10 -->
+  <div class="carta">
+    <header><span class="num">Carta 10 · 22 min</span><span class="tit">Duas Vidas Paralelas: quem você é depende de QUEM está olhando</span></header>
+    <div class="corpo">
+
+      <div class="bloco-titulo"><span class="ic">🧭</span> Resumo pro líder</div>
+      <p class="resumo">Na Carta 10, Maldanado comemora que o paciente entrou numa roda nova de “amigos desejáveis” e começou
+      a se dividir. A estratégia não é fazer o cristão negar a fé de uma vez — é fazê-lo <b>viver duas vidas paralelas</b>, ser
+      um homem diferente em cada círculo, até a máscara social virar o rosto verdadeiro. Começa pela vaidade tripla: social
+      (pertencer a um grupo “mais alto”), sexual (ser visto como desejável e desinibido) e intelectual (ser tido como esperto,
+      sem “cara de crentão”). Depois a <b>traição muda</b>: “um jogo sutil de olhares, tons e risos” — o riso na hora certa que
+      finge concordar. Depois o <b>adiamento</b> de assumir publicamente a fé (“depois eu falo, agora não é a hora”) que nunca
+      tem fim. E a frase mais assustadora: <b>“todos os mortais tendem a se transformar naquilo que pretendem ser”</b> — a
+      máscara gruda e vira a cara de verdade. O ápice é o <b>prazer vaidoso</b> da incompatibilidade: o jovem curte ser os dois
+      mundos, se acha “completo e profundo”, quando é só desleal aos dois e fiel à própria imagem. Ainda tem a palavra-arma
+      (“puritano”, “recalcado”, “careta”) que faz largar a convicção sem nem discutir, e a falsa missão (“eu tô lá pra ser luz”)
+      que disfarça cumplicidade de evangelismo. A inversão é a <b>integridade</b>: ser uma pessoa só, porque Cristo é Senhor de
+      todas as rodas — e isso não é “se policiar mais”, é descansar no fato de que Aquele que te vê em todas elas já te ama por inteiro.</p>
+      <div class="callout"><span class="lab">Nota ao líder</span>
+        Lewis <b>não</b> menciona Pedro nesta carta. A comparação com Pedro — que negou Cristo não por um tratado de ateísmo,
+        mas por gestos e por medo — é uma <b>aplicação pastoral nossa</b>, ótima, mas não atribua a Lewis nem diga “a carta fala de Pedro”.
+      </div>
+
+      <div class="bloco-titulo"><span class="ic">📣</span> Para ler em voz alta</div>
+      <p class="trechos">Leia da Carta 10. <b>Convenção:</b> «aspas angulares» = ler como está.<br>
+      (1) «Existe um jogo sutil de olhares, tons e risos pelos quais um mortal pode dar a entender que é do mesmo grupo» —
+      e o paciente nem percebe que está negando a Cristo. <i>(Aplicação sua: “isso lembra Pedro, que negou não por um tratado, mas por gestos e medo.”)</i><br>
+      (2) «Todos os mortais tendem a se transformar naquilo que pretendem ser.»<br>
+      (3) O ápice: o paciente «se sente o homem completo, equilibrado e complexo que perscruta todos os mundos» — desleal a dois grupos, mas com satisfação própria no lugar da vergonha.<br>
+      (4) A arma: «“Puritanismo” é uma palavra cujo desprezo é um dos nossos triunfos: por meio dela resgatamos milhares de uma vida temperante, caridosa e sóbria.»</p>
+
+      <div class="bloco-titulo"><span class="ic">🎲</span> Dinâmica</div>
+      <p class="nome-dyn">A Cara de Cada Roda</p>
+      <ol class="passos">
+        <li><b>Sem material, sem preparo.</b> Todos de pé. Você diz um “público” e, no “3”, cada um faz a <b>cara e a postura</b> que usaria ali — e congela 3 segundos pra todo mundo olhar em volta.</li>
+        <li>Vá chamando, rápido: “foto séria pra família no domingo… 3!” · “story de sábado à noite com a galera… 3!” · “grupo de oração de quarta… 3!” · “zoeira no grupo da escola… 3!”.</li>
+        <li>No fim, sorria: “Vocês trocaram de cara 4 vezes em 1 minuto — e foi natural.” Aí vem o peso: a Carta 10 mostra quando isso fica perigoso — quando deixa de ser simpatia e a máscara <b>gruda</b>. “Todos tendem a se transformar naquilo que pretendem ser.”</li>
+        <li>Pergunte e deixe no ar: “Qual dessas caras é a verdadeira?” A resposta do tema: a verdadeira é a que continua a mesma quando ninguém troca a placa do público — porque Cristo é Senhor de todas as rodas. Leia <b>1 Samuel 16:7</b>.</li>
+      </ol>
+      <div class="debrief">
+        <div class="d"><span class="tag">âncora</span> Se Deus já te vê sem máscara nenhuma e te ama assim, do que adianta manter a cara montada com Ele na oração?</div>
+        <div class="d"><i>Se sobrar tempo:</i> tem alguma “cara” que você começou a fazer de brincadeira e que já está virando de verdade em você?</div>
+      </div>
+      <p class="meta-nota">Versão mais profunda (se tiver tempo e material): a “Galeria de Máscaras” em papel — cada um escreve a imagem na frente e o que ela esconde por dentro (ninguém lê; é destruído na frente deles). Posso repor aqui se você quiser.</p>
+
+      <div class="bloco-titulo"><span class="ic">💬</span> Bate-papo</div>
+      <p class="meta-nota">Use <b>ou</b> o debrief da dinâmica <b>ou</b> estas perguntas — não as duas. A âncora é obrigatória.</p>
+      <ol class="perguntas">
+        <li><i>(raso)</i> Você fala, ri ou se veste diferente dependendo de com quem está? Dá um exemplo leve, sem culpa.</li>
+        <li><i>(médio)</i> Você já riu de uma piada que zoava a fé ou fez “cara de que concorda” só pra não pagar mico? O que rolou por dentro depois? (Isso lembra Pedro — negar sem um discurso, só com gestos.)</li>
+      </ol>
+      <div class="ancora-q"><span class="tag">âncora</span> Lewis diz que a gente “vira aquilo que finge ser”. Tem alguma coisa que você começou fingindo, de brincadeira, e que já está virando de verdade em você?</div>
+      <ol class="perguntas" start="3">
+        <li><i>(o fundo de tudo)</i> Qual é a diferença entre ser “completo” (estar à vontade em vários mundos) e ser dividido (ser falso com todos eles)? Onde está essa linha em você?</li>
+      </ol>
+
+      <div class="bloco-titulo"><span class="ic">📜</span> Repertório espiritual</div>
+      <ul class="versos">
+        <li><span class="ref">Mateus 10:32-33</span> “Quem me negar diante dos homens…” — dá pra negar pelo riso covarde e pelo olhar, não só pela palavra (foi assim com Pedro). Mas o verso começa com <b>promessa</b>: quem o confessa, Ele confessa diante do Pai. É convite, não ameaça.</li>
+        <li><span class="ref">Salmo 86:11</span> “Dá-me um coração indiviso para temer o teu nome.” É <b>pedido</b>, não esforço. A integridade é graça que a gente pede, não desempenho que a gente arranca de si.</li>
+        <li><span class="ref">Provérbios 29:25</span> “Temer o homem armadilha é.” O medo do apelido (“careta”, “recalcado”) é a corda que te prende. Quem teme o adjetivo dos homens já foi dominado por ele.</li>
+        <li><span class="ref">Mateus 5:13</span> O sal que perde o sabor não presta pra nada. Influencia de verdade quem permanece diferente — não quem se dilui na roda achando que está “evangelizando”.</li>
+      </ul>
+
+      <div class="bloco-titulo"><span class="ic">🎯</span> Aplicação</div>
+      <p class="resumo">Esta é a carta mais literal do tema, e aperta o parafuso: o problema não é só “quando ninguém está
+      olhando”, é que você vira pessoas diferentes dependendo de <b>quem</b> está olhando. Você é o crente exemplar no grupo de
+      jovens e o cético descolado no story de sábado à noite — e o pior, você até curte ser os dois, acha que isso é ser
+      “profundo”. A Carta 10 desmascara essa vaidade: o homem das duas vidas não é completo, é desleal a todo mundo e fiel só à
+      própria imagem. Integridade vem do latim <i>integer</i>, <b>inteiro</b>: ser uma pessoa só, sem costura, porque Cristo é o
+      mesmo no culto e no rolê, no feed e no close friends, com a galera e com a mãe na cozinha. Isso ecoa <b>Daniel 1:8</b> —
+      ele “propôs no coração” antes de qualquer plateia chegar, por isso era um só no palácio e no escondido. E de novo: não é
+      “se policiar mais”. É descansar no fato de que Aquele que te vê em todas as rodas já te ama por inteiro — então você não precisa de máscara pra ser aceito em lugar nenhum.</p>
+
+      <div class="ancora">🎯 <b>Frase-âncora:</b> “Integridade é ser inteiro: a mesma pessoa em toda roda, porque Cristo é Senhor de todas elas — e você já é amado por inteiro.”</div>
+    </div>
+  </div>
+
+  <!-- DANIEL -->
+  <h2>🦁 Integração · Daniel 1 e 8 · 14 min</h2>
+
+  <div class="daniel-card">
+    <h3>Daniel 1 — a decisão tomada em segredo (responde à Carta 10)</h3>
+    <p>A Babilônia não mata Daniel — tenta deletá-lo e reinstalar um caldeu no mesmo corpo: nova língua e literatura
+    (1:4, reprograma a mente), novos nomes (1:7) e a porção do rei (1:5, a mesa que diz “agora você é um de nós”). “Daniel”
+    significa “Deus é meu juiz”; trocaram por um nome ligado a um ídolo. É o “inner ring” da Carta 10 em escala de império: a
+    engenharia de te tornar “um deles” pouco a pouco, no silêncio, até você responder pelo nome novo sem pensar. Mas o ponto
+    de virada é <b>1:8</b>: “Daniel <b>propôs no seu coração</b> não se contaminar.” A batalha foi vencida <b>antes</b>, em
+    segredo. E repare a graça: o texto diz que “Deus concedeu a Daniel cair nas boas graças” do chefe (1:9) — deu certo porque
+    <b>Deus sustentou</b>, não porque Daniel era um super-disciplinado. Recusar a porção do rei é a tradução exata de não rir da
+    piada, não fingir, não virar duas pessoas. E note o equilíbrio: ele cedeu no que era circunstância (nome, literatura,
+    serviço) e travou só onde a fidelidade a Deus estava em jogo — não foi rebeldia performática, foi uma linha desenhada no escuro que ele não cruza.</p>
+  </div>
+
+  <div class="daniel-card">
+    <h3>Daniel 8 — o fardo carregado a sós (responde à Carta 9)</h3>
+    <div class="callout" style="margin-top:0"><span class="lab">Nota honesta ao líder</span>
+      Daniel 8 é uma <b>visão apocalíptica</b> sobre impérios e o fim — Gabriel interpreta o bode como a Grécia (8:21) e a
+      “ponta pequena” como um rei futuro específico (lido como Antíoco IV e/ou figura escatológica). <b>Não</b> diga que “a
+      ponta pequena é o seu vício” nem use os vv. 9/12/25 pra explicar como o pecado entra devagar — isso força o texto. Para o
+      “gradualismo do mal”, use a própria Carta 9 e o NT (Hb 3:13; Tg 1:14-15). De Daniel 8 use <b>só</b>, e com força, o v. 27.
+    </div>
+    <p>Depois de uma visão esmagadora, Daniel “enfraqueceu e adoeceu alguns dias”, e “não havia quem a entendesse” — ninguém ao
+    redor captou o peso que ele carregava. E então ele faz a coisa mais comum do mundo: <b>“levantou-se e tratou dos negócios
+    do rei”</b> (8:27). Aí está a vida interior que ninguém vê: o fardo espiritual carregado a sós, o vale sem plateia, e mesmo
+    assim o retorno fiel à rotina anônima. A intimidade oculta com Deus (a visão dada sozinho, junto ao rio Ulai, 8:2) é o que
+    sustenta a fidelidade visível. Daniel é fiel no peso que ninguém vê — não porque é forte, mas porque carrega esse peso diante de um Deus que vê em secreto.</p>
+  </div>
+
+  <div class="daniel-card daniel-sintese">
+    <h3>Síntese</h3>
+    <p>As duas cartas atacam o mesmo alvo por dois ângulos, e Daniel responde aos dois. A Carta 10 ataca o <b>espaço</b> — a
+    companhia, o pertencer agora, a roda que te divide — e Daniel responde em 1:8 com a decisão secreta do coração: ele é um só
+    porque já se decidiu por dentro (e porque Deus o sustentou, 1:9). A Carta 9 ataca o <b>tempo</b> — a secura que se arrasta,
+    o vale sem sentimento — e Daniel responde em 8:27 com a fidelidade carregada a sós, sem plateia e sem entender tudo. Junte
+    os dois: <b>o homem público fiel é construído no privado.</b> Quem você é quando ninguém está olhando (a decisão que você
+    propôs no escuro + o peso que você carrega sozinho) é exatamente quem te sustenta quando todos estão olhando. E o motor não
+    é esforço: é que Deus vê no secreto e ama no secreto — foi Ele quem concedeu a graça que segurou Daniel.</p>
+  </div>
+
+  <!-- ENCERRAMENTO -->
+  <h2>🙏 Encerramento · 17 min</h2>
+  <p class="resumo">Recolha a noite numa frase só, e deixe a graça por cima de tudo: o inferno aposta no que ninguém vê — o
+  vale sem plateia da Carta 9 e a roda que te divide da Carta 10 — porque acha que no escuro você desmorona. Mas o segredo de
+  Daniel é que o escuro nunca esteve vazio: tinha Alguém ali, e era Ele quem segurava. <b>“Teu Pai, que vê em secreto”
+  (Mateus 6:6)</b> não está te vigiando pra te pegar no erro; está te vendo porque te ama por inteiro, em toda roda, em todo
+  vale. Você não precisa de máscara pra ser aceito, nem de adrenalina pra provar que sua fé é real. Você é amado quando ninguém
+  aplaude e quando ninguém sente nada. Integridade no oculto não é “se esforçar mais pra Deus gostar de você” — é viver à vontade no amor de um Deus que já te conhece de dentro pra fora e ficou.</p>
+
+  <div class="desafio">
+    <span class="lab">⚑ Desafio dos 10 dias</span>
+    <i>(alusão a Daniel 1:12 — mas com a nuance certa: o teste de Daniel deu certo porque Deus sustentou, 1:9, e a decisão dele
+    já estava tomada no coração, 1:8. Este desafio não é prova pra você forjar caráter ou “provar quem você é”: é <b>resposta à graça</b>.)</i><br><br>
+    Escolha <b>uma</b> decisão de integridade no oculto, pequena e concreta, e mantenha por 10 dias — não pra ganhar a aprovação
+    de Deus (você já é amado), mas pra <b>experimentar</b> a liberdade que a graça já te deu:<br>
+    <b>(a)</b> cortar um escapismo no horário do vale (ex.: nada de celular na cama depois das 23h, ou um app deletado por 10 dias);<br>
+    <b>(b)</b> um “minuto de verdade” por dia: orar mesmo seco, sem esperar sentir nada, só porque é Deus;<br>
+    <b>(c)</b> quebrar uma vida dupla — assumir com naturalidade pra alguém da “roda de fora” que você é cristão, ou parar de rir de uma piada que zoa a fé.<br><br>
+    <b>Cláusula de graça para a falha</b> (diga em voz alta): se você quebrar no dia 4, o desafio não é cancelado e a graça não
+    é cancelada — você não é eliminado, é só recomeçar no dia 5. O ponto é descobrir que <b>Ele</b> segura, não que você é forte.<br><br>
+    <b>O parceiro (“a tesoura”):</b> não formem duplas ao vivo nem anunciem nomes — isso constrange. Cada um pensa, em silêncio,
+    em uma pessoa de confiança e a procura ao longo da semana. Quem não pensou em ninguém, procure um líder em particular (tenha
+    1–2 líderes como “tesoura coringa”). No fim dos 10 dias, conte pro parceiro como foi — sem nota, sem cobrança, só verdade.
+  </div>
+
+  <div class="bloco-titulo"><span class="ic">🤝</span> Oração guiada</div>
+  <div class="oracao">
+    <div class="item"><b>Em silêncio:</b> “Senhor, Tu me vês agora, por dentro, sem máscara. Não vou esconder de Ti o que escondo dos outros.” (deixe ~20 segundos de silêncio real)</div>
+    <div class="item"><b>O vale:</b> “Deus, nos dias em que eu não sentir nada, lembra que Tua graça me segura quando o sentimento solta. Eu não ando contigo porque sou forte; ando porque Tu és fiel. E onde a minha secura for sinal de algo a confessar, me dá coragem de confessar.”</div>
+    <div class="item"><b>A roda dupla:</b> “Faz de mim uma pessoa só. Dá-me um coração indiviso (Sl 86:11). Que eu não tenha medo de nenhum apelido, porque já tenho o nome que Tu me deste: amado, chamado, perdoado, teu.”</div>
+    <div class="item"><b>O escapismo, sem vergonha:</b> “Onde eu busquei alívio no lugar errado e fiquei mais vazio, eu te entrego o barbante. Sê Tu a minha tesoura. Liberta o que eu não consigo cortar sozinho (Jo 8:36).”</div>
+    <div class="item"><b>Selando a identidade:</b> “Antes de qualquer teste chegar, eu proponho no meu coração, como Daniel, ser teu — no palco e no escuro, no pico e no vale. E se eu cair, recomeço na Tua graça, que não cancela. Amém.”</div>
+  </div>
+
+  <!-- DICAS LÍDER -->
+  <h2>🧭 Dicas do Líder</h2>
+  <ul class="dicas">
+    <li><b>Graça acima de tudo:</b> o risco nº 1 deste tema é virar performance (“se policie mais”, “seja mais radical”). Toda vez que o clima escorregar pra culpa ou esforço, volte ao trilho: a integridade no oculto brota do amor de Deus que já nos vê. A identidade é <b>dada</b> (“amado, chamado”), não conquistada num teste. Repita isso explicitamente mais de uma vez.</li>
+    <li><b>Timing é o maior furo prático:</b> 95 min é o tempo “limpo” — reserve 2h contando atrasos. Por bloco, escolha <b>um</b> canal de partilha (ou o debrief da dinâmica, ou as perguntas). Cada lista tem uma âncora obrigatória; o resto é “se sobrar tempo”. <b>Gatilho de corte:</b> se aos 50 min você não terminou a Carta 9, vá direto pra Galeria de Máscaras e pule o aprofundamento. <b>Nunca corte:</b> a leitura dos trechos, Daniel 1:8, o desafio dos 10 dias e a oração final.</li>
+    <li><b>Discrição na Carta 9:</b> enquadre o conteúdo sensual/vício sempre como escapismo e compulsão (telas, scroll, comida por ansiedade, substância). A “fórmula” de Lewis é sobre prazer em geral — telas/scroll são aplicações atuais nossas, não termos dele (evita anacronismo). Pornografia só com faixa mais velha, sem detalhe. Nunca peça relato público de vício — ofereça conversa reservada e encaminhamento.</li>
+    <li><b>Cuidado com saúde mental — kit à mão:</b> “seca espiritual” pode se confundir com depressão/ansiedade. Se um jovem descrever desânimo persistente ou ideação, acolha e encaminhe — não espiritualize. Tenha anotado: nome do pastor/líder de referência e o <b>CVV (188, 24h)</b>. Garanta 1 líder disponível ao fim pra conversas reservadas.</li>
+    <li><b>Fidelidade a Lewis:</b> a Lei da Ondulação aparece na Carta 8 (a 9 só a explora). No vale, Lewis diz “pobre, apagado e frio” — não “vazio”. A Carta 10 não menciona Pedro (a comparação é aplicação nossa). E preserve a ironia: o que alegra Satanás é tirar tudo sem dar nada — espelho invertido da graça que dá tudo de graça.</li>
+    <li><b>Não exponha ninguém:</b> nas três dinâmicas (andar pros lados, segurar o celular, fazer caras), participar é leve e ninguém é obrigado a falar da própria vida. Convide a partilha, nunca force. Se alguém se abrir demais, acolha e siga sem holofote.</li>
+    <li><b>Preparo é mínimo:</b> as três dinâmicas rodam praticamente sem material — só o celular (ou qualquer objeto leve) de cada um pro “braço cansa”. Tenha à mão apenas: Bíblias pra todos e este guia impresso com as frases de Lewis.</li>
+    <li><b>Se optar pela Galeria de Máscaras (opcional, versão mais profunda):</b> precisa de 1 folha + 1 caneta por pessoa e 1 caixa. Avise antes que ninguém lê o “lado de dentro” e que serão destruídas — e cumpra. Proteja quem carrega dor real (luto, abuso): ofereça escrever só uma palavra. Tenha um líder disponível pra conversar depois.</li>
+    <li><b>Feche no convite, não na ameaça:</b> ao ler Mateus 10:33, comece pela promessa do v. 32 (quem confessa, Ele confessa diante do Pai). O tom da noite é “você já é amado por inteiro”, não “cuidado pra Deus não te pegar”.</li>
+  </ul>
+
+  <div class="rodape-nota">
+    <b>Material de apoio do projeto:</b> o <b>enigma das cartas</b> (<i>enigma-cartas.html</i>) tem pistas das 31 cartas — as 9 e 10 já estão lá (satisfação / esnobismo). Entregue no início e deixe os jovens preenchendo ao longo das semanas.<br>
+    <b>Nomes desta edição:</b> tio = <b>Maldanado</b> · sobrinho = <b>Vermelindo</b> · mensageiro = <b>Viltrapaça</b>.
+  </div>
+
+  <div class="acoes">
+    <button class="btn-print" onclick="window.print()">Imprimir / Salvar PDF</button>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lição 01 – O que é uma Ideologia? | Material Aprofundado | DJAD'Cast</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:       #A8791A;
+      --gold-med:   #C9A227;
+      --gold-light: #E8C84A;
+      --gold-bg:    #FFF8E8;
+      --gold-bdr:   #E5D5A0;
+      --dark:       #18130A;
+      --dark-2:     #241C0D;
+      --body-bg:    #FAFAF7;
+      --text:       #1E1A10;
+      --text-2:     #3A3220;
+      --muted:      #7A7060;
+      --border:     #E8E0CC;
+      --white:      #FFFFFF;
+      --red-soft:   #FFF0F0;
+      --red-bdr:    #E8BABA;
+      --blue-soft:  #F0F4FF;
+      --blue-bdr:   #B8C8E8;
+      --green-soft: #F0FFF4;
+      --green-bdr:  #A8D8B0;
+    }
+
+    body {
+      font-family: "DM Sans", sans-serif;
+      background: var(--body-bg);
+      color: var(--text);
+      line-height: 1.75;
+    }
+
+    /* ── PRINT BAR ──────────────────────── */
+    .print-bar {
+      background: var(--dark);
+      padding: 11px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .print-bar-left { display: flex; align-items: center; gap: 14px; }
+    .print-brand {
+      font-family: "Bebas Neue", sans-serif;
+      letter-spacing: .12em;
+      font-size: 1rem;
+      color: var(--gold-med);
+    }
+    .print-info { font-size: .78rem; color: rgba(255,255,255,.4); }
+    .btn-print {
+      background: var(--gold-med);
+      color: #000;
+      border: none;
+      font-family: "DM Sans", sans-serif;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      border-radius: 999px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-print:hover { background: var(--gold-light); }
+
+    /* ── PAGE ───────────────────────────── */
+    .page {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 52px 44px 72px;
+    }
+
+    /* ── COVER ──────────────────────────── */
+    .cover {
+      background: var(--dark);
+      border-radius: 18px;
+      padding: 44px 44px 38px;
+      margin-bottom: 44px;
+      position: relative;
+      overflow: hidden;
+    }
+    /* decorative orb */
+    .cover::after {
+      content: "";
+      position: absolute;
+      bottom: -80px; right: -80px;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,162,39,.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cover-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .cover-brand {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: .14em;
+      color: var(--gold-med);
+    }
+    .cover-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .cover-badge {
+      background: rgba(201,162,39,.12);
+      border: 1px solid rgba(201,162,39,.3);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: .68rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #E8C84A;
+    }
+    .cover-eyebrow {
+      font-size: .72rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.35);
+      margin-bottom: 8px;
+    }
+    .cover-title {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(2.4rem, 7vw, 3.8rem);
+      letter-spacing: .04em;
+      line-height: .95;
+      background: linear-gradient(140deg, #fff 0%, #E8C84A 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 18px;
+    }
+    .cover-theme {
+      font-size: .82rem;
+      font-style: italic;
+      color: rgba(255,255,255,.4);
+      margin-bottom: 18px;
+      letter-spacing: .02em;
+    }
+    .cover-verse {
+      font-family: "Lora", serif;
+      font-size: .94rem;
+      font-style: italic;
+      color: rgba(255,255,255,.65);
+      border-left: 3px solid var(--gold-med);
+      padding-left: 16px;
+      line-height: 1.65;
+      max-width: 580px;
+    }
+    .cover-verse cite {
+      display: block;
+      margin-top: 6px;
+      font-style: normal;
+      font-family: "DM Sans", sans-serif;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      color: var(--gold-med);
+    }
+    .cover-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .meta-item { font-size: .76rem; color: rgba(255,255,255,.35); }
+    .meta-item strong { display: block; color: rgba(255,255,255,.75); font-size: .82rem; margin-bottom: 2px; }
+
+    /* ── NAV (table of contents) ─────────── */
+    .toc {
+      background: var(--gold-bg);
+      border: 1px solid var(--gold-bdr);
+      border-radius: 12px;
+      padding: 22px 26px;
+      margin-bottom: 44px;
+    }
+    .toc h3 {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: .92rem;
+      letter-spacing: .16em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .toc ol { padding-left: 18px; }
+    .toc li {
+      font-size: .86rem;
+      color: var(--text-2);
+      margin-bottom: 5px;
+      line-height: 1.4;
+    }
+    .toc li a { color: var(--gold); text-decoration: none; }
+    .toc li a:hover { text-decoration: underline; }
+    .toc .sub { font-size: .78rem; color: var(--muted); }
+
+    /* ── OBJECTIVES ─────────────────────── */
+    .objectives {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--gold-med);
+      border-radius: 10px;
+      padding: 22px 26px;
+      margin-bottom: 40px;
+    }
+    .objectives h3 {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: .92rem;
+      letter-spacing: .14em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .objectives ol { padding-left: 20px; }
+    .objectives li { font-size: .9rem; margin-bottom: 6px; line-height: 1.5; }
+
+    /* ── SECTION ────────────────────────── */
+    .section { margin-bottom: 48px; }
+
+    .sec-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+    .sec-num {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--dark);
+      color: var(--gold-med);
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .sec-header h2 {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: .05em;
+      color: var(--dark);
+      line-height: 1;
+    }
+    .sec-intro {
+      font-family: "Lora", serif;
+      font-size: 1rem;
+      color: var(--text-2);
+      line-height: 1.85;
+      margin-bottom: 20px;
+    }
+
+    /* ── SUBSECTION ─────────────────────── */
+    .sub { margin-bottom: 28px; }
+    .sub h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .sub h3 .dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--gold-med);
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+    .sub p { font-size: .92rem; color: var(--text-2); margin-bottom: 10px; line-height: 1.78; }
+    .sub ul, .sub ol { padding-left: 20px; margin-bottom: 10px; }
+    .sub li { font-size: .9rem; color: var(--text-2); margin-bottom: 5px; line-height: 1.6; }
+    .sub strong { color: var(--text); }
+
+    /* ── CALLOUT TYPES ──────────────────── */
+    .callout {
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 14px 0;
+      font-size: .9rem;
+      line-height: 1.7;
+    }
+    .callout-gold {
+      background: var(--gold-bg);
+      border-left: 4px solid var(--gold-med);
+      color: var(--text-2);
+    }
+    .callout-dark {
+      background: var(--dark);
+      color: rgba(255,255,255,.8);
+    }
+    .callout-dark strong, .callout-gold strong { color: var(--gold-med); }
+    .callout-red { background: var(--red-soft); border-left: 4px solid #C44; color: var(--text-2); }
+    .callout-blue { background: var(--blue-soft); border-left: 4px solid #448; color: var(--text-2); }
+    .callout-green { background: var(--green-soft); border-left: 4px solid #484; color: var(--text-2); }
+    .callout label {
+      display: block;
+      font-size: .66rem;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .callout-gold label { color: var(--gold); }
+    .callout-dark label { color: var(--gold-med); }
+    .callout-red label { color: #A33; }
+    .callout-blue label { color: #336; }
+    .callout-green label { color: #363; }
+
+    /* ── VERSE ──────────────────────────── */
+    .verse {
+      border-left: 4px solid var(--gold-med);
+      background: var(--gold-bg);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin: 14px 0;
+    }
+    .verse p {
+      font-family: "Lora", serif;
+      font-style: italic;
+      font-size: .94rem;
+      color: var(--text);
+      margin-bottom: 6px;
+      line-height: 1.7;
+    }
+    .verse cite {
+      font-style: normal;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      color: var(--gold);
+    }
+
+    /* ── HISTORY TIMELINE ───────────────── */
+    .timeline { margin: 18px 0; }
+    .tl-item {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+    .tl-year {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1rem;
+      color: var(--gold-med);
+      min-width: 60px;
+      padding-top: 2px;
+    }
+    .tl-content { flex: 1; }
+    .tl-content strong { display: block; font-size: .9rem; color: var(--dark); margin-bottom: 3px; }
+    .tl-content p { font-size: .84rem; color: var(--text-2); margin: 0; line-height: 1.55; }
+
+    /* ── COMPARISON TABLE ───────────────── */
+    .compare-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: .88rem; }
+    .compare-table th {
+      background: var(--dark);
+      color: var(--gold-med);
+      font-family: "Bebas Neue", sans-serif;
+      letter-spacing: .1em;
+      font-size: .9rem;
+      padding: 12px 16px;
+      text-align: left;
+    }
+    .compare-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-2);
+      vertical-align: top;
+      line-height: 1.55;
+    }
+    .compare-table tr:nth-child(even) td { background: var(--gold-bg); }
+    .compare-table td:first-child { font-weight: 600; color: var(--dark); white-space: nowrap; }
+
+    /* ── CASE STUDY ─────────────────────── */
+    .case-study {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    .case-study-header {
+      background: var(--dark-2);
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .case-study-header .icon { font-size: 1.4rem; }
+    .case-study-header h4 {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1rem;
+      letter-spacing: .1em;
+      color: var(--gold-light);
+    }
+    .case-study-header span { font-size: .72rem; color: rgba(255,255,255,.4); margin-left: auto; }
+    .case-study-body { padding: 20px 22px; }
+    .case-study-body p { font-size: .9rem; color: var(--text-2); margin-bottom: 10px; line-height: 1.7; }
+    .case-study-body p:last-child { margin-bottom: 0; }
+
+    /* ── DIVIDER ────────────────────────── */
+    hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+    /* ── READING PLAN ───────────────────── */
+    .reading-plan {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 44px;
+    }
+    .rp-header {
+      background: var(--dark);
+      color: var(--gold-med);
+      font-family: "Bebas Neue", sans-serif;
+      letter-spacing: .12em;
+      font-size: .96rem;
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .rp-day {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 13px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+    .rp-day:last-child { border-bottom: none; }
+    .rp-day:nth-child(even) { background: var(--gold-bg); }
+    .rp-name {
+      font-weight: 700;
+      font-size: .75rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--gold);
+      min-width: 62px;
+      padding-top: 3px;
+    }
+    .rp-ref { font-weight: 700; color: var(--dark); }
+    .rp-desc { font-size: .86rem; color: var(--text-2); line-height: 1.5; }
+
+    /* ── DINÂMICA ───────────────────────── */
+    .dinamica {
+      border: 1px solid var(--blue-bdr);
+      border-radius: 14px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    .din-header {
+      background: #2A2F48;
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .din-header h4 {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1rem;
+      letter-spacing: .1em;
+      color: #A8C0F8;
+    }
+    .din-header span { font-size: .72rem; color: rgba(255,255,255,.4); margin-left: auto; }
+    .din-body { padding: 20px 22px; }
+    .din-step {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 12px;
+      align-items: flex-start;
+    }
+    .din-step-num {
+      background: #2A2F48;
+      color: #A8C0F8;
+      font-family: "Bebas Neue", sans-serif;
+      font-size: .9rem;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .din-step p { font-size: .88rem; color: var(--text-2); margin: 0; line-height: 1.6; }
+
+    /* ── QUESTIONS ──────────────────────── */
+    .questions { margin-bottom: 44px; }
+    .q-section-title {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: .06em;
+      color: var(--dark);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .q-intro {
+      font-size: .84rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .q-block { margin-bottom: 26px; padding-bottom: 26px; border-bottom: 1px solid var(--border); }
+    .q-block:last-child { border-bottom: none; }
+    .q-row { display: flex; gap: 14px; }
+    .q-num {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1.8rem;
+      color: var(--gold-med);
+      opacity: .35;
+      line-height: 1;
+      min-width: 30px;
+    }
+    .q-content { flex: 1; }
+    .q-text { font-size: .96rem; font-weight: 600; color: var(--dark); margin-bottom: 6px; line-height: 1.5; }
+    .q-hint { font-size: .78rem; color: var(--muted); margin-bottom: 10px; font-style: italic; }
+    .answer-line { height: 1px; background: var(--border); margin-bottom: 7px; }
+
+    /* ── APPLICATION CARDS ──────────────── */
+    .app-section { margin-bottom: 44px; }
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 14px;
+    }
+    .app-card {
+      background: var(--dark);
+      border-radius: 12px;
+      padding: 20px 18px;
+    }
+    .app-card .icon { font-size: 1.6rem; margin-bottom: 10px; }
+    .app-card h4 {
+      font-size: .88rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      margin-bottom: 6px;
+    }
+    .app-card p {
+      font-size: .8rem;
+      color: rgba(255,255,255,.55);
+      line-height: 1.6;
+    }
+
+    /* ── CONCLUSION ─────────────────────── */
+    .conclusion {
+      background: var(--dark);
+      color: rgba(255,255,255,.8);
+      border-radius: 14px;
+      padding: 30px 34px;
+      margin-bottom: 44px;
+    }
+    .conclusion h2 {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: .08em;
+      color: var(--gold-light);
+      margin-bottom: 14px;
+    }
+    .conclusion p { font-size: .92rem; line-height: 1.8; margin-bottom: 12px; }
+    .conclusion .verse-dark {
+      border-left: 3px solid var(--gold-med);
+      padding-left: 16px;
+      font-family: "Lora", serif;
+      font-style: italic;
+      color: rgba(255,255,255,.6);
+      font-size: .92rem;
+      line-height: 1.65;
+      margin-top: 16px;
+    }
+    .conclusion .verse-dark cite {
+      display: block;
+      margin-top: 5px;
+      font-style: normal;
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      color: var(--gold-med);
+    }
+
+    /* ── DOC FOOTER ─────────────────────── */
+    .doc-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 22px;
+      border-top: 1px solid var(--border);
+      font-size: .73rem;
+      color: var(--muted);
+    }
+    .doc-footer strong {
+      font-family: "Bebas Neue", sans-serif;
+      letter-spacing: .1em;
+      color: var(--gold);
+    }
+
+    /* ── PRINT ──────────────────────────── */
+    @media print {
+      .print-bar { display: none; }
+      .page { padding: 16px 22px; }
+      .cover, .conclusion, .app-card, .case-study-header, .rp-header, .din-header, .sec-num, .callout-dark {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      @page { margin: 12mm 10mm; }
+      .section { page-break-inside: avoid; }
+    }
+
+    @media (max-width: 580px) {
+      .page { padding: 24px 18px 48px; }
+      .cover { padding: 26px 20px; }
+      .app-grid { grid-template-columns: 1fr; }
+      .compare-table { font-size: .78rem; }
+      .compare-table td, .compare-table th { padding: 8px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PRINT BAR -->
+<div class="print-bar">
+  <div class="print-bar-left">
+    <span class="print-brand">🎙️ DJAD'Cast</span>
+    <span class="print-info">Material Aprofundado · Lição 01 · 2º Trimestre 2026</span>
+  </div>
+  <button class="btn-print" onclick="window.print()">⬇ Salvar / Imprimir PDF</button>
+</div>
+
+<div class="page">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-top">
+      <span class="cover-brand">🎙️ DJAD'Cast</span>
+      <div class="cover-badges">
+        <span class="cover-badge">Lição 01</span>
+        <span class="cover-badge">2º Trim. 2026</span>
+        <span class="cover-badge">Material Aprofundado</span>
+      </div>
+    </div>
+    <div class="cover-eyebrow">Entre a Verdade e o Engano · Combatendo ideologias que se opõem à Palavra de Deus</div>
+    <div class="cover-title">O que é uma<br/>Ideologia?</div>
+    <div class="cover-theme">Comentarista: Pr. Eduardo Leandro Alves · Assembleia de Deus · 5 de abril de 2026</div>
+    <div class="cover-verse">
+      "Tende cuidado para que ninguém vos faça presa sua, por meio de filosofias e vãs sutilezas, segundo a tradição dos homens, segundo os rudimentos do mundo, e não segundo Cristo."
+      <cite>Colossenses 2.8</cite>
+    </div>
+    <div class="cover-meta">
+      <div class="meta-item"><strong>Texto-base</strong>Colossenses 2.2,8; 2 Coríntios 10.3-5</div>
+      <div class="meta-item"><strong>Tema Geral</strong>Entre a Verdade e o Engano</div>
+      <div class="meta-item"><strong>Edição</strong>CPAD Jovens · 2026</div>
+    </div>
+  </div>
+
+  <!-- TABLE OF CONTENTS -->
+  <div class="toc">
+    <h3>Sumário</h3>
+    <ol>
+      <li><a href="#intro">Introdução — O Invisível que Governa o Mundo</a></li>
+      <li><a href="#historia">Origem Histórica do Conceito de Ideologia</a></li>
+      <li><a href="#cosmovisao">Ideologia vs. Cosmovisão Bíblica — Uma Distinção Essencial</a></li>
+      <li><a href="#caracteristicas">As Três Características de uma Ideologia</a></li>
+      <li><a href="#daniel">Estudo de Caso: Daniel na Babilônia</a></li>
+      <li><a href="#hoje">Como as Ideologias Operam Hoje</a></li>
+      <li><a href="#impacto">Impacto sobre a Fé Cristã</a></li>
+      <li><a href="#defesa">Defesa da Verdade Bíblica</a></li>
+      <li><a href="#dinamica">Dinâmica em Grupo</a></li>
+      <li><a href="#leitura">Plano de Leitura Semanal</a></li>
+      <li><a href="#perguntas">Perguntas para Reflexão e Debate</a></li>
+      <li><a href="#aplicacao">Aplicação Prática</a></li>
+    </ol>
+  </div>
+
+  <!-- OBJECTIVES -->
+  <div class="objectives">
+    <h3>Objetivos da Lição</h3>
+    <ol>
+      <li>Apontar as <strong>características de uma ideologia</strong> e entender como ela se estrutura e opera.</li>
+      <li>Identificar os <strong>impactos das ideologias</strong> sobre a fé cristã e a vida prática do jovem.</li>
+      <li>Estimular a busca do <strong>conhecimento bíblico</strong> como fundamento de defesa da verdade.</li>
+    </ol>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SEÇÃO 0: INTRODUÇÃO
+  ═══════════════════════════════════════ -->
+  <div class="section" id="intro">
+    <div class="sec-header">
+      <div class="sec-num">✦</div>
+      <h2>O Invisível que Governa o Mundo</h2>
+    </div>
+    <p class="sec-intro">
+      Você já parou pra pensar por que certas ideias parecem tão óbvias que nem precisam ser justificadas? Por que algumas coisas são chamadas de "ultrapassadas" sem nenhum argumento sério? Por que certos valores dominam as redes sociais, as escolas e as séries como se fossem verdades absolutas — mesmo sem base lógica ou moral sólida?
+    </p>
+    <div class="sub">
+      <p>A resposta está num fenômeno que a maioria das pessoas nunca estuda, mas que todos vivenciam: <strong>a ideologia</strong>. Ela é o "invisível que governa o mundo" — um conjunto de ideias tão entranhadas na cultura que parecem naturais, neutras, inevitáveis. Mas não são.</p>
+      <p>Toda ideologia carrega consigo uma visão do que é o ser humano, o que é certo e errado, qual é o propósito da vida e qual o destino da humanidade. Ou seja: toda ideologia é, em essência, uma <strong>religião sem Deus</strong> — e é exatamente por isso que ela entra em conflito direto com a fé cristã.</p>
+      <p>Para o jovem cristão do século XXI, entender o que é uma ideologia não é um exercício intelectual vazio. É uma questão de sobrevivência espiritual.</p>
+    </div>
+
+    <div class="callout callout-gold">
+      <label>Definição Central da Lição</label>
+      Uma ideologia é <em>"um sistema coerente com as ideias que defende e busca explicar e moldar a realidade, oferecendo respostas sobre a existência, a moralidade, a sociedade e o futuro da humanidade."</em>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- ═══════════════════════════════════════
+       SEÇÃO 1: HISTÓRIA
+  ═══════════════════════════════════════ -->
+  <div class="section" id="historia">
+    <div class="sec-header">
+      <div class="sec-num">I</div>
+      <h2>Origem Histórica do Conceito</h2>
+    </div>
+    <p class="sec-intro">Antes de combater uma coisa, é preciso conhecê-la. Entender de onde vem o conceito de ideologia ajuda a perceber como ele chegou até nós — e por que é tão poderoso.</p>
+
+    <div class="sub">
+      <p>O termo "ideologia" foi cunhado em 1797 pelo filósofo francês <strong>Antoine Destutt de Tracy</strong>, que o usou para descrever uma "ciência das ideias" — um projeto iluminista de estudar a origem dos pensamentos humanos de forma racional e científica.</p>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <span class="tl-year">1790</span>
+          <div class="tl-content">
+            <strong>Immanuel Kant — O "Weltanschauung"</strong>
+            <p>O filósofo prussiano cunha o termo alemão para "cosmovisão" (visão de mundo). Para Kant, a mente humana não é passiva — ela <em>constrói ativamente</em> a realidade que percebe. Toda pessoa enxerga o mundo através de categorias mentais internas.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <span class="tl-year">1797</span>
+          <div class="tl-content">
+            <strong>Destutt de Tracy — A "Ciência das Ideias"</strong>
+            <p>Cria o termo "ideologia" como disciplina científica para estudar como as ideias se formam. O projeto era positivo: usar a razão para libertar a humanidade das "superstições" — especialmente da religião.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <span class="tl-year">1804</span>
+          <div class="tl-content">
+            <strong>Napoleão Bonaparte — O Uso Pejorativo</strong>
+            <p>Bonaparte chamou seus opositores intelectuais de "ideólogos" — pessoas desconectadas da realidade, presas a teorias abstratas. A palavra começa a ganhar conotação negativa.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <span class="tl-year">1848</span>
+          <div class="tl-content">
+            <strong>Karl Marx — A "Falsa Consciência"</strong>
+            <p>Marx ressignifica radicalmente o conceito. Para ele, ideologia é a "falsa consciência" que a classe dominante impõe sobre o povo para mascarar a exploração. O Manifesto Comunista inaugura o uso político-revolucionário do conceito.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <span class="tl-year">Séc. XX</span>
+          <div class="tl-content">
+            <strong>A Era das Ideologias em Massa</strong>
+            <p>Fascismo, comunismo, nazismo e liberalismo competem pela lealdade total dos indivíduos. O século XX é o mais sangrento da história humana — e a maioria das atrocidades foi cometida em nome de uma ideologia.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <span class="tl-year">Hoje</span>
+          <div class="tl-content">
+            <strong>Ideologias Culturais e Digitais</strong>
+            <p>O campo de batalha mudou. Hoje as ideologias mais influentes não chegam pela força militar, mas pelos algoritmos, pelo entretenimento, pela educação formal e pelas redes sociais.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-red">
+        <label>Atenção</label>
+        Perceba: desde sua origem, o conceito de ideologia nasce como uma reação ao papel da religião na sociedade. O projeto iluminista era substituir a fé por uma "ciência das ideias". O confronto entre ideologia e fé cristã não é acidental — é estrutural.
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- ═══════════════════════════════════════
+       SEÇÃO 2: IDEOLOGIA vs COSMOVISÃO
+  ═══════════════════════════════════════ -->
+  <div class="section" id="cosmovisao">
+    <div class="sec-header">
+      <div class="sec-num">II</div>
+      <h2>Ideologia vs. Cosmovisão Bíblica</h2>
+    </div>
+    <p class="sec-intro">Uma das confusões mais comuns — e mais perigosas — é a seguinte: "O cristianismo também não é uma ideologia?" A resposta é não, e entender por quê é fundamental.</p>
+
+    <div class="sub">
+      <p>Toda pessoa possui uma <strong>cosmovisão</strong> — um conjunto de convicções que funciona como um par de óculos através do qual ela enxerga e interpreta tudo. Você tem uma, eu tenho uma, o ateu tem uma, o marxista tem uma. Isso é inevitável e não é errado.</p>
+      <p>O problema não é ter uma cosmovisão. O problema é de <em>onde ela vem</em> e <em>a quem ela aponta</em>.</p>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Aspecto</th>
+            <th>Ideologia Humana</th>
+            <th>Cosmovisão Bíblica</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Origem</td>
+            <td>Reflexão humana, cultura, experiência</td>
+            <td>Revelação divina (Escrituras)</td>
+          </tr>
+          <tr>
+            <td>Autoridade</td>
+            <td>A si mesma / a um sistema humano</td>
+            <td>Deus — teocêntrica</td>
+          </tr>
+          <tr>
+            <td>Verdade</td>
+            <td>Construída, relativa, mutável</td>
+            <td>Revelada, absoluta, imutável</td>
+          </tr>
+          <tr>
+            <td>Ser humano</td>
+            <td>Centro do sistema</td>
+            <td>Criatura dependente de Deus</td>
+          </tr>
+          <tr>
+            <td>Pecado</td>
+            <td>Negado, relativizado ou externalizado</td>
+            <td>Real, universal, necessita redenção</td>
+          </tr>
+          <tr>
+            <td>Salvação</td>
+            <td>Progresso social, revolução, autoconhecimento</td>
+            <td>Cristo crucificado e ressurreto</td>
+          </tr>
+          <tr>
+            <td>Destino</td>
+            <td>Utopia terrena ou niilismo</td>
+            <td>Reino de Deus, eternidade</td>
+          </tr>
+          <tr>
+            <td>Lealdade exige</td>
+            <td>Conformidade ao sistema</td>
+            <td>Obediência a Deus por amor</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-dark">
+        <label>Distinção Fundamental</label>
+        O perigo não é ter ideias políticas ou culturais. O perigo é quando essas ideias se tornam o <em>filtro principal</em> através do qual você lê a Bíblia — em vez de a Bíblia ser o filtro para avaliar essas ideias. Quando isso acontece, a ideologia assumiu o lugar de Deus.
+      </div>
+
+      <p>Abraham Kuyper, teólogo reformado holandês do século XIX, foi um dos primeiros a articular a <strong>cosmovisão cristã</strong> como resposta às ideologias modernas. Para ele, Cristo é "Soberano sobre toda esfera da vida" — não apenas sobre a religião privada. A fé não é um departamento da vida; é a fundação de toda ela.</p>
+
+      <div class="verse">
+        <p>"Porque nele foram criadas todas as coisas que há nos céus e na terra, visíveis e invisíveis, sejam tronos, sejam dominações, sejam principados, sejam potestades. Tudo foi criado por ele e para ele."</p>
+        <cite>Colossenses 1.16</cite>
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- ═══════════════════════════════════════
+       SEÇÃO 3: CARACTERÍSTICAS
+  ═══════════════════════════════════════ -->
+  <div class="section" id="caracteristicas">
+    <div class="sec-header">
+      <div class="sec-num">III</div>
+      <h2>As Três Características de uma Ideologia</h2>
+    </div>
+
+    <!-- 3.1 -->
+    <div class="sub">
+      <h3><span class="dot"></span>1. Fundamentação Humana</h3>
+      <p>Toda ideologia nasce de uma mente humana. Isso não é uma crítica — o ser humano foi criado com capacidade de raciocínio extraordinária. O problema é que essa mente está <strong>corrompida pela queda</strong> (Gn 3). Sem a iluminação divina, o raciocínio humano tende a construir sistemas que glorificam o próprio ser humano e rejeita a dependência de Deus.</p>
+      <p>O apóstolo Paulo descreve esse processo com precisão cirúrgica em Romanos 1: quando o ser humano recusa reconhecer Deus, sua mente não fica neutra — ela começa a adorar a criatura no lugar do Criador. A ideologia é exatamente esse processo: um sistema de ideias construído pela criatura para dispensar o Criador.</p>
+
+      <div class="verse">
+        <p>"Porque os homens, conhecendo a Deus, não o glorificaram como Deus, nem lhe deram graças; antes, se tornaram nulos em seus próprios raciocínios, e o seu coração insensato se obscureceu."</p>
+        <cite>Romanos 1.21</cite>
+      </div>
+      <div class="verse">
+        <p>"Quando dizem que são sábios, tornaram-se loucos."</p>
+        <cite>Romanos 1.22</cite>
+      </div>
+
+      <div class="callout callout-gold">
+        <label>Análise Exegética</label>
+        Em Romanos 12.2, Paulo usa a palavra grega <em>aion</em> ("século") para descrever o sistema de valores da era presente. O verbo <em>suschêmatizô</em> significa ser "moldado externamente" — exatamente o que as ideologias fazem: tentam moldar o cristão por fora, pela pressão cultural, antes que ele perceba o que está acontecendo.
+      </div>
+    </div>
+
+    <!-- 3.2 -->
+    <div class="sub">
+      <h3><span class="dot"></span>2. Autoridade Própria e Lealdade Total</h3>
+      <p>Uma característica decisiva de toda ideologia é que ela <strong>reivindica autoridade total</strong>. Não é uma sugestão ou uma perspectiva entre outras — ela exige que você organize toda a sua vida em torno dela. Quem discorda é chamado de "atrasado", "opressor", "negacionista" ou "extremista".</p>
+      <p>Isso transforma as ideologias em <strong>"religiões seculares"</strong>. Elas têm seus dogmas (verdades inquestionáveis), seus santos (figuras históricas celebradas), seus pecados (qualquer desvio da linha), suas excomunhões (cancelamento) e sua promessa de salvação (o paraíso social aqui na terra).</p>
+
+      <ul>
+        <li><strong>Marxismo:</strong> O paraíso é a sociedade sem classes. O pecado é a propriedade privada. A salvação é a revolução.</li>
+        <li><strong>Progressismo cultural:</strong> O paraíso é a "inclusão total". O pecado é o preconceito. A salvação é a desconstrução.</li>
+        <li><strong>Consumismo:</strong> O paraíso é a realização pessoal pelo ter. O pecado é a pobreza. A salvação é o sucesso financeiro.</li>
+        <li><strong>Individualismo radical:</strong> O paraíso é a autossuficiência. O pecado é a dependência. A salvação é "viver sua verdade".</li>
+      </ul>
+
+      <div class="verse">
+        <p>"Para que não sejais como crianças agitadas, levadas e arrastadas por todo o vento de doutrina, pela artimanha dos homens que, astutamente, as arrastam para o erro."</p>
+        <cite>Efésios 4.14</cite>
+      </div>
+
+      <div class="callout callout-red">
+        <label>Sinal de Alerta</label>
+        Quando uma ideia começa a exigir que você não a questione — quando a dúvida é tratada como traição, quando pensar diferente é "crime" social — você está diante de uma ideologia funcionando como religião. O cristão deve ser livre para examinar tudo à luz das Escrituras (1Ts 5.21).
+      </div>
+    </div>
+
+    <!-- 3.3 -->
+    <div class="sub">
+      <h3><span class="dot"></span>3. Resistência à Verdade Revelada</h3>
+      <p>As ideologias não chegam sempre com um ataque frontal à Bíblia. Muitas vezes chegam de forma muito mais sutil: <strong>reinterpretando</strong> as Escrituras à luz da ideologia. É quando alguém diz "o que a Bíblia <em>realmente</em> quer dizer é…" — e o que segue é uma leitura moldada pela cultura, não pelo texto.</p>
+      <p>Esse processo é chamado de <em>eisegese</em> (ler para dentro do texto o que você já acredita) em vez de <em>exegese</em> (extrair do texto o que ele realmente diz). Quando uma pessoa usa a Bíblia para confirmar suas ideias preconcebidas, a Escritura perdeu sua autoridade — ela virou apenas uma ferramenta retórica.</p>
+
+      <div class="verse">
+        <p>"Tende cuidado para que ninguém vos faça presa sua, por meio de filosofias e vãs sutilezas, segundo a tradição dos homens, segundo os rudimentos do mundo, e não segundo Cristo."</p>
+        <cite>Colossenses 2.8</cite>
+      </div>
+
+      <div class="callout callout-gold">
+        <label>Análise do Texto</label>
+        A palavra grega traduzida como "filosofias" (<em>philosophia</em>) no tempo de Paulo não se referia apenas à disciplina acadêmica. Era um termo amplo para qualquer sistema humano de explicação da realidade. Paulo não está condenando o pensamento — está condenando os sistemas que pretendem explicar o mundo <em>sem Cristo</em>.
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- ═══════════════════════════════════════
+       SEÇÃO 4: ESTUDO DE CASO — DANIEL
+  ═══════════════════════════════════════ -->
+  <div class="section" id="daniel">
+    <div class="sec-header">
+      <div class="sec-num">IV</div>
+      <h2>Estudo de Caso: Daniel na Babilônia</h2>
+    </div>
+    <p class="sec-intro">
+      Daniel não é apenas uma figura histórica bíblica. Ele é um espelho para o jovem cristão de hoje — alguém que precisou viver sua fé dentro de uma cultura hostil, totalitária e ideologicamente agressiva.
+    </p>
+
+    <div class="sub">
+      <h3><span class="dot"></span>O Contexto: Um Choque de Cosmovisões</h3>
+      <p>Em 605 a.C., Nabucodonosor conquista Jerusalém e deporta os jovens mais talentosos de Israel para Babilônia — a superpotência do mundo antigo. O plano era claro: desisraelizar esses jovens e babilonizá-los. Transformar servos de Yahweh em servidores do império.</p>
+      <p>A Babilônia era uma civilização com ideologia própria e poderosa: politeísmo imperial, onde o rei era representante dos deuses; magia e adivinhação como acesso ao conhecimento; e uma cultura de domínio total sobre a identidade dos conquistados.</p>
+
+      <div class="case-study">
+        <div class="case-study-header">
+          <span class="icon">📜</span>
+          <h4>Daniel 1 — Análise Passo a Passo</h4>
+          <span>Daniel 1.1-21</span>
+        </div>
+        <div class="case-study-body">
+          <p><strong>1. A troca de nomes (v.7):</strong> Daniel vira Beltessazar; Hananias vira Sadraque; Misael vira Mesaque; Azarias vira Abede-Nego. No mundo antigo, nome é identidade. Os nomes hebreus apontavam para Yahweh — os nomes babilônicos apontavam para deuses pagãos. A primeira tentativa de aculturação foi <em>reformatar a identidade religiosa</em>. Idêntico ao que as ideologias contemporâneas fazem ao tentar redefinir o que significa ser humano, o que é família, o que é gênero — antes de atacar a fé, atacam a identidade.</p>
+          <p><strong>2. A iguaria do rei (v.8):</strong> A comida real provavelmente incluía carnes sacrificadas a ídolos e alimentos proibidos pela Lei mosaica. Recusar era risco de morte. Mas Daniel "propôs no seu coração não se contaminar." Perceba a sequência: primeiro a decisão interior, depois a negociação com o exterior. Convicção precede circunstância.</p>
+          <p><strong>3. A estratégia inteligente (v.12-14):</strong> Daniel não faz um protesto dramático. Propõe um experimento de 10 dias. Ele é fiel aos seus princípios <em>sem ser desnecessariamente confrontacional</em>. Isso é sabedoria — não capitulação. Ele permanece no sistema sem ser capturado pelo sistema.</p>
+          <p><strong>4. O resultado (v.17-20):</strong> "Deus deu a esses quatro jovens conhecimento e inteligência em toda a literatura e sabedoria." Fidelidade aos princípios bíblicos não produz ignorância — produz excelência. Daniel e seus companheiros foram dez vezes melhores que todos os outros. A cosmovisão bíblica não é um obstáculo à competência; é seu fundamento.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3><span class="dot"></span>A Babilônia de Hoje</h3>
+      <p>Se Daniel vivesse hoje, a "iguaria do rei" não seria um prato de comida. Seria:</p>
+      <ul>
+        <li>A pressão para <strong>aceitar como normal</strong> aquilo que a Escritura chama de pecado</li>
+        <li>O convite a <strong>relativizar a fé</strong> para "ser aceito" no ambiente universitário, profissional ou social</li>
+        <li>O algoritmo que serve conteúdo que <strong>reforça o que você já quer acreditar</strong> — sem nunca questionar</li>
+        <li>A cultura do cancelamento que pune quem <strong>discorda da narrativa dominante</strong></li>
+        <li>A educação formal que trata a fé como <strong>irracional por definição</strong></li>
+      </ul>
+
+      <div class="callout callout-blue">
+        <label>Paralelo Contemporâneo</label>
+        A Babilônia não precisava que Daniel negasse Deus — precisava apenas que ele o colocasse em segundo lugar. As ideologias de hoje raramente pedem abandono explícito da fé. Pedem apenas que a fé fique no privado, que não interfira no público, que não julgue o que a cultura aprova. Essa é a "iguaria do rei" do século XXI.
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- ═══════════════════════════════════════
+       SEÇÃO 5: COMO OPERAM HOJE
+  ═══════════════════════════════════════ -->
+  <div class="section" id="hoje">
+    <div class="sec-header">
+      <div class="sec-num">V</div>
+      <h2>Como as Ideologias Operam Hoje</h2>
+    </div>
+    <p class="sec-intro">Entender os mecanismos modernos de propagação ideológica é tão importante quanto entender a ideologia em si. O inimigo usa as ferramentas do século com maestria.</p>
+
+    <div class="sub">
+      <h3><span class="dot"></span>1. Algoritmos e Bolhas Ideológicas</h3>
+      <p>As plataformas digitais foram projetadas para maximizar o <strong>engajamento</strong> — não a verdade. O conteúdo que gera mais reação emocional (raiva, medo, indignação) é amplificado. O resultado é que cada pessoa vive dentro de uma "bolha" onde só vê ideias que confirmam o que já acredita, com radicalização progressiva.</p>
+      <p>Um jovem que começa consumindo conteúdo político ou cultural razoável pode, em poucos meses, estar exposto a posições extremas — simplesmente porque o algoritmo foi otimizando o que geraria mais engajamento nele especificamente. Esse processo acontece sem percepção consciente.</p>
+
+      <div class="callout callout-red">
+        <label>Dado Prático</label>
+        Pesquisas mostram que o ser humano médio passa mais de 4 horas por dia em telas. Em um ano, isso representa cerca de 1.460 horas de exposição a conteúdo escolhido por algoritmos — e não por você. Quem está formando sua visão de mundo?
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3><span class="dot"></span>2. Entretenimento como Veículo</h3>
+      <p>A propaganda ideológica mais eficaz do nosso tempo não vem em panfletos políticos — vem em <strong>séries, filmes, músicas e games</strong>. O entretenimento age pela via emocional: você não analisa criticamente o que o faz chorar ou torcer. Você <em>sente</em> — e sentimentos formam convicções muito mais profundas que argumentos.</p>
+      <p>Quando uma série apresenta um personagem cristão como o vilão da história, ou quando uma música celebra valores incompatíveis com a fé mas com uma melodia irresistível — a mensagem entra pela porta dos fundos, sem que o filtro crítico seja ativado.</p>
+    </div>
+
+    <div class="sub">
+      <h3><span class="dot"></span>3. Linguagem Capturada</h3>
+      <p>Uma das estratégias mais sofisticadas das ideologias é a <strong>captura da linguagem</strong>: redefinir palavras para que carreguem significados ideológicos específicos. Quem controla as palavras, controla o pensamento.</p>
+      <ul>
+        <li>"Amor" redefinido como aceitação incondicional de qualquer comportamento</li>
+        <li>"Tolerância" redefinida como concordância — quem discorda é "intolerante"</li>
+        <li>"Justiça" redefinida dentro de categorias marxistas de opressor/oprimido</li>
+        <li>"Progresso" associado automaticamente a afastamento dos valores tradicionais</li>
+      </ul>
+      <p>O cristão precisa perceber quando está usando vocabulário que carrega uma cosmovisão contrária — muitas vezes sem perceber.</p>
+
+      <div class="callout callout-green">
+        <label>Resposta Bíblica</label>
+        Paulo adverte que a batalha é no campo das <em>"altivezas que se levantam contra o conhecimento de Deus"</em> e que precisamos levar <em>"cativo todo o entendimento à obediência de Cristo"</em> (2Co 10.5). Isso inclui examinar criticamente a linguagem que usamos — ela revela o sistema de ideias que internalizamos.
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- ═══════════════════════════════════════
+       SEÇÃO 6: IMPACTO SOBRE A FÉ
+  ═══════════════════════════════════════ -->
+  <div class="section" id="impacto">
+    <div class="sec-header">
+      <div class="sec-num">VI</div>
+      <h2>Impacto sobre a Fé Cristã</h2>
+    </div>
+
+    <div class="sub">
+      <h3><span class="dot"></span>1. Conflito de Valores e a Dupla Lealdade</h3>
+      <p>O cristão que absorve ideologias sem examiná-las acaba vivendo em <strong>dupla lealdade</strong> — tenta servir a dois senhores ao mesmo tempo (Mt 6.24). Isso produz o que os psicólogos chamam de "dissonância cognitiva": a tensão interna de acreditar em coisas contraditórias.</p>
+      <p>Na prática: o jovem sabe o que a Bíblia diz sobre certo assunto, mas a cultura diz o oposto — e ele tenta manter os dois ao mesmo tempo, relativizando a Escritura para não ser "julgado" pelos amigos. Resultado: uma fé sem coluna vertebral.</p>
+    </div>
+
+    <div class="sub">
+      <h3><span class="dot"></span>2. O Evangelho Secularizado — O Perigo Mais Sutil</h3>
+      <p>Este é o impacto mais devastador e o mais difícil de perceber: quando a fé cristã <strong>perde seu caráter sobrenatural</strong> e se torna apenas uma filosofia de autoajuda, uma ética de bondade ou uma ferramenta de transformação social.</p>
+      <p>O evangelho secularizado é o evangelho que fala de Jesus sem a cruz, de salvação sem arrependimento, de amor sem santidade, de graça sem lei. Ele usa a linguagem cristã mas tem conteúdo ideológico.</p>
+
+      <div class="callout callout-dark">
+        <label>Diagnóstico Preciso</label>
+        Como saber se seu evangelho foi secularizado? Pergunte-se: <em>O Cristo que você prega incomoda alguém? Ele exige mudança de comportamento? Ele fala de pecado, julgamento e arrependimento? Ou ele apenas conforta, valida e inclui — sem nunca confrontar?</em> O Cristo bíblico fez as duas coisas. Um Cristo que só conforta é uma construção ideológica.
+      </div>
+
+      <div class="verse">
+        <p>"Porque não me envergonho do evangelho de Cristo, pois é o poder de Deus para salvação de todo aquele que crê."</p>
+        <cite>Romanos 1.16</cite>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3><span class="dot"></span>3. A Erosão das Doutrinas Fundamentais</h3>
+      <p>A infiltração ideológica não destrói a fé de uma vez — ela corrói gradualmente, doutrina por doutrina. Começa com questões periféricas ("talvez a Bíblia esteja errada sobre isso…"), avança para questões práticas ("aquele comportamento não é tão pecaminoso assim…") e chega às doutrinas fundamentais ("Jesus não precisa ser o único caminho…").</p>
+      <p>Paulo combateu com dureza qualquer desvio doutrinário — não por rigidez, mas porque sabia que a pureza do evangelho era a questão de vida ou morte espiritual (Gl 1.8,9).</p>
+
+      <div class="verse">
+        <p>"Mas, ainda que nós ou um anjo do céu vos anuncie outro evangelho além do que vos anunciamos, seja anátema."</p>
+        <cite>Gálatas 1.8</cite>
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- ═══════════════════════════════════════
+       SEÇÃO 7: DEFESA DA VERDADE
+  ═══════════════════════════════════════ -->
+  <div class="section" id="defesa">
+    <div class="sec-header">
+      <div class="sec-num">VII</div>
+      <h2>Defesa da Verdade Bíblica</h2>
+    </div>
+
+    <div class="sub">
+      <h3><span class="dot"></span>1. Discernimento — O Dom que Precisa ser Cultivado</h3>
+      <p>O discernimento não é um talento inato — é uma <strong>capacidade cultivada</strong> pela imersão na Palavra e pela sensibilidade ao Espírito Santo. Quanto mais você conhece a verdade, mais fácil se torna reconhecer a mentira.</p>
+      <p>Um especialista em detectar cédulas falsas não estuda as falsificações — estuda obsessivamente as cédulas verdadeiras. Da mesma forma, o cristão que conhece profundamente a Escritura detecta os desvios ideológicos com mais facilidade que aquele que tenta catalogar todas as falsas doutrinas existentes.</p>
+
+      <div class="verse">
+        <p>"Examinai tudo. Retende o bem. Abstende-vos de toda a aparência do mal."</p>
+        <cite>1 Tessalonicenses 5.21,22</cite>
+      </div>
+      <div class="verse">
+        <p>"Lâmpada para os meus pés é a tua palavra e luz para o meu caminho."</p>
+        <cite>Salmos 119.105</cite>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3><span class="dot"></span>2. Fidelidade Doutrinária — Não é Rigidez, é Âncora</h3>
+      <p>A fidelidade doutrinária não é teimosia ou fundamentalismo reacionário. É a recusa de negociar o que não pode ser negociado. As doutrinas fundamentais da fé cristã — divindade de Cristo, autoridade das Escrituras, realidade do pecado, justificação pela fé, ressurreição corporal — são o <strong>alicerce sobre o qual tudo o mais se sustenta</strong>.</p>
+      <p>Quando uma sociedade prega que não existe verdade absoluta, o cristão que mantém as doutrinas não é "preconceituoso" — é o único que ainda tem algo sólido para oferecer em meio ao caos. A certeza bíblica é um serviço ao mundo, não um insulto a ele.</p>
+
+      <div class="verse">
+        <p>"Guarda o bom depósito que te foi confiado, pelo Espírito Santo que habita em nós."</p>
+        <cite>2 Timóteo 1.14</cite>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3><span class="dot"></span>3. A Batalha Espiritual — Armas que Funcionam</h3>
+      <p>É fundamental entender que o combate às ideologias não é vencido apenas com bons argumentos. Debater é necessário — mas a raiz do problema é espiritual. Paulo afirma que a batalha acontece no nível das "fortalezas" — estruturas mentais construídas pela cultura que aprisionam o pensamento.</p>
+      <p>Derrubar fortalezas ideológicas requer armas espirituais: <strong>Palavra, oração, jejum, comunidade cristã, adoração genuína e dependência do Espírito Santo</strong>. Um jovem cheio do Espírito e enraizado na Escritura é extraordinariamente resistente às pressões ideológicas — não por arrogância, mas por convicção.</p>
+
+      <div class="verse">
+        <p>"Porque as armas da nossa milícia não são carnais, mas, sim, poderosas em Deus, para destruição das fortalezas; destruindo os conselhos e toda altivez que se levanta contra o conhecimento de Deus, e levando cativo todo o entendimento à obediência de Cristo."</p>
+        <cite>2 Coríntios 10.4,5</cite>
+      </div>
+
+      <div class="callout callout-green">
+        <label>Promessa</label>
+        "E conhecereis a verdade, e a verdade vos libertará." (Jo 8.32). A libertação das ideologias não é produto de esforço humano — é efeito do encontro com a Verdade que tem nome, rosto e cicatrizes: Jesus Cristo.
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- ═══════════════════════════════════════
+       DINÂMICA
+  ═══════════════════════════════════════ -->
+  <div class="section" id="dinamica">
+    <div class="sec-header">
+      <div class="sec-num">✧</div>
+      <h2>Dinâmica em Grupo</h2>
+    </div>
+
+    <div class="dinamica">
+      <div class="din-header">
+        <h4>O Filtro da Verdade</h4>
+        <span>⏱ 15 minutos · Materiais simples</span>
+      </div>
+      <div class="din-body">
+        <p><strong>Materiais:</strong> 3 copos com água limpa, corante alimentício escuro, um filtro de café ou pano branco.</p>
+        <div class="din-step">
+          <div class="din-step-num">1</div>
+          <p>Mostre a água limpa nos copos: "Esta é a mente humana recém-criada por Deus — pura, capaz de conhecer a verdade."</p>
+        </div>
+        <div class="din-step">
+          <div class="din-step-num">2</div>
+          <p>Adicione corante ao primeiro copo: "Isso representa uma ideologia específica — marxismo, relativismo, consumismo — chegando pela rede social, pela série ou pela sala de aula." A água turva. "Você ainda vê a cor? Parece transparente?"</p>
+        </div>
+        <div class="din-step">
+          <div class="din-step-num">3</div>
+          <p>Tente filtrar a água colorida com o filtro de café. Mostre que ela não volta ao estado original facilmente. <em>"Descontaminar a mente é muito mais difícil que mantê-la limpa. Por isso Paulo diz 'renovai a mente' — não é um evento, é um processo."</em></p>
+        </div>
+        <div class="din-step">
+          <div class="din-step-num">4</div>
+          <p>Mantenha um copo de água limpa intocado: "Esse é o copo de quem mergulha diariamente na Palavra, ora, tem comunhão cristã e exercita o discernimento. A ideologia tenta entrar, mas encontra resistência."</p>
+        </div>
+        <div class="din-step">
+          <div class="din-step-num">5</div>
+          <p><strong>Pergunta para debate:</strong> "Qual ideologia você percebe que já entrou no seu 'copo' sem você perceber? Como você está filtrando?"</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- ═══════════════════════════════════════
+       PLANO DE LEITURA
+  ═══════════════════════════════════════ -->
+  <div class="reading-plan" id="leitura">
+    <div class="rp-header">📖 Plano de Leitura Devocional da Semana</div>
+    <div class="rp-day">
+      <span class="rp-name">Segunda</span>
+      <div><span class="rp-ref">Mateus 15.1-9</span> <span class="rp-desc">— "Anulastes o mandamento de Deus por causa da vossa tradição." Reflita: onde você tem colocado tradição humana acima da Palavra?</span></div>
+    </div>
+    <div class="rp-day">
+      <span class="rp-name">Terça</span>
+      <div><span class="rp-ref">Efésios 6.10-18</span> <span class="rp-desc">— A armadura de Deus completa. Identifique cada peça e o que ela representa na batalha contra ideologias.</span></div>
+    </div>
+    <div class="rp-day">
+      <span class="rp-name">Quarta</span>
+      <div><span class="rp-ref">1 Coríntios 1.18-31</span> <span class="rp-desc">— A sabedoria do mundo vs. a loucura da cruz. Por que Deus escolheu o que o mundo chama de fraqueza?</span></div>
+    </div>
+    <div class="rp-day">
+      <span class="rp-name">Quinta</span>
+      <div><span class="rp-ref">Daniel 1.1-21</span> <span class="rp-desc">— Leia o capítulo completo. Liste as pressões que Daniel enfrentou e como ele respondeu a cada uma.</span></div>
+    </div>
+    <div class="rp-day">
+      <span class="rp-name">Sexta</span>
+      <div><span class="rp-ref">1 Timóteo 6.11-21</span> <span class="rp-desc">— "Guarda o bom depósito." O que é o "bom depósito" da sua fé? O que você tem guardado e o que tem descuidado?</span></div>
+    </div>
+    <div class="rp-day">
+      <span class="rp-name">Sábado</span>
+      <div><span class="rp-ref">Romanos 12.1-8</span> <span class="rp-desc">— A renovação da mente como ato de culto. Escreva o v.2 de memória e carregue-o com você durante a semana.</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PERGUNTAS
+  ═══════════════════════════════════════ -->
+  <div class="questions" id="perguntas">
+    <div class="q-section-title">
+      <div class="sec-num" style="width:36px;height:36px;">?</div>
+      Perguntas para Reflexão e Debate
+    </div>
+    <p class="q-intro">As primeiras perguntas são para reflexão pessoal. As últimas são para debate em grupo ou célula.</p>
+
+    <div class="q-block">
+      <div class="q-row">
+        <span class="q-num">01</span>
+        <div class="q-content">
+          <div class="q-text">O que diferencia uma ideologia de uma simples opinião? E o que diferencia uma ideologia de uma cosmovisão bíblica?</div>
+          <div class="q-hint">Pense na origem, na autoridade reivindicada e na relação com a verdade revelada.</div>
+          <div class="answer-line"></div><div class="answer-line"></div><div class="answer-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-row">
+        <span class="q-num">02</span>
+        <div class="q-content">
+          <div class="q-text">Quais ideologias você percebe com mais força no seu ambiente — escola, trabalho, família, redes sociais? Como elas se manifestam concretamente?</div>
+          <div class="q-hint">Seja específico. Não responda de forma genérica.</div>
+          <div class="answer-line"></div><div class="answer-line"></div><div class="answer-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-row">
+        <span class="q-num">03</span>
+        <div class="q-content">
+          <div class="q-text">Daniel resistiu à iguaria do rei sem fazer um escândalo — ele propôs um experimento. O que essa postura nos ensina sobre como resistir às ideologias sem perder o testemunho?</div>
+          <div class="q-hint">Há uma diferença entre ser fiel e ser desnecessariamente conflituoso.</div>
+          <div class="answer-line"></div><div class="answer-line"></div><div class="answer-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-row">
+        <span class="q-num">04</span>
+        <div class="q-content">
+          <div class="q-text">O "evangelho secularizado" perde poder porque abandona a cruz e o arrependimento. Você consegue identificar exemplos de mensagens cristãs — músicas, pregações, posts — que parecem ter esse problema?</div>
+          <div class="q-hint">O objetivo não é condenar pessoas, mas desenvolver discernimento crítico.</div>
+          <div class="answer-line"></div><div class="answer-line"></div><div class="answer-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-row">
+        <span class="q-num">05</span>
+        <div class="q-content">
+          <div class="q-text">Para debate: É possível ser influenciador digital cristão sem absorver a ideologia do sucesso e da autopromoção? Onde está a linha?</div>
+          <div class="q-hint">Considere: qual é a motivação? A quem a plataforma aponta? O que acontece quando a verdade é impopular?</div>
+          <div class="answer-line"></div><div class="answer-line"></div><div class="answer-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-row">
+        <span class="q-num">06</span>
+        <div class="q-content">
+          <div class="q-text">Para debate: "Cada um tem sua verdade." Como você responderia a essa afirmação — não para ganhar um argumento, mas para plantar uma semente de reflexão genuína na pessoa?</div>
+          <div class="q-hint">A resposta cristã não é agressiva, mas também não é evasiva. É confiante e amorosa.</div>
+          <div class="answer-line"></div><div class="answer-line"></div><div class="answer-line"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       APLICAÇÃO PRÁTICA
+  ═══════════════════════════════════════ -->
+  <div class="app-section" id="aplicacao">
+    <div class="sec-header" style="margin-bottom:16px;">
+      <div class="sec-num">✓</div>
+      <h2>Aplicação Prática para a Semana</h2>
+    </div>
+    <div class="app-grid">
+      <div class="app-card">
+        <div class="icon">📱</div>
+        <h4>Auditoria de Conteúdo</h4>
+        <p>Anote 3 conteúdos que consumiu esta semana. Identifique: que visão de mundo eles transmitem? Concordam com a Escritura?</p>
+      </div>
+      <div class="app-card">
+        <div class="icon">📖</div>
+        <h4>Devocional Diário</h4>
+        <p>Siga o plano de leitura desta semana. Antes de abrir a Bíblia, ore pedindo discernimento e sensibilidade ao Espírito Santo.</p>
+      </div>
+      <div class="app-card">
+        <div class="icon">✏️</div>
+        <h4>Diário de Ideias</h4>
+        <p>Ao longo da semana, anote ideias que você ouviu e que pareçam contradizer os valores bíblicos. Busque na Palavra a resposta.</p>
+      </div>
+      <div class="app-card">
+        <div class="icon">💬</div>
+        <h4>Conversa Honesta</h4>
+        <p>Compartilhe com um amigo cristão de confiança uma área onde você sente pressão ideológica. Orem juntos por discernimento.</p>
+      </div>
+      <div class="app-card">
+        <div class="icon">🧠</div>
+        <h4>Memorize Rm 12.2</h4>
+        <p>"Não vos conformeis com este século, mas transformai-vos pela renovação do vosso entendimento..." Carregue esse versículo na semana.</p>
+      </div>
+      <div class="app-card">
+        <div class="icon">🔍</div>
+        <h4>Analise a Linguagem</h4>
+        <p>Preste atenção às palavras que você usa. Alguma delas carrega significado ideológico diferente do bíblico? O que você deveria ajustar?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONCLUSÃO -->
+  <div class="conclusion">
+    <h2>Conclusão</h2>
+    <p>Toda ideologia é uma resposta humana à questão mais fundamental de todas: <em>"O que é real? O que é certo? Qual é o propósito da vida?"</em> Enquanto as ideologias oferecem respostas construídas pela mente humana — limitada, corrompida e sujeita ao tempo — a cosmovisão bíblica oferece respostas reveladas pelo próprio Criador.</p>
+    <p>Isso não nos torna superiores. Nos torna responsáveis. O cristão que conhece a Verdade tem a obrigação de vivê-la com integridade e comunicá-la com amor — mesmo quando é impopular, mesmo quando custa.</p>
+    <p>Daniel não parou de ser excelente por ser fiel. Pelo contrário: sua fidelidade foi o fundamento de sua excelência. Da mesma forma, o jovem cristão que mantém sua cosmovisão bíblica no século XXI não está se excluindo do mundo — está oferecendo ao mundo o que ele mais precisa e menos percebe: a verdade que liberta.</p>
+    <div class="verse-dark">
+      "E conhecereis a verdade, e a verdade vos libertará."
+      <cite>João 8.32</cite>
+    </div>
+  </div>
+
+  <!-- DOC FOOTER -->
+  <div class="doc-footer">
+    <span><strong>DJAD'Cast</strong> · Lição 01 · 2º Trimestre 2026</span>
+    <span>Baseado na Revista CPAD Jovens · Pr. Eduardo Leandro Alves</span>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>

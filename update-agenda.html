@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualizar Agenda - UMADCAMP</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #52c234 0%, #61b15a 100%);
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Atualizar Agenda UMADCAMP</h1>
+            <p>Gerencie os eventos da agenda</p>
+        </div>
+        <div class="content">
+            <div id="messages"></div>
+
+            <h3>Nova Agenda (2024)</h3>
+            <p>Clique no botão abaixo para atualizar a agenda com os novos eventos:</p>
+
+            <button class="btn btn-danger" onclick="limparAgenda()">
+                🗑️ Limpar Agenda Atual
+            </button>
+
+            <button class="btn btn-success" onclick="importarNovaAgenda()">
+                📅 Importar Nova Agenda
+            </button>
+
+            <button class="btn" onclick="verAgenda()">
+                👁️ Ver Agenda Atual
+            </button>
+
+            <div id="agendaPreview" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+            authDomain: "umadcamp-patu.firebaseapp.com",
+            projectId: "umadcamp-patu",
+            storageBucket: "umadcamp-patu.firebasestorage.app",
+            messagingSenderId: "1043102355965",
+            appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+            measurementId: "G-S6N9R4F8Z8"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const novaAgenda = [
+            { mes: 'SETEMBRO', dataInicio: '2024-09-20', dataFim: null, titulo: 'Congresso Unificado', local: 'João Dias' },
+            { mes: 'SETEMBRO', dataInicio: '2024-09-24', dataFim: '2024-09-27', titulo: 'Congresso de Jovens', local: 'Lucrécia' },
+            { mes: 'OUTUBRO', dataInicio: '2024-10-17', dataFim: '2024-10-19', titulo: 'Congresso de Jovens', local: 'Candeia' },
+            { mes: 'OUTUBRO', dataInicio: '2024-10-18', dataFim: null, titulo: 'Congresso de Jovens', local: 'Almino Afonso' },
+            { mes: 'OUTUBRO', dataInicio: '2024-10-31', dataFim: null, titulo: 'Congresso de Jovens', local: 'Pintada' },
+            { mes: 'NOVEMBRO', dataInicio: '2024-11-01', dataFim: null, titulo: 'Congresso de Jovens', local: 'Pintada' },
+            { mes: 'NOVEMBRO', dataInicio: '2024-11-15', dataFim: null, titulo: 'Aniversário do Conjunto e do círculo de oração da mocidade', local: 'Pico Branco' },
+            { mes: 'NOVEMBRO', dataInicio: '2024-11-22', dataFim: null, titulo: 'Dejad na Estrada', local: 'Patu' }
+        ];
+
+        function showMessage(message, type = 'success') {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = message;
+            messagesDiv.appendChild(messageDiv);
+
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        async function limparAgenda() {
+            if (!confirm('Tem certeza que deseja limpar toda a agenda atual?')) {
+                return;
+            }
+
+            try {
+                showMessage('<div class="loading"></div> Limpando agenda...', 'success');
+
+                const snapshot = await db.collection('agenda').get();
+                const batch = db.batch();
+
+                snapshot.docs.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+
+                await batch.commit();
+
+                showMessage(`✅ Agenda limpa! ${snapshot.size} eventos removidos.`, 'success');
+
+            } catch (error) {
+                console.error('Erro ao limpar agenda:', error);
+                showMessage('❌ Erro ao limpar agenda: ' + error.message, 'error');
+            }
+        }
+
+        async function importarNovaAgenda() {
+            try {
+                showMessage('<div class="loading"></div> Importando nova agenda...', 'success');
+
+                let sucessos = 0;
+                let erros = 0;
+
+                for (const evento of novaAgenda) {
+                    try {
+                        const doc = {
+                            ...evento,
+                            dataCadastro: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+                        await db.collection('agenda').add(doc);
+                        sucessos++;
+                    } catch (error) {
+                        erros++;
+                        console.error(`Erro ao adicionar evento ${evento.titulo}:`, error);
+                    }
+                }
+
+                showMessage(`✅ Importação concluída! ${sucessos} eventos adicionados, ${erros} erros.`, 'success');
+
+            } catch (error) {
+                console.error('Erro ao importar agenda:', error);
+                showMessage('❌ Erro ao importar agenda: ' + error.message, 'error');
+            }
+        }
+
+        async function verAgenda() {
+            try {
+                showMessage('<div class="loading"></div> Carregando agenda...', 'success');
+
+                const snapshot = await db.collection('agenda').orderBy('dataInicio', 'asc').get();
+                const previewDiv = document.getElementById('agendaPreview');
+
+                if (snapshot.empty) {
+                    previewDiv.innerHTML = '<p>Nenhum evento na agenda.</p>';
+                    return;
+                }
+
+                let html = '<h4>Agenda Atual:</h4><ul>';
+                snapshot.forEach(doc => {
+                    const evento = doc.data();
+                    const dataFormatada = evento.dataFim ?
+                        `${evento.dataInicio} a ${evento.dataFim}` :
+                        evento.dataInicio;
+                    html += `<li><strong>${evento.mes}</strong> - ${dataFormatada}: ${evento.titulo} em ${evento.local}</li>`;
+                });
+                html += '</ul>';
+
+                previewDiv.innerHTML = html;
+                showMessage('✅ Agenda carregada!', 'success');
+
+            } catch (error) {
+                console.error('Erro ao carregar agenda:', error);
+                showMessage('❌ Erro ao carregar agenda: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>

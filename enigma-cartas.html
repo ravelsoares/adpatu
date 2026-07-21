@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Enigma da 32ª Carta — Cartas de um Diabo a Seu Aprendiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#2b2014;        /* tinta marrom-escura  */
+    --ink-soft:#6a5640;
+    --laranja:#FF6600;    /* brasa CRJ            */
+    --brasa:#b3300a;      /* ember profundo       */
+    --ouro:#8a6d3b;
+    --char:#170f06;       /* bordas chamuscadas   */
+    --parch1:#f6ecd6;
+    --parch2:#ecdcba;
+    --parch3:#e0cda3;
+  }
+  *{ box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    font-family:"EB Garamond","Georgia",serif;
+    color:var(--ink);
+    background:#ffffff;
+    margin:0; padding:28px 16px;
+    line-height:1.42;
+  }
+
+  /* ---------- FOLHA ---------- */
+  .folha{
+    position:relative;
+    max-width:820px; margin:0 auto 36px;
+    padding:38px 48px 40px;
+    color:var(--ink);
+    background:#ffffff;
+    border:1px solid rgba(50,30,10,.30);
+    border-radius:3px;
+    box-shadow:0 4px 18px rgba(0,0,0,.12);
+  }
+  /* moldura interna fina */
+  .folha::after{
+    content:""; position:absolute; inset:16px;
+    border:1px solid rgba(120,80,35,.45);
+    box-shadow:inset 0 0 0 3px rgba(120,80,35,.10);
+    pointer-events:none; border-radius:2px;
+  }
+  .folha > *{ position:relative; z-index:1; }
+
+  /* ---------- CABEÇALHO ---------- */
+  .selo-topo{
+    font-family:"Cinzel",serif; font-size:11px; letter-spacing:4px;
+    text-transform:uppercase; color:var(--brasa); font-weight:600;
+    text-align:center; margin-bottom:6px;
+  }
+  .ornamento{ text-align:center; color:var(--ouro); font-size:15px; letter-spacing:6px; margin:4px 0 2px; }
+  h1{
+    font-family:"Cinzel",serif; font-weight:700;
+    font-size:27px; line-height:1.12; text-align:center;
+    margin:0 0 2px; color:var(--ink);
+    text-shadow:0 1px 0 rgba(255,255,255,.35);
+  }
+  h1 .titulo-livro{
+    display:block; font-family:"EB Garamond",serif; font-style:italic; font-weight:500;
+    font-size:16px; letter-spacing:.5px; color:var(--ink-soft); margin-top:8px;
+  }
+  /* selo de cera */
+  .selo-cera{
+    position:absolute; top:34px; right:40px; width:78px; height:78px; z-index:2;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #d6431a, #8c1f06 70%, #5e1404);
+    box-shadow:0 4px 10px rgba(0,0,0,.5), inset 0 2px 6px rgba(255,160,120,.5), inset 0 -6px 10px rgba(0,0,0,.45);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    color:#ffd9c2; transform:rotate(-8deg);
+    font-family:"Cinzel",serif; text-align:center;
+  }
+  .selo-cera .n{ font-size:22px; font-weight:700; line-height:1; text-shadow:0 1px 2px rgba(0,0,0,.5); }
+  .selo-cera .l{ font-size:7px; letter-spacing:2px; margin-top:3px; opacity:.85; }
+
+  /* ---------- INTRO ---------- */
+  .intro{
+    font-size:15px; font-style:italic; color:#3a2c1b; line-height:1.55;
+    margin:16px 6px 4px; text-align:justify;
+  }
+  .intro::first-letter{
+    font-family:"Cinzel",serif; font-style:normal; font-size:54px; font-weight:700;
+    float:left; line-height:.8; padding:6px 10px 0 0; color:var(--brasa);
+  }
+
+  /* ---------- TÍTULOS DE SEÇÃO ---------- */
+  h2{
+    font-family:"Cinzel",serif; font-weight:600; font-size:15px; letter-spacing:2px;
+    text-transform:uppercase; color:var(--brasa); text-align:center;
+    margin:20px 0 10px; position:relative;
+  }
+  h2::before, h2::after{
+    content:"✦"; color:var(--ouro); font-size:11px; vertical-align:middle; margin:0 14px;
+  }
+
+  .nota{ font-size:14px; color:#4a3a28; font-family:"EB Garamond",serif; line-height:1.7; }
+  .nota strong{ color:var(--brasa); }
+
+  /* ---------- PISTAS ---------- */
+  ol.pistas{ padding-left:0; list-style:none; counter-reset:carta; margin:0; }
+  ol.pistas li{
+    counter-increment:carta; padding:7px 0 7px 50px; position:relative;
+    border-bottom:1px dotted rgba(120,80,35,.5);
+  }
+  ol.pistas li:last-child{ border-bottom:none; }
+  ol.pistas li::before{
+    content:counter(carta); position:absolute; left:2px; top:7px;
+    width:34px; height:34px; line-height:34px; text-align:center;
+    background:radial-gradient(circle at 35% 30%, #c2410c, #7c1d05 75%);
+    color:#ffe6d6; font-family:"Cinzel",serif; font-weight:700; font-size:15px;
+    border-radius:50%; transform:rotate(-5deg);
+    box-shadow:inset 0 1px 4px rgba(255,170,120,.45), inset 0 -3px 6px rgba(0,0,0,.4), 0 2px 4px rgba(0,0,0,.35);
+  }
+  .q{ display:block; font-size:14px; color:#332618; line-height:1.35; }
+  .resp{ display:flex; gap:14px; align-items:flex-end; margin-top:5px;
+    font-family:"Cinzel",serif; font-size:9.5px; letter-spacing:1px; text-transform:uppercase; color:var(--ink-soft); }
+  .linha-resp{ flex:1; border-bottom:1.5px dotted var(--ink); height:15px; }
+  .marca{ white-space:nowrap; padding-bottom:1px; }
+  .marca b{ color:var(--brasa); font-size:12px; }
+
+  /* ---------- 3 CANDIDATAS ---------- */
+  .escolha{ display:flex; align-items:center; gap:5px; margin-top:6px;
+    font-family:"Cinzel",serif; font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--ink-soft); }
+  .escolha .rotulo{ color:var(--brasa); margin-right:2px; }
+  .escolha .opt{ display:inline-block; min-width:24px; text-align:center; padding:2px 7px;
+    font-size:15px; font-weight:600; color:var(--ink); }
+  .escolha .sep{ color:var(--ouro); }
+  .escolha .circ{ text-transform:none; letter-spacing:0; font-size:9px; color:var(--ink-soft);
+    margin-left:6px; font-style:italic; font-family:"EB Garamond",serif; }
+
+  /* ---------- GRADE FINAL ---------- */
+  .grade{ display:flex; flex-wrap:wrap; gap:7px; margin:16px 0 8px; justify-content:center; }
+  .grade .cel{
+    width:36px; height:46px; position:relative;
+    border:1.5px solid var(--ink);
+    background:rgba(255,255,255,.18);
+    box-shadow:inset 0 0 6px rgba(120,80,35,.25);
+    display:flex; align-items:flex-end; justify-content:center; padding-bottom:4px;
+  }
+  .grade .cel small{ position:absolute; top:2px; left:0; right:0; text-align:center;
+    font-size:8px; color:var(--ink-soft); font-family:"Cinzel",serif; }
+
+  /* ---------- GABARITO ---------- */
+  .frase-final{
+    font-family:"Cinzel",serif; font-weight:700; font-size:18px; text-align:center;
+    letter-spacing:1px; line-height:1.45;
+    background:linear-gradient(160deg, #1c130a, #2a1c0c);
+    color:#f4e6cf; padding:14px 16px; border-radius:4px; margin:14px 0;
+    border:1px solid var(--brasa);
+    box-shadow:inset 0 0 24px rgba(255,90,0,.18), 0 4px 14px rgba(0,0,0,.4);
+  }
+  .frase-final span{ color:var(--laranja); text-shadow:0 0 10px rgba(255,102,0,.5); }
+
+  .gab{ border-collapse:collapse; width:100%; margin-top:12px; font-family:"EB Garamond",serif; }
+  .gab td, .gab th{ border:1px solid rgba(120,80,35,.55); padding:4px 9px; font-size:13px; text-align:left; }
+  .gab th{ background:linear-gradient(160deg,#1c130a,#2a1c0c); color:#f4e6cf;
+    font-family:"Cinzel",serif; font-weight:600; font-size:11px; letter-spacing:1px; text-transform:uppercase; }
+  .gab tr:nth-child(even) td{ background:rgba(255,255,255,.12); }
+  .gab .letra{ color:var(--brasa); font-weight:700; text-align:center; font-family:"Cinzel",serif; font-size:15px; }
+  .gab .pos{ text-align:center; color:var(--ink-soft); font-family:"Cinzel",serif; font-size:12px; }
+  .gab b{ color:var(--brasa); }
+
+  .montada{ font-family:"Cinzel",serif; font-size:15px; letter-spacing:2px; text-align:center;
+    color:var(--ink); margin:6px 0 4px; }
+
+  .rodape{ text-align:center; font-family:"Cinzel",serif; font-size:9px; letter-spacing:3px;
+    text-transform:uppercase; color:var(--ouro); margin-top:18px; }
+
+  /* ---------- IMPRESSÃO ---------- */
+  @media print{
+    @page{ size:A4; margin:10mm; }
+    body{ background:#fff; padding:0; }
+    .folha{
+      margin:0; max-width:100%; border-radius:0;
+      box-shadow:inset 0 0 70px rgba(80,45,10,.28), inset 0 0 16px rgba(30,15,0,.4);
+      page-break-after:always;
+    }
+    .folha:last-child{ page-break-after:auto; }
+    .quebra{ page-break-before:always; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== FOLHA DO PARTICIPANTE ===================== -->
+<section class="folha">
+  <div class="selo-cera"><span class="n">32</span><span class="l">CARTA</span></div>
+
+  <h1>O Enigma da 32ª Carta
+    <span class="titulo-livro">Cartas de um Diabo a Seu Aprendiz</span>
+  </h1>
+
+  <p class="intro">
+    Existiram trinta e uma cartas. Mas há uma <strong>32ª</strong> — a que o jovem demônio
+    nunca conseguiu enviar, porque <em>fracassou</em>. Nela está selada a única verdade
+    que o inferno passou o livro inteiro tentando abafar. Só consegue lê-la quem
+    atravessar, uma a uma, as trinta e uma cartas. Você ousa?
+  </p>
+
+  <h2>Como decifrar</h2>
+  <p class="nota">
+    <strong>Atenção:</strong> as pistas estão <strong>fora de ordem</strong> e nenhuma diz de qual carta é.
+    Sob cada pista há <strong>3 cartas candidatas</strong> — mas ela só encaixa em <strong>uma</strong>.<br>
+    1. Leia a pista e <strong>circule</strong> a carta certa entre as 3 (só dá para eliminar as outras duas se você tiver lido aquelas cartas).<br>
+    2. Responda a pista (sempre <strong>uma palavra</strong>) e marque a <strong>letra da posição indicada</strong>.<br>
+    3. O número da carta que você circulou é a <strong>posição</strong> da letra na frase: escreva-a no quadradinho com esse número (1 a 31).<br>
+    <strong>Desconsidere os acentos:</strong> Á, É, Ó, Ú, Â, Ã, Ç… valem como A, E, O, U, A, A, C.<br>
+    4. Por fim, leia os quadradinhos de 1 a 31: as palavras vêm <strong>coladas</strong>; descubra onde cada uma começa e termina.<br>
+    <em>(O número grande no carimbo é só a ordem da pista — não é a carta.)</em>
+  </p>
+
+  <h2>As 31 Pistas</h2>
+  <ol class="pistas">
+    <li><span class="q">Qual virtude o tio quer corromper, fazendo o paciente sentir orgulho justamente por achar que a possui? → a ___</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">5</span><span class="sep">·</span><span class="opt">14</span><span class="sep">·</span><span class="opt">16</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>9ª</b> letra</span></div></li>
+
+    <li><span class="q">Que sentimento o tio quer alimentar entre o paciente e a própria mãe, para que pequenas implicâncias virem brigas? → ___ (mágoa acumulada)</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">3</span><span class="sep">·</span><span class="opt">8</span><span class="sep">·</span><span class="opt">25</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>3ª</b> letra</span></div></li>
+
+    <li><span class="q">O paciente se confunde sobre a oração porque trata como "realidade suprema" algo que o Inimigo, na verdade, vê todo de uma vez no "eterno agora". O que é? → o ___</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">10</span><span class="sep">·</span><span class="opt">22</span><span class="sep">·</span><span class="opt">27</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>3ª</b> letra</span></div></li>
+
+    <li><span class="q">Nos períodos de "vale", o tio quer o paciente acomodado, com uma religião morna e cheia de ___ consigo mesmo.</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">3</span><span class="sep">·</span><span class="opt">9</span><span class="sep">·</span><span class="opt">23</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>3ª</b> letra</span></div></li>
+
+    <li><span class="q">Como termina a história do paciente — aquilo que o inferno julgou vitória e foi a derrota total? → a sua ___</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">6</span><span class="sep">·</span><span class="opt">17</span><span class="sep">·</span><span class="opt">31</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>5ª</b> letra</span></div></li>
+
+    <li><span class="q">O tio quer reduzir o casamento a uma única base "respeitável": estar apaixonado, ou seja, pura ___.</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">1</span><span class="sep">·</span><span class="opt">12</span><span class="sep">·</span><span class="opt">18</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>1ª</b> letra</span></div></li>
+
+    <li><span class="q">Que sentimento sobre o futuro o tio quer cultivar para roubar a paz do paciente? → a ___</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">6</span><span class="sep">·</span><span class="opt">17</span><span class="sep">·</span><span class="opt">22</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>1ª</b> letra</span></div></li>
+
+    <li><span class="q">Ao falar dos prazeres que o Inimigo espalhou pelo mundo, o tio perde o controle e, de tanta ___, vira uma centopeia.</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">2</span><span class="sep">·</span><span class="opt">22</span><span class="sep">·</span><span class="opt">28</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>2ª</b> letra</span></div></li>
+
+    <li><span class="q">O tio repreende o sobrinho: a fé NÃO se combate com a arma que ele imaginava. Que arma da razão o tio manda evitar, mantendo o homem preso à "vida real"? → o ___</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">1</span><span class="sep">·</span><span class="opt">17</span><span class="sep">·</span><span class="opt">23</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>9ª</b> letra</span></div></li>
+
+    <li><span class="q">Contra o tédio do "mesmo de sempre", o tio explora a sede do homem por novidade e ___ constante.</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">7</span><span class="sep">·</span><span class="opt">20</span><span class="sep">·</span><span class="opt">25</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>2ª</b> letra</span></div></li>
+
+    <li><span class="q">Das causas do riso humano, qual é a única que o tio aprova — aquela leviandade de tratar tudo como piada, que vira uma armadura da alma contra o Inimigo?</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">11</span><span class="sep">·</span><span class="opt">20</span><span class="sep">·</span><span class="opt">28</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>10ª</b> letra</span></div></li>
+
+    <li><span class="q">Em que o tio quer transformar o paciente, fazendo-o vasculhar a vizinhança atrás da igreja que mais lhe agrade, em vez de ser um aprendiz humilde? → um ___ de igrejas</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">8</span><span class="sep">·</span><span class="opt">16</span><span class="sep">·</span><span class="opt">29</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>7ª</b> letra</span></div></li>
+
+    <li><span class="q">Na guerra, qual virtude o tio mais quer destruir, para transformar o paciente num covarde? → a ___</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">13</span><span class="sep">·</span><span class="opt">25</span><span class="sep">·</span><span class="opt">29</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>3ª</b> letra</span></div></li>
+
+    <li><span class="q">Para corromper a oração, o tio quer que o paciente reze a um "objeto composto" que ele mantém diante dos olhos da própria ___ — e não à Pessoa real que o criou.</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">4</span><span class="sep">·</span><span class="opt">10</span><span class="sep">·</span><span class="opt">29</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>1ª</b> letra</span></div></li>
+
+    <li><span class="q">Se o ataque à pureza falhar, o tio manda arranjar um ___ conveniente para prender o paciente.</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">6</span><span class="sep">·</span><span class="opt">20</span><span class="sep">·</span><span class="opt">25</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>1ª</b> letra</span></div></li>
+
+    <li><span class="q">Como se chama a "lei" das subidas e descidas da alma, que o Inimigo aproveita mais nos vales do que nos picos? → a lei da ___</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">8</span><span class="sep">·</span><span class="opt">18</span><span class="sep">·</span><span class="opt">23</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>1ª</b> letra</span></div></li>
+
+    <li><span class="q">Por que o tio teme os prazeres verdadeiros? Porque eles são um toque de ___ que aproxima o homem de Deus.</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">7</span><span class="sep">·</span><span class="opt">13</span><span class="sep">·</span><span class="opt">21</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>3ª</b> letra</span></div></li>
+
+    <li><span class="q">Na noite do bombardeio, o tio ensina que, para irritar o paciente, a fadiga moderada é mais útil do que a ___ absoluta.</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">12</span><span class="sep">·</span><span class="opt">23</span><span class="sep">·</span><span class="opt">30</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>6ª</b> letra</span></div></li>
+
+    <li><span class="q">Logo após a conversão, de qual instituição o tio quer que o paciente fique decepcionado, reparando nos fiéis "esquisitos" e hipócritas? → a ___</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">2</span><span class="sep">·</span><span class="opt">9</span><span class="sep">·</span><span class="opt">21</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>1ª</b> letra</span></div></li>
+
+    <li><span class="q">O tio planta no paciente o orgulho espiritual: a sensação de pertencer a um grupo ___, superior a todos os de fora.</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">4</span><span class="sep">·</span><span class="opt">24</span><span class="sep">·</span><span class="opt">31</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>5ª</b> letra</span></div></li>
+
+    <li><span class="q">A gula do "requinte" se disfarça no "só quero uma coisinha bem-feita". No fundo, é a tirania da própria ___.</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">3</span><span class="sep">·</span><span class="opt">17</span><span class="sep">·</span><span class="opt">25</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>1ª</b> letra</span></div></li>
+
+    <li><span class="q">Qual é a grande vantagem do tio: manter o paciente em total ___ quanto à existência dos demônios.</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">7</span><span class="sep">·</span><span class="opt">13</span><span class="sep">·</span><span class="opt">26</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>3ª</b> letra</span></div></li>
+
+    <li><span class="q">Que palavrinha possessiva o tio quer que o homem use como se fosse dono de tudo, de seu tempo ao seu corpo?</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">5</span><span class="sep">·</span><span class="opt">16</span><span class="sep">·</span><span class="opt">21</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>2ª</b> letra</span></div></li>
+
+    <li><span class="q">Por que os pecadinhos funcionam tão bem? Porque o caminho mais seguro para o Inferno é o gradual e ___ (que não se percebe).</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">12</span><span class="sep">·</span><span class="opt">19</span><span class="sep">·</span><span class="opt">26</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>2ª</b> letra</span></div></li>
+
+    <li><span class="q">Por que o tio quer guardar a vida do paciente para que ele envelheça? Porque a mundanidade precisa de ___ (viver muito).</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">11</span><span class="sep">·</span><span class="opt">17</span><span class="sep">·</span><span class="opt">28</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>2ª</b> letra</span></div></li>
+
+    <li><span class="q">Por que o tio diz para NÃO esperar muito da guerra? Porque o Inimigo usa o ___ para fortalecer as almas.</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">5</span><span class="sep">·</span><span class="opt">11</span><span class="sep">·</span><span class="opt">16</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>6ª</b> letra</span></div></li>
+
+    <li><span class="q">O tio confessa não entender por que Deus realmente AMA os homens. Como os demônios chamam Deus? → o ___</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">8</span><span class="sep">·</span><span class="opt">19</span><span class="sep">·</span><span class="opt">30</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>2ª</b> letra</span></div></li>
+
+    <li><span class="q">O tio quer transformar a fé num meio político — Cristianismo virando apenas uma ___ social.</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">11</span><span class="sep">·</span><span class="opt">14</span><span class="sep">·</span><span class="opt">23</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>2ª</b> letra</span></div></li>
+
+    <li><span class="q">O paciente faz novos amigos mundanos e chiques. O tio aposta no ___ desse grupo para envaidecê-lo e diluir sua fé.</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">5</span><span class="sep">·</span><span class="opt">10</span><span class="sep">·</span><span class="opt">15</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>1ª</b> letra</span></div></li>
+
+    <li><span class="q">Durante o namoro, o tio semeia brigas usando um falso ___ ("não, faça você o que quiser, eu não ligo").</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">1</span><span class="sep">·</span><span class="opt">15</span><span class="sep">·</span><span class="opt">26</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>1ª</b> letra</span></div></li>
+
+    <li><span class="q">O Inimigo quer o homem vivendo no presente, no "eterno agora". Por isso o tio o arrasta para longe do ___ .</span>
+        <div class="escolha"><span class="rotulo">Carta:</span><span class="opt">2</span><span class="sep">·</span><span class="opt">15</span><span class="sep">·</span><span class="opt">22</span><span class="circ">circule a correta</span></div>
+        <div class="resp"><span class="linha-resp"></span><span class="marca">marque a <b>3ª</b> letra</span></div></li>
+  </ol>
+
+  <h2>Monte a Frase Secreta</h2>
+  <div class="grade">
+    <div class="cel"><small>1</small></div><div class="cel"><small>2</small></div><div class="cel"><small>3</small></div>
+    <div class="cel"><small>4</small></div><div class="cel"><small>5</small></div><div class="cel"><small>6</small></div>
+    <div class="cel"><small>7</small></div><div class="cel"><small>8</small></div><div class="cel"><small>9</small></div>
+    <div class="cel"><small>10</small></div><div class="cel"><small>11</small></div><div class="cel"><small>12</small></div>
+    <div class="cel"><small>13</small></div><div class="cel"><small>14</small></div><div class="cel"><small>15</small></div>
+    <div class="cel"><small>16</small></div><div class="cel"><small>17</small></div><div class="cel"><small>18</small></div>
+    <div class="cel"><small>19</small></div><div class="cel"><small>20</small></div><div class="cel"><small>21</small></div>
+    <div class="cel"><small>22</small></div><div class="cel"><small>23</small></div><div class="cel"><small>24</small></div>
+    <div class="cel"><small>25</small></div><div class="cel"><small>26</small></div><div class="cel"><small>27</small></div>
+    <div class="cel"><small>28</small></div><div class="cel"><small>29</small></div><div class="cel"><small>30</small></div>
+    <div class="cel"><small>31</small></div>
+  </div>
+  <p class="nota" style="text-align:center;">Cada letra vai no quadradinho com o número da carta que você circulou.
+  Depois leia de 1 a 31 e corte em palavras — a frase começa com a palavra que o diabo mais odeia ouvir a respeito de Deus. &nbsp;†</p>
+
+  <div class="rodape">Nº 32 · Não enviada</div>
+</section>
+
+<!-- ===================== GABARITO DO LÍDER ===================== -->
+<section class="folha quebra">
+  <div class="selo-cera"><span class="n">✠</span><span class="l">SIGILO</span></div>
+
+  <div class="selo-topo">Confidencial · Somente o Líder</div>
+  <h1>Gabarito do Líder
+    <span class="titulo-livro">O Enigma da 32ª Carta</span>
+  </h1>
+
+  <div class="frase-final">
+    “O <span>INIMIGO</span> TE AMA E JÁ VENCEU A TUA <span>MORTE</span>”
+  </div>
+  <p class="nota">
+    O "Inimigo" é como os demônios chamam <strong>Deus</strong> o livro inteiro — esse é o estalo.
+    A frase fecha exatamente onde a história fecha: a <strong>morte</strong> do paciente, que o
+    inferno julgou vitória e foi a derrota total. Ótimo gancho para a conversa de encerramento.
+  </p>
+
+  <h2>Chave das 31 Cartas</h2>
+  <p class="nota" style="margin-bottom:6px;">A chave está em ordem de carta (1→31). A coluna <strong>Candidatas</strong> mostra as 3 opções que foram oferecidas para aquela pista, com a <strong>correta em destaque</strong> — use-a para conferir o que o jovem circulou.</p>
+  <table class="gab">
+    <tr><th>Carta</th><th>Resposta</th><th>Pos.</th><th>Letra</th><th>Candidatas</th></tr>
+    <tr><td>1</td><td>ARGUMENT<b>O</b> (a arma que o tio proíbe)</td><td class="pos">9ª</td><td class="letra">O</td><td class="pos"><b>1</b> · 17 · 23</td></tr>
+    <tr><td>2</td><td><b>I</b>GREJA</td><td class="pos">1ª</td><td class="letra">I</td><td class="pos"><b>2</b> · 9 · 21</td></tr>
+    <tr><td>3</td><td>RA<b>N</b>COR</td><td class="pos">3ª</td><td class="letra">N</td><td class="pos"><b>3</b> · 8 · 25</td></tr>
+    <tr><td>4</td><td><b>I</b>MAGINAÇÃO</td><td class="pos">1ª</td><td class="letra">I</td><td class="pos"><b>4</b> · 10 · 29</td></tr>
+    <tr><td>5</td><td>SOFRI<b>M</b>ENTO</td><td class="pos">6ª</td><td class="letra">M</td><td class="pos"><b>5</b> · 11 · 16</td></tr>
+    <tr><td>6</td><td><b>I</b>NCERTEZA</td><td class="pos">1ª</td><td class="letra">I</td><td class="pos"><b>6</b> · 17 · 22</td></tr>
+    <tr><td>7</td><td>CE<b>G</b>UEIRA</td><td class="pos">3ª</td><td class="letra">G</td><td class="pos"><b>7</b> · 13 · 26</td></tr>
+    <tr><td>8</td><td><b>O</b>NDULAÇÃO</td><td class="pos">1ª</td><td class="letra">O</td><td class="pos"><b>8</b> · 18 · 23</td></tr>
+    <tr><td>9</td><td>SA<b>T</b>ISFAÇÃO</td><td class="pos">3ª</td><td class="letra">T</td><td class="pos">3 · <b>9</b> · 23</td></tr>
+    <tr><td>10</td><td><b>E</b>SNOBISMO</td><td class="pos">1ª</td><td class="letra">E</td><td class="pos">5 · <b>10</b> · 15</td></tr>
+    <tr><td>11</td><td>PETULÂNCI<b>A</b></td><td class="pos">10ª</td><td class="letra">A</td><td class="pos"><b>11</b> · 20 · 28</td></tr>
+    <tr><td>12</td><td>I<b>M</b>PERCEPTÍVEL</td><td class="pos">2ª</td><td class="letra">M</td><td class="pos"><b>12</b> · 19 · 26</td></tr>
+    <tr><td>13</td><td>RE<b>A</b>LIDADE</td><td class="pos">3ª</td><td class="letra">A</td><td class="pos">7 · <b>13</b> · 21</td></tr>
+    <tr><td>14</td><td>HUMILDAD<b>E</b></td><td class="pos">9ª</td><td class="letra">E</td><td class="pos">5 · <b>14</b> · 16</td></tr>
+    <tr><td>15</td><td>HO<b>J</b>E</td><td class="pos">3ª</td><td class="letra">J</td><td class="pos">2 · <b>15</b> · 22</td></tr>
+    <tr><td>16</td><td>DEGUST<b>A</b>DOR (de igrejas)</td><td class="pos">7ª</td><td class="letra">A</td><td class="pos">8 · <b>16</b> · 29</td></tr>
+    <tr><td>17</td><td><b>V</b>ONTADE</td><td class="pos">1ª</td><td class="letra">V</td><td class="pos">3 · <b>17</b> · 25</td></tr>
+    <tr><td>18</td><td><b>E</b>MOÇÃO</td><td class="pos">1ª</td><td class="letra">E</td><td class="pos">1 · 12 · <b>18</b></td></tr>
+    <tr><td>19</td><td>I<b>N</b>IMIGO</td><td class="pos">2ª</td><td class="letra">N</td><td class="pos">8 · <b>19</b> · 30</td></tr>
+    <tr><td>20</td><td><b>C</b>ASAMENTO</td><td class="pos">1ª</td><td class="letra">C</td><td class="pos">6 · <b>20</b> · 25</td></tr>
+    <tr><td>21</td><td>M<b>E</b>U</td><td class="pos">2ª</td><td class="letra">E</td><td class="pos">5 · 16 · <b>21</b></td></tr>
+    <tr><td>22</td><td>F<b>Ú</b>RIA</td><td class="pos">2ª</td><td class="letra">U</td><td class="pos">2 · <b>22</b> · 28</td></tr>
+    <tr><td>23</td><td>C<b>A</b>USA</td><td class="pos">2ª</td><td class="letra">A</td><td class="pos">11 · 14 · <b>23</b></td></tr>
+    <tr><td>24</td><td>SELE<b>T</b>O</td><td class="pos">5ª</td><td class="letra">T</td><td class="pos">4 · <b>24</b> · 31</td></tr>
+    <tr><td>25</td><td>M<b>U</b>DANÇA</td><td class="pos">2ª</td><td class="letra">U</td><td class="pos">7 · 20 · <b>25</b></td></tr>
+    <tr><td>26</td><td><b>A</b>LTRUÍSMO</td><td class="pos">1ª</td><td class="letra">A</td><td class="pos">1 · 15 · <b>26</b></td></tr>
+    <tr><td>27</td><td>TE<b>M</b>PO (a "realidade suprema")</td><td class="pos">3ª</td><td class="letra">M</td><td class="pos">10 · 22 · <b>27</b></td></tr>
+    <tr><td>28</td><td>L<b>O</b>NGEVIDADE</td><td class="pos">2ª</td><td class="letra">O</td><td class="pos">11 · 17 · <b>28</b></td></tr>
+    <tr><td>29</td><td>CO<b>R</b>AGEM</td><td class="pos">3ª</td><td class="letra">R</td><td class="pos">13 · 25 · <b>29</b></td></tr>
+    <tr><td>30</td><td>EXAUS<b>T</b>ÃO (a "exaustão absoluta")</td><td class="pos">6ª</td><td class="letra">T</td><td class="pos">12 · 23 · <b>30</b></td></tr>
+    <tr><td>31</td><td>MORT<b>E</b></td><td class="pos">5ª</td><td class="letra">E</td><td class="pos">6 · 17 · <b>31</b></td></tr>
+  </table>
+
+  <h2>Sequência Montada</h2>
+  <p class="montada">O·I·N·I·M·I·G·O &nbsp; T·E &nbsp; A·M·A &nbsp; E &nbsp; J·A &nbsp; V·E·N·C·E·U &nbsp; A &nbsp; T·U·A &nbsp; M·O·R·T·E</p>
+
+  <p class="nota">
+    <strong>Dicas de aplicação:</strong> distribua a folha no início da leitura; cada um preenche conforme avança.
+    Cada pista pertence a <strong>uma única</strong> das 3 cartas candidatas — para errar as outras duas, é preciso
+    NÃO ter lido aquelas cartas. Aceite sinônimos próximos: o que importa é a <strong>letra marcada</strong> bater.
+    Nesta edição, o tio é <strong>Maldanado</strong> (Screwtape) e o sobrinho, <strong>Vermelindo</strong> (Wormwood).
+  </p>
+
+  <div class="rodape">Selado contra os jovens · Inabalável</div>
+</section>
+
+</body>
+</html>

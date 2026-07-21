@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fotos CRJ 2026 - UMADCAMP</title>
+    <meta name="description" content="Baixe as fotos do Congresso Regional de Jovens 2026 - De Todo o Vosso Coração">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Press+Start+2P&display=swap"
+        rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neon-orange': '#FF6600',
+                        'deep-red': '#4A0404',
+                        'dark-bg': '#0a0a0a',
+                        'card-bg': '#141414'
+                    },
+                    fontFamily: {
+                        'pixel': ['"Press Start 2P"', 'cursive'],
+                        'body': ['Montserrat', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050505;
+            background-image: linear-gradient(rgba(255, 102, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 102, 0, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: white;
+        }
+
+        .glitch-text {
+            text-shadow: 2px 2px 0px #4A0404, -2px -2px 0px #FF6600;
+        }
+
+        .scanline {
+            width: 100%;
+            height: 100px;
+            z-index: 10;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(255, 102, 0, 0.1) 50%, rgba(0, 0, 0, 0) 100%);
+            opacity: 0.1;
+            position: absolute;
+            bottom: 100%;
+            animation: scanline 10s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scanline {
+            0% {
+                bottom: 100%;
+            }
+
+            100% {
+                bottom: -100%;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #FF6600;
+            border-radius: 5px;
+        }
+
+        /* Photo grid */
+        .photo-grid {
+            columns: 2;
+            column-gap: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .photo-grid {
+                columns: 3;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .photo-grid {
+                columns: 4;
+            }
+        }
+
+        .photo-item {
+            break-inside: avoid;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .photo-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 20px rgba(255, 102, 0, 0.3);
+        }
+
+        .photo-item img {
+            width: 100%;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .photo-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(transparent 40%, rgba(0, 0, 0, 0.8));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .photo-item:hover .photo-overlay {
+            opacity: 1;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox img {
+            max-width: 90vw;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 0 40px rgba(255, 102, 0, 0.2);
+            transition: opacity 0.2s ease;
+        }
+
+        /* Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #1a1a1a 25%, #252525 50%, #1a1a1a 75%);
+            background-size: 200% 100%;
+            animation: skeletonShimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes skeletonShimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Day tabs */
+        .day-btn {
+            transition: all 0.3s ease;
+        }
+
+        .day-btn.active {
+            color: #000;
+            background-color: #FF6600;
+            box-shadow: 0 0 15px rgba(255, 102, 0, 0.5);
+            border-color: #FF6600;
+        }
+
+        /* Shift tabs */
+        .shift-btn {
+            transition: all 0.3s ease;
+        }
+
+        .shift-btn.active {
+            color: #FF6600;
+            border-color: #FF6600;
+            background-color: rgba(255, 102, 0, 0.1);
+        }
+
+        .shift-btn:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+        }
+
+        .scroll-top {
+            transition: opacity 0.3s, transform 0.3s;
+        }
+    </style>
+</head>
+
+<body class="font-body overflow-x-hidden">
+
+    <!-- Scanline -->
+    <div class="fixed inset-0 pointer-events-none h-full w-full overflow-hidden">
+        <div class="scanline"></div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="fixed w-full z-50 bg-dark-bg/90 backdrop-blur border-b border-gray-800">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/umadcamp" class="text-neon-orange font-pixel text-sm md:text-lg hover:opacity-80 transition">
+                <span class="text-white">UMAD</span>CAMP
+            </a>
+
+            <a href="/umadcamp"
+                class="bg-neon-orange text-black font-pixel text-xs px-4 py-3 hover:bg-white transition shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:shadow-none active:translate-x-1 active:translate-y-1">
+                VOLTAR
+            </a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="min-h-[45vh] flex items-center justify-center relative pt-20">
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <div class="inline-block bg-deep-red/30 border border-neon-orange px-4 py-1 mb-6 rounded-full">
+                <p class="text-neon-orange font-mono text-xs md:text-sm tracking-widest">ACHIEVEMENT UNLOCKED:
+                    MEMÓRIAS DESBLOQUEADAS</p>
+            </div>
+            <h1 class="text-3xl md:text-5xl font-pixel mb-4 leading-tight glitch-text">
+                FOTOS DO <span class="text-neon-orange">CRJ 2026</span>
+            </h1>
+            <p class="text-gray-400 text-lg mb-2 max-w-2xl mx-auto font-light">
+                Selecione o dia e o turno para ver as fotos. Clique para ampliar e baixar!
+            </p>
+            <div id="photo-count" class="text-gray-600 font-mono text-sm mt-2"></div>
+        </div>
+        <div
+            class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-neon-orange rounded-full mix-blend-screen filter blur-[120px] opacity-10">
+        </div>
+    </section>
+
+    <!-- FACE SEARCH BANNER (oculto - resultados insatisfatórios) -->
+    <section
+        class="hidden py-6 bg-gradient-to-r from-deep-red/30 via-card-bg to-deep-red/30 border-t border-b border-gray-800">
+        <div class="container mx-auto px-6">
+            <a href="/umadcamp/encontre-me"
+                class="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 group">
+                <div class="flex items-center gap-3">
+                    <span class="text-3xl">🔍</span>
+                    <div>
+                        <h3 class="font-pixel text-neon-orange text-xs md:text-sm group-hover:text-white transition">ME
+                            ENCONTRE NAS FOTOS</h3>
+                        <p class="text-gray-400 text-sm mt-1">Envie uma selfie e descubra em quais fotos você aparece!
+                        </p>
+                    </div>
+                </div>
+                <span
+                    class="bg-neon-orange text-black font-bold text-xs px-4 py-2 rounded group-hover:bg-white transition whitespace-nowrap">
+                    TESTAR AGORA →
+                </span>
+            </a>
+        </div>
+    </section>
+
+    <!-- FILTERS + GALLERY -->
+    <section id="galeria" class="py-10 bg-card-bg border-t border-gray-900">
+        <div class="container mx-auto px-4 md:px-6">
+
+            <!-- Day Selector -->
+            <div class="text-center mb-10">
+                <h3 class="font-pixel text-xs text-gray-500 mb-4 tracking-widest">📅 SELECIONE O DIA</h3>
+                <div class="flex flex-wrap justify-center gap-2 md:gap-3" id="day-tabs">
+
+                    <button onclick="selectDay('sexta')" id="day-sexta"
+                        class="day-btn active font-bold text-sm px-4 md:px-6 py-3 rounded-lg border border-gray-700">
+                        <span class="hidden md:inline">🎮 </span>Sexta
+                    </button>
+                    <button onclick="selectDay('sabado')" id="day-sabado"
+                        class="day-btn font-bold text-sm px-4 md:px-6 py-3 rounded-lg border border-gray-700 text-gray-400">
+                        <span class="hidden md:inline">⚔️ </span>Sábado
+                    </button>
+                    <button onclick="selectDay('domingo')" id="day-domingo"
+                        class="day-btn font-bold text-sm px-4 md:px-6 py-3 rounded-lg border border-gray-700 text-gray-400">
+                        <span class="hidden md:inline">�️ </span>Domingo
+                    </button>
+                    <button onclick="selectDay('segunda')" id="day-segunda"
+                        class="day-btn font-bold text-sm px-4 md:px-6 py-3 rounded-lg border border-gray-700 text-gray-400">
+                        <span class="hidden md:inline">�️ </span>Segunda
+                    </button>
+                    <button onclick="selectDay('terca')" id="day-terca"
+                        class="day-btn font-bold text-sm px-4 md:px-6 py-3 rounded-lg border border-gray-700 text-gray-400">
+                        <span class="hidden md:inline">👑 </span>Terça
+                    </button>
+                </div>
+            </div>
+
+            <!-- Shift Selector -->
+            <div class="text-center mb-10" id="shift-section">
+                <h3 class="font-pixel text-xs text-gray-500 mb-4 tracking-widest">🕐 SELECIONE O TURNO</h3>
+                <div class="flex justify-center gap-3" id="shift-tabs">
+                    <button onclick="selectShift('manha')" id="shift-manha"
+                        class="shift-btn font-bold text-sm px-5 py-2.5 rounded-full border border-gray-700 text-gray-400">
+                        ☀️ Manhã
+                    </button>
+                    <button onclick="selectShift('tarde')" id="shift-tarde"
+                        class="shift-btn font-bold text-sm px-5 py-2.5 rounded-full border border-gray-700 text-gray-400">
+                        🌅 Tarde
+                    </button>
+                    <button onclick="selectShift('noite')" id="shift-noite"
+                        class="shift-btn font-bold text-sm px-5 py-2.5 rounded-full border border-gray-700 text-gray-400">
+                        🌙 Noite
+                    </button>
+                </div>
+            </div>
+
+            <!-- Current selection label -->
+            <div class="text-center mb-8">
+                <div class="inline-block bg-black border border-gray-800 rounded-lg px-5 py-2">
+                    <span class="text-gray-500 text-sm">Exibindo: </span>
+                    <span id="current-label" class="text-neon-orange font-bold text-sm">Sexta - Abertura</span>
+                </div>
+            </div>
+
+            <!-- Photo Grid Container -->
+            <div id="gallery-container" class="photo-grid hidden"></div>
+
+            <!-- Loading State -->
+            <div id="loading-state" class="photo-grid">
+                <div class="skeleton h-48 mb-3"></div>
+                <div class="skeleton h-64 mb-3"></div>
+                <div class="skeleton h-56 mb-3"></div>
+                <div class="skeleton h-40 mb-3"></div>
+                <div class="skeleton h-60 mb-3"></div>
+                <div class="skeleton h-52 mb-3"></div>
+                <div class="skeleton h-44 mb-3"></div>
+                <div class="skeleton h-72 mb-3"></div>
+            </div>
+
+            <!-- Error State -->
+            <div id="error-state" class="hidden text-center py-20">
+                <span class="text-5xl block mb-4">⚠️</span>
+                <h3 class="font-pixel text-neon-orange text-sm mb-3">ERRO AO CARREGAR</h3>
+                <p class="text-gray-400 mb-6">Não foi possível carregar as fotos deste álbum.</p>
+                <a id="drive-fallback-link" href="#" target="_blank"
+                    class="inline-block bg-neon-orange text-black font-bold px-6 py-3 rounded hover:bg-white transition">
+                    ABRIR NO GOOGLE DRIVE →
+                </a>
+            </div>
+
+            <!-- Empty / Not configured state -->
+            <div id="empty-state" class="hidden text-center py-20">
+                <span class="text-5xl block mb-4">📭</span>
+                <h3 class="font-pixel text-neon-orange text-sm mb-3">SEM FOTOS</h3>
+                <p class="text-gray-400">Ainda não há fotos disponíveis para este dia/turno.</p>
+            </div>
+
+            <!-- Load more -->
+            <div id="load-more-container" class="hidden text-center mt-10">
+                <button onclick="loadMore()"
+                    class="bg-neon-orange text-black font-pixel text-xs px-6 py-3 hover:bg-white transition shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:shadow-none active:translate-x-1 active:translate-y-1">
+                    CARREGAR MAIS FOTOS
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- LIGHTBOX -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+        <button onclick="closeLightbox(event, true)"
+            class="absolute top-4 right-4 text-white text-3xl hover:text-neon-orange transition z-50 bg-black/50 w-12 h-12 rounded-full flex items-center justify-center">
+            ✕
+        </button>
+        <button onclick="navigatePhoto(-1)"
+            class="absolute left-4 top-1/2 -translate-y-1/2 text-white text-4xl hover:text-neon-orange transition z-50 bg-black/50 w-12 h-12 rounded-full flex items-center justify-center">
+            ‹
+        </button>
+        <button onclick="navigatePhoto(1)"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-white text-4xl hover:text-neon-orange transition z-50 bg-black/50 w-12 h-12 rounded-full flex items-center justify-center">
+            ›
+        </button>
+        <img id="lightbox-img" src="" alt="Foto ampliada" class="hidden">
+        <iframe id="lightbox-video" class="hidden w-[90vw] h-[70vh] md:h-[80vh] rounded-lg shadow-2xl border-0"
+            allow="autoplay; fullscreen"></iframe>
+        <div class="mt-4 flex items-center gap-4">
+            <span id="lightbox-name" class="text-gray-400 text-sm"></span>
+            <button id="lightbox-download" onclick="downloadCurrentPhoto()"
+                class="bg-neon-orange text-black font-bold text-sm px-4 py-2 rounded hover:bg-white transition inline-flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span id="lightbox-download-text">BAIXAR</span>
+            </button>
+        </div>
+        <div class="mt-2 text-gray-600 text-xs font-mono" id="lightbox-counter"></div>
+    </div>
+
+    <!-- Scroll to top -->
+    <button id="scroll-top-btn" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+        class="scroll-top fixed bottom-6 right-6 z-40 bg-neon-orange text-black w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-white transition opacity-0 pointer-events-none translate-y-4">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7" />
+        </svg>
+    </button>
+
+    <!-- FOOTER -->
+    <footer class="bg-black border-t border-gray-900 py-12">
+        <div class="container mx-auto px-6 text-center">
+            <div class="text-neon-orange font-pixel text-2xl mb-6">UMADCAMP</div>
+            <p class="text-gray-500 mb-8">Congresso Regional de Jovens - Patu/RN</p>
+            <div class="flex justify-center space-x-6 mb-8">
+                <a href="#"
+                    class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center hover:bg-neon-orange hover:text-black transition">IG</a>
+                <a href="#"
+                    class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center hover:bg-neon-orange hover:text-black transition">YT</a>
+                <a href="#"
+                    class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center hover:bg-neon-orange hover:text-black transition">WA</a>
+            </div>
+            <p class="text-xs text-gray-700 font-mono">© 2025/2026 UMADCAMP SYSTEM. ALL RIGHTS RESERVED.</p>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================================
+        //  FIREBASE CONFIG
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+            authDomain: "umadcamp-patu.firebaseapp.com",
+            projectId: "umadcamp-patu",
+            storageBucket: "umadcamp-patu.firebasestorage.app",
+            messagingSenderId: "1043102355965",
+            appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+            measurementId: "G-S6N9R4F8Z8"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ============================================================
+        //  CONFIG (HARDCODED FALLBACKS)
+        // ============================================================
+        const API_KEY = 'AIzaSyCM05uKadKIX5xxtWt3FlyKp8nANwV4Kpc';
+
+        // Mapeamento: dia → folder ID principal do Google Drive
+        let FOLDERS = {
+            sexta: '1r7m0DtWVl63xdJ_kVMtUxRJN6qWs2R77',   // CRJ 2K26 - Abertura
+            sabado: '1fnGxi8PgDb1yeQCRgovQ4dYTQzcEMChc',    // CRJ 2K26 - Sábado
+            domingo: '1zds1vnNFwPbT_x6psXCwpI8dF5VlC7zY',   // CRJ 2K26 - Domingo
+            segunda: '1s2FBqj-LIQfuSatWGsqeZRdnPXcXcF5m',   // CRJ 2K26 - Segunda
+            terca: '1gOX1uCxlMoLwUuirUdmt3QYzTB32WMWd'    // CRJ 2K26 - Encerramento
+        };
+
+        // Pastas extras por dia/turno (somam às subpastas descobertas)
+        let EXTRA_FOLDERS = {
+            sexta: {
+                noite: [
+                    '1w4wyktrH_T3ZoOukQ2D06V8xNhK7Ve0V',
+                    '1uU9mNaWAXI6DNXbW2dCCjINq9vYuJ8j4'
+                ]
+            },
+            sabado: {
+                tarde: [
+                    '1_zc60AamTCCDNCeuZXSII2mwpflPBiVC',
+                    '1NrS4IdSBMhLxqjbeLuaK2ZkiB3DWEaiG'
+                ],
+                noite: [
+                    '1BkONm2t_c4OUEZWPx6zbZhJaELROlWde',
+                    '1SuCHQll9Au4rjiu0rACAhzzvApDVOJ1y'
+                ]
+            },
+            domingo: {
+                manha: [
+                    '1h5Bp_TAszj9PG_B7r-2qUw2efS8A6B-N',
+                    '1D2XSgArpVOi6swSpWdlwFoGrkwcHO7IV'
+                ],
+                tarde: [
+                    '1EbeXymNAz0GpbhQaMT2S634HrA9LxDaz',
+                    '1ElLMkJouwXx1djBtht_x4WEmqEe2hcBi'
+                ],
+                noite: [
+                    '1vjrsZiby_QkOFTVUiebdZpqH5pOEpnqa',
+                    '1YXuiEGzQ2frYcATZXpJsTBuCJ5yseu93'
+                ]
+            },
+            segunda: {
+                manha: [
+                    '1dpfCbh7D0cwpLkWtygG6oOVAam5vlz9Y',
+                    '17toQRsXGmIjYUXc3ync-A4IrvVI7yAXx'
+                ],
+                tarde: [
+                    '1F0zPJ2dDYK6TsaxRP-n7aoEWhAuxfjC2'
+                ],
+                noite: [
+                    '1SJqdmgmy3hxyzNz5vJMDZzsFU4_HzxUO',
+                    '1SC635MusSvOJlUFCvdXrwdpVyVxuuQoZ'
+                ]
+            },
+            terca: {
+                manha: [
+                    '168xkyjHNFxdRqYRTs4GJ20MsI8mROr65',
+                    '1yxjgMxz1zO5pNLKIjMw05b9zzl66Ychv'
+                ],
+                tarde: ['1wXuA9rztw2axZAfIokgUC_S2jngjSWdR'],
+                noite: ['1PvuY8_pGwrL20b9G365UA_VjsMfT8wz1']
+            }
+        };
+
+        const DAY_LABELS = {
+            sexta: 'Sexta - Abertura',
+            sabado: 'Sábado',
+            domingo: 'Domingo',
+            segunda: 'Segunda',
+            terca: 'Terça - Encerramento'
+        };
+
+        const SHIFT_LABELS = {
+            manha: 'Manhã', tarde: 'Tarde', noite: 'Noite'
+        };
+
+        // Dias que NÃO têm subpastas (fotos direto na pasta)
+        const FLAT_DAYS = ['sexta'];
+
+        let currentDay = 'sexta';
+        let currentShift = null;
+        let currentPhotos = [];
+        let nextPageToken = '';
+        let lightboxIndex = 0;
+        // Cache das subpastas já descobertas: { dia: { shiftName: folderId } }
+        let subfolderCache = {};
+
+        // Função para carregar links dinâmicos do Firebase
+        async function loadFirestoreLinks() {
+            try {
+                // Tenta carregar do Firestore por 3 segundos no máximo
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000));
+                const fetchPromise = db.collection('config').doc('links').get();
+
+                const doc = await Promise.race([fetchPromise, timeoutPromise]);
+
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (data.folders) {
+                        // Faz o merge apenas dos campos que vieram (mantém fallbacks se algum dia faltar)
+                        FOLDERS = { ...FOLDERS, ...data.folders };
+                    }
+                    if (data.extra_folders) {
+                        EXTRA_FOLDERS = { ...EXTRA_FOLDERS, ...data.extra_folders };
+                    }
+                    console.log("Links dinâmicos carregados do Firestore");
+                }
+            } catch (error) {
+                console.warn("Usando links hardcoded (Firestore offline ou erro):", error.message);
+            }
+        }
+
+        // Retorna array de folder IDs para um dia/turno
+        function getFolderIds(day, shift) {
+            const folders = [];
+            // Subfolder descoberta dinamicamente
+            const discovered = subfolderCache[day]?.[shift];
+            if (discovered) folders.push(discovered);
+            // Pastas extras configuradas
+            const extras = EXTRA_FOLDERS[day]?.[shift];
+            if (extras) folders.push(...extras);
+            return folders;
+        }
+
+        // ============================================================
+        //  DAY SELECTION
+        // ============================================================
+        async function selectDay(day) {
+            currentDay = day;
+            currentShift = null;
+
+            // Update day tab styles
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                const isActive = btn.id === `day-${day}`;
+                btn.classList.toggle('active', isActive);
+                btn.classList.toggle('text-gray-400', !isActive);
+            });
+
+            const shiftSection = document.getElementById('shift-section');
+
+            if (FLAT_DAYS.includes(day)) {
+                // Dia sem subpastas — esconde turnos e carrega direto
+                shiftSection.classList.add('hidden');
+                document.getElementById('current-label').textContent = DAY_LABELS[day];
+                // Pasta principal + extras
+                const folders = [FOLDERS[day]];
+                const extras = EXTRA_FOLDERS[day];
+                if (extras) {
+                    Object.values(extras).forEach(arr => folders.push(...arr));
+                }
+                loadPhotosFromFolders(folders);
+            } else {
+                // Dia com subpastas de turno — descobrir subpastas
+                shiftSection.classList.remove('hidden');
+                await discoverShifts(day);
+            }
+        }
+
+        // ============================================================
+        //  DISCOVER SUBFOLDERS (SHIFTS)
+        // ============================================================
+        async function discoverShifts(day) {
+            const gallery = document.getElementById('gallery-container');
+            const loading = document.getElementById('loading-state');
+            const errorState = document.getElementById('error-state');
+            const emptyState = document.getElementById('empty-state');
+            const loadMoreContainer = document.getElementById('load-more-container');
+
+            gallery.innerHTML = '';
+            gallery.classList.add('hidden');
+            loading.classList.remove('hidden');
+            errorState.classList.add('hidden');
+            emptyState.classList.add('hidden');
+            loadMoreContainer.classList.add('hidden');
+
+            // Check cache first
+            if (subfolderCache[day]) {
+                loading.classList.add('hidden');
+                applyShifts(day, subfolderCache[day]);
+                return;
+            }
+
+            const folderId = FOLDERS[day];
+            try {
+                // List subfolders
+                const url = `https://www.googleapis.com/drive/v3/files?` +
+                    `q='${folderId}'+in+parents+and+mimeType='application/vnd.google-apps.folder'` +
+                    `&key=${API_KEY}` +
+                    `&fields=files(id,name)` +
+                    `&pageSize=10`;
+
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                const data = await response.json();
+
+                loading.classList.add('hidden');
+
+                // Map subfolder names to shift keys
+                const shifts = {};
+                if (data.files && data.files.length > 0) {
+                    data.files.forEach(f => {
+                        const name = f.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                        if (name.includes('manha')) shifts.manha = f.id;
+                        else if (name.includes('tarde')) shifts.tarde = f.id;
+                        else if (name.includes('noite')) shifts.noite = f.id;
+                    });
+                }
+
+                subfolderCache[day] = shifts;
+                applyShifts(day, shifts);
+
+            } catch (error) {
+                console.error('Error discovering shifts:', error);
+                loading.classList.add('hidden');
+                errorState.classList.remove('hidden');
+                document.getElementById('drive-fallback-link').href =
+                    `https://drive.google.com/drive/folders/${folderId}`;
+            }
+        }
+
+        function applyShifts(day, shifts) {
+            const allShifts = ['manha', 'tarde', 'noite'];
+            let firstAvailable = null;
+
+            allShifts.forEach(shift => {
+                const btn = document.getElementById(`shift-${shift}`);
+                // Um turno está disponível se tem subfolder OU extras
+                const hasDiscovered = !!shifts[shift];
+                const hasExtras = !!(EXTRA_FOLDERS[day]?.[shift]?.length);
+                const available = hasDiscovered || hasExtras;
+                btn.disabled = !available;
+                btn.classList.toggle('text-gray-400', !available);
+                btn.classList.remove('active');
+                if (available && !firstAvailable) firstAvailable = shift;
+            });
+
+            // Auto-select first available shift
+            if (firstAvailable) {
+                selectShift(firstAvailable);
+            }
+        }
+
+        // ============================================================
+        //  SHIFT SELECTION
+        // ============================================================
+        function selectShift(shift) {
+            currentShift = shift;
+
+            document.querySelectorAll('.shift-btn').forEach(btn => {
+                const isActive = btn.id === `shift-${shift}`;
+                btn.classList.toggle('active', isActive);
+            });
+
+            document.getElementById('current-label').textContent =
+                `${DAY_LABELS[currentDay]} - ${SHIFT_LABELS[shift]}`;
+
+            const folders = getFolderIds(currentDay, shift);
+            if (folders.length > 0) {
+                loadPhotosFromFolders(folders);
+            }
+        }
+
+        // ============================================================
+        //  LOAD PHOTOS FROM MULTIPLE FOLDERS
+        // ============================================================
+        let activeFolderIds = [];
+
+        async function loadPhotosFromFolders(folderIds) {
+            activeFolderIds = folderIds;
+            const gallery = document.getElementById('gallery-container');
+            const loading = document.getElementById('loading-state');
+            const errorState = document.getElementById('error-state');
+            const emptyState = document.getElementById('empty-state');
+            const loadMoreContainer = document.getElementById('load-more-container');
+
+            gallery.innerHTML = '';
+            gallery.classList.add('hidden');
+            loading.classList.remove('hidden');
+            errorState.classList.add('hidden');
+            emptyState.classList.add('hidden');
+            loadMoreContainer.classList.add('hidden');
+            currentPhotos = [];
+
+            if (!folderIds || folderIds.length === 0) {
+                loading.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                document.getElementById('photo-count').textContent = '';
+                return;
+            }
+
+            try {
+                // Load all photos from ALL folders
+                for (const folderId of folderIds) {
+                    let pageToken = '';
+                    do {
+                        const url = `https://www.googleapis.com/drive/v3/files?` +
+                            `q='${folderId}'+in+parents+and+(mimeType+contains+'image/'+or+mimeType+contains+'video/')` +
+                            `&key=${API_KEY}` +
+                            `&fields=nextPageToken,files(id,name,mimeType,thumbnailLink,webContentLink)` +
+                            `&pageSize=100` +
+                            `&orderBy=name` +
+                            (pageToken ? `&pageToken=${pageToken}` : '');
+
+                        const response = await fetch(url);
+                        if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+                        const data = await response.json();
+
+                        if (data.files && data.files.length > 0) {
+                            currentPhotos = currentPhotos.concat(data.files);
+                        }
+                        pageToken = data.nextPageToken || '';
+                    } while (pageToken);
+                }
+
+                loading.classList.add('hidden');
+
+                if (currentPhotos.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    document.getElementById('photo-count').textContent = '';
+                    return;
+                }
+
+                renderPhotos(currentPhotos);
+                gallery.classList.remove('hidden');
+
+                document.getElementById('photo-count').textContent =
+                    `${currentPhotos.length} fotos carregadas`;
+
+            } catch (error) {
+                console.error('Error loading photos:', error);
+                loading.classList.add('hidden');
+                errorState.classList.remove('hidden');
+                document.getElementById('drive-fallback-link').href =
+                    `https://drive.google.com/drive/folders/${folderIds[0]}`;
+            }
+        }
+
+        // ============================================================
+        //  LOAD MORE
+        // ============================================================
+        async function loadMore() {
+            if (!nextPageToken) return;
+            const folderId = activeFolderId;
+            if (!folderId) return;
+
+            const loadMoreContainer = document.getElementById('load-more-container');
+            loadMoreContainer.innerHTML = '<p class="text-gray-500 font-mono text-sm animate-pulse">Carregando...</p>';
+
+            try {
+                const url = `https://www.googleapis.com/drive/v3/files?` +
+                    `q='${folderId}'+in+parents+and+(mimeType+contains+'image/'+or+mimeType+contains+'video/')` +
+                    `&key=${API_KEY}` +
+                    `&fields=nextPageToken,files(id,name,mimeType,thumbnailLink,webContentLink)` +
+                    `&pageSize=30` +
+                    `&orderBy=name` +
+                    `&pageToken=${nextPageToken}`;
+
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.files && data.files.length > 0) {
+                    currentPhotos = currentPhotos.concat(data.files);
+                    nextPageToken = data.nextPageToken || '';
+                    renderPhotos(currentPhotos);
+                    document.getElementById('photo-count').textContent =
+                        `${currentPhotos.length} fotos carregadas`;
+                }
+
+                if (nextPageToken) {
+                    loadMoreContainer.innerHTML = `
+                        <button onclick="loadMore()"
+                            class="bg-neon-orange text-black font-pixel text-xs px-6 py-3 hover:bg-white transition shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:shadow-none active:translate-x-1 active:translate-y-1">
+                            CARREGAR MAIS FOTOS
+                        </button>`;
+                } else {
+                    loadMoreContainer.classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('Error loading more:', error);
+                loadMoreContainer.innerHTML = '<p class="text-red-500 text-sm">Erro ao carregar.</p>';
+            }
+        }
+
+        // ============================================================
+        //  RENDER PHOTOS
+        // ============================================================
+        function renderPhotos(photos) {
+            const gallery = document.getElementById('gallery-container');
+            gallery.innerHTML = '';
+
+            photos.forEach((photo, index) => {
+                const thumbUrl = `https://lh3.googleusercontent.com/d/${photo.id}=w600`;
+
+                const isVideo = photo.mimeType.startsWith('video/');
+
+                const item = document.createElement('div');
+                item.className = 'photo-item';
+                item.onclick = () => openLightbox(index);
+                item.innerHTML = `
+                    <div class="relative">
+                        <img src="${thumbUrl}" alt="${photo.name}" loading="lazy"
+                             onerror="this.parentElement.parentElement.style.display='none'">
+                        ${isVideo ? `
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="bg-black/50 backdrop-blur-sm p-3 rounded-full border border-white/30">
+                                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="photo-overlay">
+                        <div class="flex gap-2">
+                            <span class="bg-white/20 backdrop-blur text-white text-xs px-3 py-1.5 rounded-full">
+                                ${isVideo ? '▶ Reproduzir' : '🔍 Ampliar'}
+                            </span>
+                            <button onclick="event.stopPropagation(); downloadPhoto('${photo.id}', '${photo.name.replace(/'/g, "\\'")}'${isVideo ? ', true' : ''})"
+                               class="bg-neon-orange text-black text-xs px-3 py-1.5 rounded-full font-bold hover:bg-white transition">
+                                ⬇ Baixar
+                            </button>
+                        </div>
+                    </div>
+                `;
+                gallery.appendChild(item);
+            });
+        }
+
+        // ============================================================
+        //  LIGHTBOX
+        // ============================================================
+        function openLightbox(index) {
+            lightboxIndex = index;
+            const photo = currentPhotos[index];
+            const isVideo = photo.mimeType.startsWith('video/');
+
+            const img = document.getElementById('lightbox-img');
+            const video = document.getElementById('lightbox-video');
+            if (isVideo) {
+                img.classList.add('hidden');
+                video.classList.remove('hidden');
+                video.src = `https://drive.google.com/file/d/${photo.id}/preview`;
+            } else {
+                video.classList.add('hidden');
+                video.src = '';
+                img.classList.remove('hidden');
+                img.src = `https://lh3.googleusercontent.com/d/${photo.id}=w1600`;
+            }
+
+            document.getElementById('lightbox-name').textContent = photo.name;
+            document.getElementById('lightbox-download-text').textContent = 'BAIXAR';
+            document.getElementById('lightbox-counter').textContent =
+                `${index + 1} / ${currentPhotos.length}`;
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(event, force) {
+            if (force || event.target.id === 'lightbox') {
+                const video = document.getElementById('lightbox-video');
+                video.src = '';
+                document.getElementById('lightbox').classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        function navigatePhoto(direction) {
+            event.stopPropagation();
+            lightboxIndex = (lightboxIndex + direction + currentPhotos.length) % currentPhotos.length;
+            const photo = currentPhotos[lightboxIndex];
+            const isVideo = photo.mimeType.startsWith('video/');
+            const img = document.getElementById('lightbox-img');
+            const video = document.getElementById('lightbox-video');
+
+            if (isVideo) {
+                img.classList.add('hidden');
+                video.classList.remove('hidden');
+                video.src = `https://drive.google.com/file/d/${photo.id}/preview`;
+            } else {
+                video.classList.add('hidden');
+                video.src = '';
+                img.classList.remove('hidden');
+                img.style.opacity = 0;
+                setTimeout(() => {
+                    img.src = `https://lh3.googleusercontent.com/d/${photo.id}=w1600`;
+                    img.onload = () => { img.style.opacity = 1; };
+                }, 150);
+            }
+
+            document.getElementById('lightbox-name').textContent = photo.name;
+            document.getElementById('lightbox-download-text').textContent = 'BAIXAR';
+            document.getElementById('lightbox-counter').textContent =
+                `${lightboxIndex + 1} / ${currentPhotos.length}`;
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            const lightbox = document.getElementById('lightbox');
+            if (!lightbox.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox(e, true);
+            if (e.key === 'ArrowLeft') navigatePhoto(-1);
+            if (e.key === 'ArrowRight') navigatePhoto(1);
+        });
+
+        // ============================================================
+        //  DIRECT DOWNLOAD (bypass Google Drive redirect on mobile)
+        // ============================================================
+        function downloadCurrentPhoto() {
+            const photo = currentPhotos[lightboxIndex];
+            if (!photo) return;
+            const isVideo = photo.mimeType.startsWith('video/');
+            downloadPhoto(photo.id, photo.name, isVideo);
+        }
+
+        async function downloadPhoto(fileId, fileName, isVideo) {
+            // Videos: open Google Drive download directly (lh3 only serves image thumbnails)
+            if (isVideo) {
+                window.open(`https://drive.google.com/uc?export=download&id=${fileId}`, '_blank');
+                return;
+            }
+
+            // Images: fetch as blob for direct download (bypasses Drive redirect on mobile)
+            const btnText = document.getElementById('lightbox-download-text');
+            if (btnText) btnText.textContent = 'BAIXANDO...';
+
+            try {
+                const url = `https://lh3.googleusercontent.com/d/${fileId}=w0`; // w0 = original size
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = fileName || 'foto.jpg';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+            } catch (error) {
+                console.error('Download error, falling back to Drive link:', error);
+                window.open(`https://drive.google.com/uc?export=download&id=${fileId}`, '_blank');
+            }
+
+            if (btnText) btnText.textContent = 'BAIXAR';
+        }
+
+        // ============================================================
+        //  SCROLL TO TOP
+        // ============================================================
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('scroll-top-btn');
+            if (window.scrollY > 500) {
+                btn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+            } else {
+                btn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+            }
+        });
+
+        // = : INIT
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Carrega links do Firestore antes de qualquer coisa
+            await loadFirestoreLinks();
+            selectDay('sexta');
+        });
+    </script>
+
+</body>
+
+</html>

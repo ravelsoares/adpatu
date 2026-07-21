@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Maker - UMADCAMP CRJ 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Anton&family=Bebas+Neue&family=League+Spartan:wght@800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neon-orange': '#FF6600',
+                        'deep-red': '#4A0404',
+                        'dark-bg': '#0a0a0a'
+                    },
+                    fontFamily: {
+                        'body': ['Montserrat', 'sans-serif'],
+                        'anton': ['Anton', 'sans-serif'],
+                        'bebas': ['Bebas Neue', 'cursive'],
+                        'spartan': ['League Spartan', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050505;
+            color: white;
+            padding-bottom: 50px;
+        }
+
+        .post-container {
+            width: 1080px;
+            height: 1080px;
+            background-color: #111;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0;
+            /* Instagram post is square */
+            transform-origin: top left;
+        }
+
+        /* Rescaling for preview */
+        .preview-wrapper {
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 1/1;
+            margin: 0 auto;
+            border: 2px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .masonry-grid {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 250px;
+            gap: 10px;
+            transform: scale(1.1) rotate(-2deg);
+            opacity: 1;
+            transition: all 0.5s ease;
+        }
+
+        .masonry-grid.polaroid-style .photo-box {
+            background: white;
+            padding: 10px 10px 30px 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .masonry-grid.polaroid-style .photo-img {
+            border-radius: 0;
+            border: 1px solid #ddd;
+        }
+
+        .photo-box {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        .photo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .overlay-gradient {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.8) 100%);
+            mix-blend-mode: multiply;
+            transition: background 0.3s;
+        }
+
+        .overlay-color {
+            position: absolute;
+            inset: 0;
+            background: black;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .text-container {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            padding: 40px;
+            text-align: center;
+            /* Compensate for font baseline to make it visually centered */
+            transform: translateY(-20px);
+        }
+
+        .main-text {
+            font-size: 200px;
+            line-height: 0.9;
+            color: white;
+            text-transform: uppercase;
+            text-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .sub-text {
+            font-size: 32px;
+            font-weight: 600;
+            color: #FF6600;
+            margin-top: 20px;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+            letter-spacing: 2px;
+        }
+
+        .watermark {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            font-size: 24px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 1px;
+            z-index: 10;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border-left-color: #FF6600;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="font-body">
+    <div class="fixed top-0 w-full z-50 bg-dark-bg/90 backdrop-blur border-b border-gray-800">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/umadcamp" class="text-neon-orange font-bold text-lg hover:opacity-80 transition">
+                <span class="text-white">Gerador de </span>Post
+            </a>
+            <a href="/umadcamp/fotos-crj.html"
+                class="bg-gray-800 text-white text-xs px-4 py-2 hover:bg-gray-700 transition rounded-md">
+                VOLTAR PARA FOTOS
+            </a>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 pt-24 pb-12 flex flex-col lg:flex-row gap-8">
+
+        <!-- Editor Controls (Left) -->
+        <div class="w-full lg:w-1/3 bg-[#111] p-6 rounded-xl border border-gray-800 flex flex-col gap-6">
+            <h2 class="text-xl font-bold border-b border-gray-800 pb-3">Controles</h2>
+
+            <!-- Text Config -->
+            <div class="space-y-3">
+                <label class="block text-sm font-semibold text-gray-400">Texto Principal</label>
+                <input type="text" id="ctrl-main-text" value="OBRIGADO"
+                    class="w-full bg-[#222] border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:border-neon-orange">
+
+                <label class="block text-sm font-semibold text-gray-400 mt-2">Cor do Texto</label>
+                <div class="flex gap-2">
+                    <button class="w-8 h-8 rounded-full bg-white border-2 border-transparent focus:border-neon-orange"
+                        onclick="changeTextColor('white')"></button>
+                    <button class="w-8 h-8 rounded-full bg-[#FF6600] border-2 border-transparent focus:border-white"
+                        onclick="changeTextColor('#FF6600')"></button>
+                    <button class="w-8 h-8 rounded-full bg-[#FFE600] border-2 border-transparent focus:border-white"
+                        onclick="changeTextColor('#FFE600')"></button>
+                </div>
+
+                <label class="block text-sm font-semibold text-gray-400 mt-2">Fonte Principal</label>
+                <select id="ctrl-font"
+                    class="w-full bg-[#222] border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:border-neon-orange"
+                    onchange="updateStyles()">
+                    <option value="'Anton', sans-serif">Anton (Impacto)</option>
+                    <option value="'League Spartan', sans-serif">League Spartan (Moderna)</option>
+                    <option value="'Bebas Neue', cursive">Bebas Neue (Alta)</option>
+                    <option value="'Montserrat', sans-serif" selected>Montserrat (Elegante)</option>
+                </select>
+
+                <label class="block text-sm font-semibold text-gray-400 mt-4">Sub-texto (Opcional)</label>
+                <input type="text" id="ctrl-sub-text" value=""
+                    class="w-full bg-[#222] border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:border-neon-orange">
+            </div>
+
+            <!-- Background Config -->
+            <div class="space-y-3 border-t border-gray-800 pt-4">
+                <label class="block text-sm font-semibold text-gray-400">Estilo das Fotos</label>
+                <div class="flex gap-2">
+                    <button class="flex-1 bg-neon-orange text-black font-semibold py-2 rounded-md transition"
+                        id="btn-style-grid" onclick="setPhotoStyle('grid')">Mural / Grid</button>
+                    <button class="flex-1 bg-[#222] text-white font-semibold py-2 rounded-md hover:bg-[#333] transition"
+                        id="btn-style-polaroid" onclick="setPhotoStyle('polaroid')">Polaroid</button>
+                </div>
+
+                <label class="block text-sm font-semibold text-gray-400 mt-4">Escurecer Fundo (Opacidade: <span
+                        id="op-val">50</span>%)</label>
+                <input type="range" id="ctrl-opacity" min="0" max="90" value="50" class="w-full accent-neon-orange"
+                    oninput="updateStyles()">
+            </div>
+
+            <!-- Actions -->
+            <div class="space-y-3 border-t border-gray-800 pt-4 mt-auto">
+                <button onclick="fetchRandomPhotos()" id="btn-randomize"
+                    class="w-full bg-[#222] border border-gray-600 text-white font-semibold py-3 rounded-md hover:bg-[#333] transition flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                        </path>
+                    </svg>
+                    Sortear Novas Fotos
+                </button>
+
+                <button onclick="downloadImage()" id="btn-download"
+                    class="w-full bg-neon-orange text-black font-bold py-3 rounded-md hover:bg-white transition flex items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-1 active:translate-y-1 active:shadow-none">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    Baixar Imagem Final
+                </button>
+            </div>
+        </div>
+
+        <!-- Preview Area (Right) -->
+        <div class="w-full lg:w-2/3 flex flex-col items-center justify-center relative">
+
+            <div id="loading-overlay"
+                class="absolute inset-0 z-50 bg-[#050505] flex flex-col items-center justify-center rounded-xl bg-opacity-90">
+                <div class="spinner mb-4"></div>
+                <p class="text-neon-orange font-semibold animate-pulse">Buscando as melhores fotos do Drive...</p>
+            </div>
+
+            <!-- Wrapper for scaling the 1080x1080 design down to screen size -->
+            <div class="preview-wrapper" id="preview-wrapper">
+                <!-- Actual Design Container -->
+                <div class="post-container" id="capture-area">
+                    <!-- Photos -->
+                    <div class="masonry-grid" id="photo-grid">
+                        <!-- Injetado via JS -->
+                    </div>
+
+                    <!-- Overlays -->
+                    <div class="overlay-gradient"></div>
+                    <div class="overlay-color" id="preview-overlay"></div>
+
+                    <!-- Texts -->
+                    <!-- Container sem o transform para o layout principal do quadrado, e um wrapper interno para ajustar visualmente -->
+                    <div class="text-container" style="transform: none;">
+                        <div id="text-wrapper"
+                            style="transform: translateY(-30px); display: flex; flex-direction: column; align-items: center;">
+                            <h1 class="main-text font-anton" id="preview-main">OBRIGADO</h1>
+                            <p class="sub-text font-body" id="preview-sub" style="display: none;"></p>
+                        </div>
+                    </div>
+
+                    <!-- <div class="watermark font-body">@UMADCAMP</div> -->
+                </div>
+            </div>
+
+            <p class="text-gray-500 text-sm mt-4 text-center">Tamanho final gerado: 1080x1080 (Square for Feed)</p>
+        </div>
+
+    </div>
+
+    <!-- Scripting -->
+    <script>
+        const API_KEY = 'AIzaSyCM05uKadKIX5xxtWt3FlyKp8nANwV4Kpc'; // Mesma chave usada no fotos-crj.html
+
+        // Todas as pastas disponíveis mapeadas das informações do usuário
+        const FOLDER_IDS = [
+            '1_zc60AamTCCDNCeuZXSII2mwpflPBiVC', '1NrS4IdSBMhLxqjbeLuaK2ZkiB3DWEaiG', // Sab tarde
+            '1BkONm2t_c4OUEZWPx6zbZhJaELROlWde', '1SuCHQll9Au4rjiu0rACAhzzvApDVOJ1y', // Sab Noite
+            '1h5Bp_TAszj9PG_B7r-2qUw2efS8A6B-N', '1D2XSgArpVOi6swSpWdlwFoGrkwcHO7IV', // Dom Manhã
+            '1EbeXymNAz0GpbhQaMT2S634HrA9LxDaz', '1ElLMkJouwXx1djBtht_x4WEmqEe2hcBi', // Dom Tarde
+            '1vjrsZiby_QkOFTVUiebdZpqH5pOEpnqa', '1YXuiEGzQ2frYcATZXpJsTBuCJ5yseu93', // Dom Noite
+            '1dpfCbh7D0cwpLkWtygG6oOVAam5vlz9Y', '17toQRsXGmIjYUXc3ync-A4IrvVI7yAXx', // Seg Manha
+            '1SJqdmgmy3hxyzNz5vJMDZzsFU4_HzxUO', '1SC635MusSvOJlUFCvdXrwdpVyVxuuQoZ', // Seg Noite
+            '168xkyjHNFxdRqYRTs4GJ20MsI8mROr65', '1yxjgMxz1zO5pNLKIjMw05b9zzl66Ychv'  // Ter Manha
+        ];
+
+        let currentTextColor = 'white';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            adjustScale();
+            window.addEventListener('resize', adjustScale);
+
+            // Listeners for text inputs
+            document.getElementById('ctrl-main-text').addEventListener('input', updateTexts);
+            document.getElementById('ctrl-sub-text').addEventListener('input', updateTexts);
+
+            // Initial load
+            fetchRandomPhotos();
+        });
+
+        function adjustScale() {
+            const wrapper = document.getElementById('preview-wrapper');
+            const captureArea = document.getElementById('capture-area');
+            const wrapperWidth = wrapper.offsetWidth;
+            const scale = wrapperWidth / 1080;
+            captureArea.style.transform = `scale(${scale})`;
+        }
+
+        function updateTexts() {
+            document.getElementById('preview-main').textContent = document.getElementById('ctrl-main-text').value;
+            const sub = document.getElementById('ctrl-sub-text').value;
+            document.getElementById('preview-sub').textContent = sub;
+            document.getElementById('preview-sub').style.display = sub.trim() === '' ? 'none' : 'block';
+        }
+
+        function changeTextColor(color) {
+            currentTextColor = color;
+            document.getElementById('preview-main').style.color = color;
+            if (color === '#FF6600' || color === '#FFE600') {
+                document.getElementById('preview-main').style.textShadow = '0 10px 40px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.5)';
+            } else {
+                document.getElementById('preview-main').style.textShadow = '0 10px 40px rgba(0,0,0,0.8)';
+            }
+        }
+
+        function updateStyles() {
+            const opacity = document.getElementById('ctrl-opacity').value;
+            document.getElementById('op-val').textContent = opacity;
+            document.getElementById('preview-overlay').style.opacity = opacity / 100;
+
+            const font = document.getElementById('ctrl-font').value;
+            document.getElementById('preview-main').style.fontFamily = font;
+
+            let fontSize = "200px";
+            if (font.includes('Anton') || font.includes('Bebas')) fontSize = "280px";
+            if (font.includes('League Spartan')) fontSize = "220px";
+            document.getElementById('preview-main').style.fontSize = fontSize;
+        }
+
+        function setPhotoStyle(style) {
+            const grid = document.getElementById('photo-grid');
+            const btnGrid = document.getElementById('btn-style-grid');
+            const btnPolaroid = document.getElementById('btn-style-polaroid');
+
+            if (style === 'grid') {
+                grid.classList.remove('polaroid-style');
+                grid.style.transform = "scale(1.1) rotate(-2deg)";
+                btnGrid.classList.replace('bg-[#222]', 'bg-neon-orange');
+                btnGrid.classList.replace('text-white', 'text-black');
+                btnPolaroid.classList.replace('bg-neon-orange', 'bg-[#222]');
+                btnPolaroid.classList.replace('text-black', 'text-white');
+            } else {
+                grid.classList.add('polaroid-style');
+                grid.style.transform = "scale(1.15) rotate(3deg)";
+                btnPolaroid.classList.replace('bg-[#222]', 'bg-neon-orange');
+                btnPolaroid.classList.replace('text-white', 'text-black');
+                btnGrid.classList.replace('bg-neon-orange', 'bg-[#222]');
+                btnGrid.classList.replace('text-black', 'text-white');
+            }
+        }
+
+        // Shuffle array helper
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        async function fetchRandomPhotos() {
+            const loading = document.getElementById('loading-overlay');
+            const btnObj = document.getElementById('btn-randomize');
+
+            loading.style.display = 'flex';
+            btnObj.disabled = true;
+            btnObj.innerHTML = 'Buscando...';
+
+            try {
+                // Seleciona 4 pastas aleatórias do montante para não pesar a query
+                const selectedFolders = shuffle([...FOLDER_IDS]).slice(0, 4);
+                let allPhotos = [];
+
+                for (const folderId of selectedFolders) {
+                    const url = `https://www.googleapis.com/drive/v3/files?` +
+                        `q='${folderId}'+in+parents+and+(mimeType+contains+'image/')` +
+                        `&key=${API_KEY}` +
+                        `&fields=files(id,thumbnailLink)` +
+                        `&pageSize=30`; // Busca 30 de cada uma pra sortear depois
+
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.files && data.files.length > 0) {
+                            allPhotos = allPhotos.concat(data.files);
+                        }
+                    }
+                }
+
+                // Randomiza e pega 24 fotos para o grid (6x4)
+                const finalPhotos = shuffle(allPhotos).slice(0, 24);
+                renderGrid(finalPhotos);
+
+            } catch (err) {
+                console.error("Erro ao carregar fotos:", err);
+                alert("Erro ao puxar fotos do Drive. Tentando usar algumas imagens padrão se disponíveis.");
+            } finally {
+                loading.style.display = 'none';
+                btnObj.disabled = false;
+                btnObj.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Sortear Novas Fotos';
+            }
+        }
+
+        function renderGrid(photos) {
+            const grid = document.getElementById('photo-grid');
+            grid.innerHTML = '';
+
+            photos.forEach((photo, i) => {
+                // Aumenta o tamanho (s) no thumbnailLink para ter melhor qualidade na imagem de fundo
+                const highResUrl = photo.thumbnailLink ? photo.thumbnailLink.replace('=s220', '=s600') : '';
+
+                // Variação de tamanhos pro Masonry (CSS grid com auto-rows e row-span)
+                let span = "span 1";
+                if (i % 5 === 0) span = "span 2"; // algumas fotos ficam mais altas
+
+                const div = document.createElement('div');
+                div.className = 'photo-box';
+                div.style.gridRow = span;
+                // leve rotação aleatória pra polaroid style ficar mais natural
+                const rot = (Math.random() * 6) - 3;
+                div.style.transform = `rotate(${rot}deg)`;
+
+                if (highResUrl) {
+                    div.innerHTML = `<img src="${highResUrl}" class="photo-img" crossorigin="anonymous">`;
+                } else {
+                    div.innerHTML = `<div class="photo-img bg-gray-800 animate-pulse"></div>`;
+                }
+
+                grid.appendChild(div);
+            });
+        }
+
+        async function downloadImage() {
+            const captureArea = document.getElementById('capture-area');
+            const btn = document.getElementById('btn-download');
+
+            // Save original styles
+            const originalTransform = captureArea.style.transform;
+            const originalPosition = captureArea.style.position;
+
+            // Remove scale form capture area before shooting and set it to exactly 1080x1080
+            captureArea.style.transform = 'none';
+            // We need to temporarily move it to top left and ensure it's not hidden
+            captureArea.style.position = 'absolute';
+            captureArea.style.top = '0';
+            captureArea.style.left = '0';
+            captureArea.style.zIndex = '-9999';
+
+            btn.innerHTML = 'Gerando imagem... <div class="spinner border-t-black ml-2" style="width:20px;height:20px;border-width:2px"></div>';
+            btn.disabled = true;
+
+            try {
+                // html2canvas magic, usa proxy ou useCORS
+                const canvas = await html2canvas(captureArea, {
+                    scale: 2, // Retained high resolution 
+                    width: 1080,
+                    height: 1080,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#050505',
+                    logging: false
+                });
+
+                // Baixa o arquivo
+                const image = canvas.toDataURL("image/jpeg", 0.9);
+                const a = document.createElement("a");
+                a.href = image;
+                a.download = `CRJ_OBRIGADO_${Date.now()}.jpg`;
+                a.click();
+            } catch (error) {
+                console.error("Erro no html2canvas:", error);
+                alert("Erro ao baixar a imagem. Confira o console.");
+            } finally {
+                // Restore original styles
+                captureArea.style.transform = originalTransform;
+                captureArea.style.position = originalPosition;
+                captureArea.style.top = '';
+                captureArea.style.left = '';
+                captureArea.style.zIndex = '';
+
+                // Volta o scale
+                adjustScale();
+                btn.disabled = false;
+                btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Baixar Imagem Final';
+            }
+        }
+    </script>
+</body>
+
+</html>

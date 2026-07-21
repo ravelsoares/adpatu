@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBD - AD Patu</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Philosopher&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --dark-bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.95)), url(/images/backgroud-home.png);
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+            padding-top: 20px;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 20px;
+            border-radius: 99px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .header h1 {
+            font-family: 'Philosopher', serif;
+            font-size: 3em;
+            margin: 0 0 10px 0;
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1em;
+            margin: 0;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .video-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .video-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            /* 16:9 */
+            height: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .video-card:hover .video-container img {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        .video-info {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .video-date {
+            font-size: 0.85em;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .video-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            line-height: 1.3;
+            color: var(--text-main);
+        }
+
+        .video-desc {
+            font-size: 0.95em;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin: 0;
+            flex-grow: 1;
+            margin-bottom: 15px;
+        }
+
+        .youtube-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 16px;
+            background: rgba(255, 0, 0, 0.1);
+            color: #ff4444;
+            text-decoration: none;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            margin-top: auto;
+        }
+
+        .youtube-btn:hover {
+            background: rgba(255, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                margin-bottom: 40px;
+                padding-top: 0;
+            }
+
+            .header h1 {
+                font-size: 2.2em;
+                margin-top: 60px;
+            }
+
+            .back-btn {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                justify-content: center;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 0;
+                border: none;
+                border-bottom: 1px solid var(--glass-border);
+                transform: none;
+            }
+
+            .back-btn:hover {
+                transform: none;
+                background: rgba(0, 0, 0, 0.5);
+            }
+
+            .video-grid {
+                gap: 20px;
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <a href="/umadcamp" class="back-btn">← Voltar para Home</a>
+            <h1>EBD Online</h1>
+            <p>Conteúdos e aulas da Escola Bíblica Dominical</p>
+        </header>
+
+        <div class="video-grid" id="videoGrid">
+            <!-- Loader -->
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px;">
+                <div
+                    style="display: inline-block; width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;">
+                </div>
+                <p style="color: var(--text-muted); margin-top: 15px;">Carregando vídeos...</p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+            authDomain: "umadcamp-patu.firebaseapp.com",
+            projectId: "umadcamp-patu",
+            storageBucket: "umadcamp-patu.firebasestorage.app",
+            messagingSenderId: "1043102355965",
+            appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+            measurementId: "G-S6N9R4F8Z8"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const videoGrid = document.getElementById('videoGrid');
+
+        function formatDate(timestamp) {
+            if (!timestamp) return '';
+            // Handle both Firestore Timestamp and regular Date objects
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '');
+        }
+
+        // Carregar vídeos
+        db.collection('ebd_videos')
+            .orderBy('dataPublicacao', 'desc')
+            .get()
+            .then(snapshot => {
+                videoGrid.innerHTML = ''; // Limpar loader
+
+                if (snapshot.empty) {
+                    videoGrid.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 60px; background: rgba(255,255,255,0.03); border-radius: 20px; border: 1px dashed var(--glass-border);">
+                            <p style="color: var(--text-muted); font-size: 1.2em; margin-bottom: 10px;">Nenhum vídeo publicado ainda.</p>
+                            <p style="color: var(--text-muted); font-size: 0.9em;">Volte em breve para conferir novas aulas!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach(doc => {
+                    const video = doc.data();
+                    // Get high quality thumbnail
+                    const thumbUrl = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
+
+                    html += `
+                        <article class="video-card">
+                            <div class="video-container" id="container-${video.youtubeId}" onclick="playVideo('${video.youtubeId}')">
+                                <img src="${thumbUrl}" class="video-thumb" alt="${video.titulo}">
+                                <div class="play-button">▶</div>
+                            </div>
+                            <div class="video-info">
+                                <span class="video-date">${formatDate(video.dataPublicacao)}</span>
+                                <h2 class="video-title">${video.titulo}</h2>
+                                ${video.descricao ? `<p class="video-desc">${video.descricao}</p>` : ''}
+                                <a href="https://www.youtube.com/watch?v=${video.youtubeId}" target="_blank" class="youtube-btn">
+                                    ▶ Assistir no YouTube
+                                </a>
+                            </div>
+                        </article>
+                    `;
+                });
+                videoGrid.innerHTML = html;
+            })
+            .catch(error => {
+                console.error("Erro ao carregar vídeos:", error);
+                videoGrid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #ef4444;">
+                        <p>Ocorreu um erro ao carregar os vídeos. Por favor, tente novamente mais tarde.</p>
+                    </div>
+                `;
+            });
+
+        function playVideo(id) {
+            const container = document.getElementById(`container-${id}`);
+            // Calculate origin for better embedding compatibility
+            const origin = window.location.origin;
+
+            container.innerHTML = `
+                <iframe 
+                    src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0&playsinline=1&modestbranding=1&origin=${origin}" 
+                    title="YouTube video player" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            `;
+            container.onclick = null;
+            container.classList.add('playing');
+        }
+    </script>
+</body>
+
+</html>

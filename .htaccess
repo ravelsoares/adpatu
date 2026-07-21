@@ -1,0 +1,56 @@
+RewriteEngine On
+
+# Define index file
+DirectoryIndex home-adpatu.html
+
+# Mappings from firebase.json
+RewriteRule ^login/?$ login-adpatu.html [L]
+RewriteRule ^cadastro/?$ cadastro-adpatu.html [L]
+RewriteRule ^agenda/?$ agenda-adpatu.html [L]
+
+# Umadcamp section mappings
+RewriteRule ^umadcamp/?$ home.html [L]
+RewriteRule ^umadcamp/home/?$ home.html [L]
+RewriteRule ^umadcamp/agenda/?$ new_agenda.html [L]
+RewriteRule ^umadcamp/liderancas/?$ liderancas.html [L]
+RewriteRule ^umadcamp/projetos/?$ projetos.html [L]
+RewriteRule ^umadcamp/estatisticas/?$ estatisticas.html [L]
+RewriteRule ^umadcamp/doacoes/?$ doacoes.html [L]
+RewriteRule ^umadcamp/censo/?$ censo.html [L]
+RewriteRule ^umadcamp/crj/?$ crj.html [L]
+RewriteRule ^djad/cadetes/?$ cadetes.html [L]
+RewriteRule ^djad/sorteio/?$ sorteio-cadetes.html [L]
+RewriteRule ^djad/ranking/?$ ranking-cadetes.html [L]
+RewriteRule ^djad/admin-cadetes/?$ admin-cadetes.html [L]
+RewriteRule ^djad/djadcast/?$ djadcast.html [L]
+RewriteRule ^djad/licao-01-estudo/?$ materiais/licao-01-estudo.html [L]
+RewriteRule ^djad/album/?$ album-efesios.html [L]
+RewriteRule ^djad/admin-album/?$ admin-album.html [L]
+RewriteRule ^djad/ranking-album/?$ ranking-album.html [L]
+RewriteRule ^djad/batalha/?$ batalha.html [L]
+RewriteRule ^djad/inabalavel/?$ inabalavel.html [L]
+RewriteRule ^umadcamp/esquadroes/?$ esquadroes.html [L]
+RewriteRule ^umadcamp/missoes/?$ missoes.html [L]
+RewriteRule ^umadcamp/dossie-aguias/?$ dossie-aguias.html [L]
+RewriteRule ^umadcamp/cadetes-arte/?$ cadetes_arte.html [L]
+RewriteRule ^umadcamp/admin/?$ admin.html [L]
+RewriteRule ^umadcamp/fotos-crj/?$ fotos-crj.html [L]
+RewriteRule ^umadcamp/encontre-me/?$ encontre-me.html [L]
+RewriteRule ^umadcamp/tapago/?$ tapago.html [L]
+RewriteRule ^umadcamp/desafio/?$ desafio.html [L]
+RewriteRule ^umadcamp/desafio-stats/?$ desafio-stats.html [L]
+RewriteRule ^desafio/stats/?$ desafio-stats.html [L]
+RewriteRule ^umadcamp/encontro-cartas/?$ encontro-cartas.html [L]
+RewriteRule ^cartas/guia/?$ encontro-cartas.html [L]
+RewriteRule ^umadcamp/encontro-cartas-9-10/?$ encontro-cartas-9-10.html [L]
+RewriteRule ^cartas/guia-9-10/?$ encontro-cartas-9-10.html [L]
+RewriteRule ^umadcamp/enigma-cartas/?$ enigma-cartas.html [L]
+RewriteRule ^cartas/enigma/?$ enigma-cartas.html [L]
+RewriteRule ^umadcamp/amor/?$ central-do-amor.html [L]
+RewriteRule ^amor/?$ central-do-amor.html [L]
+RewriteRule ^amor/stats/?$ admin-central-amor.html [L]
+RewriteRule ^umadcamp/amor-stats/?$ admin-central-amor.html [L]
+RewriteRule ^ebd/?$ ebd.html [L]
+
+# Fallback for 404s (matches firebase "source": "*" behavior)
+ErrorDocument 404 /home-adpatu.html

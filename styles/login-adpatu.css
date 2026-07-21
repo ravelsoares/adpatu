@@ -1,0 +1,131 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "DM Sans", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    height: 100vh;
+    background: url(../images/background-home.png) no-repeat center center;
+    background-size: cover;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+.login-box {
+    background-color: rgba(1, 18, 52, 0.85);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    width: 100%;
+    max-width: 380px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+    height: 90px;
+    margin-bottom: 15px;
+}
+
+h2 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 1.8rem;
+}
+
+.subtitle {
+    margin-top: 0;
+    margin-bottom: 30px;
+    color: #cbd5e1;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: #e5e7eb;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #3f5b8f;
+    background-color: #162542;
+    color: white;
+    font-size: 1rem;
+    box-sizing: border-box;
+    /* Garante que o padding não aumente a largura total */
+}
+
+/* Estilos para o ícone de ver senha */
+.password-group {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    /* distância da borda direita */
+    bottom: 12px;
+    /* Alinha com a parte inferior do input */
+    transform: translateY(0);
+    /* Remove o transform anterior */
+    cursor: pointer;
+    user-select: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #a0aec0;
+}
+
+button {
+    width: 100%;
+    /* mesma largura dos inputs */
+    padding: 12px;
+    /* igual ao input */
+    border: none;
+    border-radius: 8px;
+    background-color: #294170;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box;
+    /* garante que padding não estoure largura */
+}
+
+button:hover {
+    background-color: #3f5b8f;
+}
+
+.error-message {
+    color: #ff8a8a;
+    margin-top: 15px;
+    min-height: 1.2em;
+}
+
+.back-link {
+    display: block;
+    margin-top: 20px;
+    color: #a0aec0;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//mnt/c/Users/ravel/Pictures/**)",
+      "Read(//c/Users/ravel/Pictures/cadetes/**)",
+      "Bash(start cadetes.html)",
+      "Bash(start:*)"
+    ]
+  }
+}

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMADCAMP 2026 - De Todo o Vosso Coração</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Press Start 2P (Pixel) e Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Press+Start+2P&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neon-orange': '#FF6600',
+                        'deep-red': '#4A0404',
+                        'dark-bg': '#0a0a0a',
+                        'card-bg': '#141414'
+                    },
+                    fontFamily: {
+                        'pixel': ['"Press Start 2P"', 'cursive'],
+                        'body': ['Montserrat', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Efeitos extras estilo Retro Game */
+        body {
+            background-color: #050505;
+            background-image: linear-gradient(rgba(255, 102, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 102, 0, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            /* Grid de fundo */
+            color: white;
+        }
+
+        .glitch-text {
+            text-shadow: 2px 2px 0px #4A0404, -2px -2px 0px #FF6600;
+        }
+
+        .neon-border {
+            box-shadow: 0 0 10px #FF6600, 0 0 20px #FF6600 inset;
+            border: 2px solid #FF6600;
+        }
+
+        .scanline {
+            width: 100%;
+            height: 100px;
+            z-index: 10;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(255, 102, 0, 0.1) 50%, rgba(0, 0, 0, 0) 100%);
+            opacity: 0.1;
+            position: absolute;
+            bottom: 100%;
+            animation: scanline 10s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scanline {
+            0% {
+                bottom: 100%;
+            }
+
+            100% {
+                bottom: -100%;
+            }
+        }
+
+        /* Estilização da Barra de Rolagem */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #FF6600;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body class="font-body overflow-x-hidden">
+
+    <!-- Scanline effect overlay -->
+    <div class="fixed inset-0 pointer-events-none h-full w-full overflow-hidden">
+        <div class="scanline"></div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="fixed w-full z-50 bg-dark-bg/90 backdrop-blur border-b border-gray-800">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/umadcamp" class="text-neon-orange font-pixel text-sm md:text-lg hover:opacity-80 transition">
+                <span class="text-white">UMAD</span>CAMP
+            </a>
+            <div class="hidden md:flex space-x-8 font-bold text-sm tracking-widest">
+                <a href="#home" class="hover:text-neon-orange transition">INÍCIO</a>
+                <a href="#sobre" class="hover:text-neon-orange transition">MISSÃO</a>
+                <a href="#programacao" class="hover:text-neon-orange transition">FASES</a>
+                <a href="#loja" class="hover:text-neon-orange transition">SKINS</a>
+            </div>
+            <a href="https://wa.me/558498397969"
+                class="bg-neon-orange text-black font-pixel text-xs px-4 py-3 hover:bg-white transition shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:shadow-none active:translate-x-1 active:translate-y-1">
+                INSCRIÇÃO
+            </a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section id="home" class="min-h-screen flex items-center justify-center relative pt-20">
+        <div class="container mx-auto px-6 text-center relative z-10">
+
+            <!-- Tagline -->
+            <div class="inline-block bg-deep-red/30 border border-neon-orange px-4 py-1 mb-6 rounded-full">
+                <p class="text-neon-orange font-mono text-xs md:text-sm tracking-widest">LOADING: JOEL 2:12 SYSTEM
+                    REBOOT...</p>
+            </div>
+
+            <!-- Título Principal -->
+            <h1 class="text-4xl md:text-7xl font-pixel mb-6 leading-tight glitch-text">
+                DE TODO O<br>
+                VOSSO <span class="text-neon-orange">CORAÇÃO</span>
+            </h1>
+
+            <!-- Detalhes -->
+            <p class="text-gray-400 text-lg md:text-xl mb-8 max-w-2xl mx-auto font-light">
+                Conecte-se à verdadeira fonte de energia. O maior congresso de jovens de Patu está carregando.
+            </p>
+
+            <!-- Info Box -->
+            <div class="flex flex-col md:flex-row justify-center gap-6 mb-12">
+                <div class="bg-card-bg border-l-4 border-neon-orange p-4 text-left">
+                    <p class="text-xs text-gray-500 uppercase">Data</p>
+                    <p class="font-bold text-lg">13-17 FEV 2026</p>
+                </div>
+                <div class="bg-card-bg border-l-4 border-neon-orange p-4 text-left">
+                    <p class="text-xs text-gray-500 uppercase">Local</p>
+                    <p class="font-bold text-lg">PATU - RN</p>
+                </div>
+            </div>
+
+            <!-- Botão Principal -->
+            <a href="https://wa.me/558498397969"
+                class="inline-block bg-neon-orange hover:bg-orange-500 text-black font-pixel text-sm md:text-lg px-8 py-4 shadow-[0_0_20px_rgba(255,102,0,0.6)] hover:shadow-[0_0_40px_rgba(255,102,0,0.8)] transition transform hover:scale-105">
+                PRESS START TO JOIN >
+            </a>
+        </div>
+
+        <!-- Elemento Decorativo de Fundo (Glow) -->
+        <div
+            class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-neon-orange rounded-full mix-blend-screen filter blur-[120px] opacity-20">
+        </div>
+    </section>
+
+    <!-- SOBRE (MISSION BRIEFING) -->
+    <section id="sobre" class="py-20 bg-card-bg border-t border-gray-900">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
+            <div class="w-full md:w-1/2 relative">
+                <!-- Espaço para o Coração Anatômico (Arte da Camisa) -->
+                <div class="border-2 border-gray-800 p-2 rounded-lg bg-black relative">
+                    <div class="absolute -top-2 -left-2 bg-neon-orange text-black font-pixel text-xs px-2 py-1">FIG. 01
+                    </div>
+                    <!-- Substitua o src abaixo pela imagem do coração que você mandou -->
+                    <img src="/images/1.png" alt="Coração Joel 2:12"
+                        class="w-full h-auto opacity-80 hover:opacity-100 transition duration-500 grayscale hover:grayscale-0">
+                </div>
+            </div>
+            <div class="w-full md:w-1/2">
+                <h2 class="text-neon-orange font-pixel text-2xl mb-4">MISSION BRIEFING</h2>
+                <h3 class="text-3xl font-bold mb-6">"Ainda assim, agora mesmo diz o Senhor..."</h3>
+                <p class="text-gray-400 mb-4 leading-relaxed">
+                    Vivemos em um mundo hiperconectado, mas muitas vezes estamos com o sinal fraco espiritualmente. O
+                    tema deste ano é um chamado para um <strong>Hard Reset</strong>.
+                </p>
+                <p class="text-gray-400 mb-6 leading-relaxed">
+                    Joel 2:12 não é apenas um versículo, é o código-fonte para o avivamento. É hora de se desconectar do
+                    ruído e se conectar "De todo o vosso coração" na Palavra.
+                </p>
+
+                <!-- Stats Gamificados -->
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-xs mb-1 font-mono">
+                            <span>CARGA ESPIRITUAL</span>
+                            <span>100%</span>
+                        </div>
+                        <div class="w-full bg-gray-800 h-2 rounded-full">
+                            <div class="bg-neon-orange h-2 rounded-full w-full shadow-[0_0_10px_#FF6600]"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1 font-mono">
+                            <span>NETWORKING JOVEM</span>
+                            <span>MAX</span>
+                        </div>
+                        <div class="w-full bg-gray-800 h-2 rounded-full">
+                            <div class="bg-deep-red h-2 rounded-full w-[90%]"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LOJA DE SKINS (CAMISETAS) -->
+    <section id="loja" class="py-20 bg-dark-bg relative overflow-hidden">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-white font-pixel text-3xl mb-2">EQUIPAMENTOS (SKINS)</h2>
+            <p class="text-gray-500 mb-12">Adquira a armadura oficial do congresso.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+                <!-- Item 1: Camisa Preta -->
+                <div
+                    class="group relative bg-card-bg border border-gray-800 p-4 hover:border-neon-orange transition duration-300 rounded-xl">
+                    <div class="bg-black p-4 rounded-lg mb-4 relative overflow-hidden">
+                        <!-- Substitua o src pela foto da camisa preta -->
+                        <img src="/images/4.png"
+                            class="w-full h-64 object-cover group-hover:scale-105 transition duration-500">
+                        <div
+                            class="absolute top-2 right-2 bg-neon-orange text-black font-bold text-xs px-2 py-1 rounded">
+                            EPIC ITEM</div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-1">Skin: Dark Heart</h3>
+                    <!-- <p class="text-sm text-gray-400 mb-4">Algodão Egípcio • Estampa Silk HD</p> -->
+                    <div class="flex justify-between items-center border-t border-gray-800 pt-4">
+                        <span class="text-2xl font-bold text-neon-orange">R$ 40,00</span>
+                        <a href="https://wa.me/558498397969"
+                            class="bg-white text-black px-4 py-2 font-bold hover:bg-gray-300 text-sm">EQUIPAR</a>
+                    </div>
+                </div>
+
+                <!-- Item 2: Camisa Bordô -->
+                <div
+                    class="group relative bg-card-bg border border-gray-800 p-4 hover:border-deep-red transition duration-300 rounded-xl">
+                    <div class="bg-black p-4 rounded-lg mb-4 relative overflow-hidden">
+                        <!-- Substitua o src pela foto da camisa bordo -->
+                        <img src="/images/7.png"
+                            class="w-full h-64 object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute top-2 right-2 bg-deep-red text-white font-bold text-xs px-2 py-1 rounded">
+                            RARE ITEM</div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-1">Skin: Blood Pact</h3>
+                    <!-- <p class="text-sm text-gray-400 mb-4">Cor Exclusiva • Conforto Max</p> -->
+                    <div class="flex justify-between items-center border-t border-gray-800 pt-4">
+                        <span class="text-2xl font-bold text-neon-orange">R$ 40,00</span>
+                        <a href="https://wa.me/558498397969"
+                            class="bg-white text-black px-4 py-2 font-bold hover:bg-gray-300 text-sm">EQUIPAR</a>
+                    </div>
+                </div>
+
+                <!-- Item 3: Inscrição -->
+                <div
+                    class="group relative bg-gradient-to-b from-gray-900 to-black border border-neon-orange p-4 rounded-xl transform md:-translate-y-4 shadow-[0_0_15px_rgba(255,102,0,0.2)]">
+                    <div
+                        class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-neon-orange text-black font-pixel text-xs px-3 py-1 border-2 border-black animate-pulse">
+                        ÚLTIMAS VAGAS
+                    </div>
+                    <div class="bg-black p-4 rounded-lg mb-4 flex items-center justify-center h-64">
+                        <span class="text-6xl">�</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-1">Inscrição</h3>
+                    <p class="text-sm text-gray-400 mb-1">Acomodação + Alojamento</p>
+                    <p class="text-xs text-red-500 font-bold mb-4 animate-pulse">⚠️ VAGAS ACABANDO!</p>
+                    <div class="flex justify-between items-center border-t border-gray-800 pt-4">
+                        <span class="text-2xl font-bold text-neon-orange">R$ 60,00</span>
+                        <a href="https://wa.me/558498397969"
+                            class="bg-neon-orange text-black px-4 py-2 font-bold hover:bg-orange-400 w-full ml-4 animate-pulse text-center">GARANTIR</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- PROGRAMAÇÃO (LEVELS) -->
+    <section id="programacao" class="py-20 bg-card-bg">
+        <div class="container mx-auto px-6">
+            <h2 class="text-center text-neon-orange font-pixel text-2xl mb-12">MAPA DAS FASES (PROGRAMAÇÃO)</h2>
+
+            <div
+                class="max-w-3xl mx-auto space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-neon-orange before:to-transparent">
+
+                <!-- Level 1 -->
+                <div
+                    class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div
+                        class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-neon-orange bg-black shadow-[0_0_10px_#FF6600] shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                        <span class="font-pixel text-xs text-neon-orange">01</span>
+                    </div>
+                    <div
+                        class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-dark-bg p-6 rounded-xl border border-gray-800 hover:border-neon-orange transition">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-white">LEVEL 1: O START</h3>
+                            <span class="text-xs bg-gray-800 px-2 py-1 rounded text-neon-orange">13 FEV • 18:30H</span>
+                        </div>
+                        <p class="text-gray-400 text-sm">Culto de Abertura - Pr. Edvaldo Poço Dantas</p>
+                        <p class="text-xs text-neon-orange mt-2 font-mono">[LOOT: Louvor com Ev. Roniquele]</p>
+                    </div>
+                </div>
+
+                <!-- Level 2 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div
+                        class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-gray-700 bg-black shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                        <span class="font-pixel text-xs text-gray-500">02</span>
+                    </div>
+                    <div
+                        class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-dark-bg p-6 rounded-xl border border-gray-800 hover:border-gray-600 transition">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-white">LEVEL 2: O COMBATE</h3>
+                            <span class="text-xs bg-gray-800 px-2 py-1 rounded text-gray-400">14 FEV •
+                                14:30/18:30</span>
+                        </div>
+                        <p class="text-gray-400 text-sm">Tarde de Adoração e Culto - Robson Santana</p>
+                        <p class="text-xs text-neon-orange mt-2 font-mono">[LOOT: Banda Asafe]</p>
+                    </div>
+                </div>
+
+                <!-- Level 3 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div
+                        class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-gray-700 bg-black shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                        <span class="font-pixel text-xs text-gray-500">03</span>
+                    </div>
+                    <div
+                        class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-dark-bg p-6 rounded-xl border border-gray-800 hover:border-gray-600 transition">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-white">LEVEL 3: TUTORIAL</h3>
+                            <span class="text-xs bg-gray-800 px-2 py-1 rounded text-gray-400">15 FEV • 09:00H</span>
+                        </div>
+                        <p class="text-gray-400 text-sm">Estudo "Namoro, Noivado e Casamento" - Dc. Hallyssom e Danielly
+                        </p>
+                        <p class="text-xs text-neon-orange mt-2 font-mono">[XP +500]</p>
+                    </div>
+                </div>
+
+                <!-- Level 4 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div
+                        class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-gray-700 bg-black shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                        <span class="font-pixel text-xs text-gray-500">04</span>
+                    </div>
+                    <div
+                        class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-dark-bg p-6 rounded-xl border border-gray-800 hover:border-gray-600 transition">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-white">LEVEL 4: A JORNADA</h3>
+                            <span class="text-xs bg-gray-800 px-2 py-1 rounded text-gray-400">15 FEV •
+                                14:30/18:30</span>
+                        </div>
+                        <p class="text-gray-400 text-sm">Tarde de Adoração e Culto - Diana Rodrigues</p>
+                        <p class="text-xs text-neon-orange mt-2 font-mono">[LOOT: Kamila Karen]</p>
+                    </div>
+                </div>
+
+                <!-- Level 5 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div
+                        class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-gray-700 bg-black shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                        <span class="font-pixel text-xs text-gray-500">05</span>
+                    </div>
+                    <div
+                        class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-dark-bg p-6 rounded-xl border border-gray-800 hover:border-gray-600 transition">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-white">LEVEL 5: REGENERAÇÃO</h3>
+                            <span class="text-xs bg-gray-800 px-2 py-1 rounded text-gray-400">16 FEV • 09:00H</span>
+                        </div>
+                        <p class="text-gray-400 text-sm">Manhã de Adoração - Pr. Fábio Morais</p>
+                        <p class="text-xs text-neon-orange mt-2 font-mono">[MANA RESTORED]</p>
+                    </div>
+                </div>
+
+                <!-- Level 6 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div
+                        class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-gray-700 bg-black shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                        <span class="font-pixel text-xs text-gray-500">06</span>
+                    </div>
+                    <div
+                        class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-dark-bg p-6 rounded-xl border border-gray-800 hover:border-gray-600 transition">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-white">LEVEL 6: A RESISTÊNCIA</h3>
+                            <span class="text-xs bg-gray-800 px-2 py-1 rounded text-gray-400">16 FEV •
+                                14:30/18:30</span>
+                        </div>
+                        <p class="text-gray-400 text-sm">Tarde de Adoração e Culto - Pr. Júnior Mesquita</p>
+                        <p class="text-xs text-neon-orange mt-2 font-mono">[LOOT: Kamila Karen]</p>
+                    </div>
+                </div>
+
+                <!-- Level 7 -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div
+                        class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-gray-700 bg-black shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                        <span class="font-pixel text-xs text-gray-500">07</span>
+                    </div>
+                    <div
+                        class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-dark-bg p-6 rounded-xl border border-gray-800 hover:border-gray-600 transition">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-white">SIDE QUEST: O IDE</h3>
+                            <span class="text-xs bg-gray-800 px-2 py-1 rounded text-gray-400">17 FEV • 09:00H</span>
+                        </div>
+                        <p class="text-gray-400 text-sm">Evangelismo em Patu-RN</p>
+                        <p class="text-xs text-neon-orange mt-2 font-mono">[GLOBAL EVENT]</p>
+                    </div>
+                </div>
+
+                <!-- Boss Fight -->
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div
+                        class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-neon-orange bg-black shadow-[0_0_15px_#FF6600] shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 animate-pulse">
+                        <span class="font-pixel text-xs text-neon-orange">☠️</span>
+                    </div>
+                    <div
+                        class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-dark-bg p-6 rounded-xl border border-neon-orange hover:shadow-[0_0_20px_rgba(255,102,0,0.3)] transition">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-white text-neon-orange glitch-text">BOSS FIGHT: A GLÓRIA
+                            </h3>
+                            <span class="text-xs bg-neon-orange text-black font-bold px-2 py-1 rounded">17 FEV •
+                                14:30/18:30</span>
+                        </div>
+                        <p class="text-gray-300 text-sm">Tarde de Adoração e Encerramento - Pr. Salim Pinheiros</p>
+                        <p class="text-xs text-neon-orange mt-2 font-mono">[EPIC LOOT: Kamila Karen]</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-black border-t border-gray-900 py-12">
+        <div class="container mx-auto px-6 text-center">
+            <div class="text-neon-orange font-pixel text-2xl mb-6">UMADCAMP</div>
+            <p class="text-gray-500 mb-8">Congresso de Jovens de Patu - RN</p>
+            <div class="flex justify-center space-x-6 mb-8">
+                <!-- Ícones sociais placeholder -->
+                <a href="#"
+                    class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center hover:bg-neon-orange hover:text-black transition">IG</a>
+                <a href="#"
+                    class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center hover:bg-neon-orange hover:text-black transition">YT</a>
+                <a href="#"
+                    class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center hover:bg-neon-orange hover:text-black transition">WA</a>
+            </div>
+            <p class="text-xs text-gray-700 font-mono">© 2025/2026 UMADCAMP SYSTEM. ALL RIGHTS RESERVED.</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

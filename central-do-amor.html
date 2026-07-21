@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Central do Amor · UMADCAMP</title>
+<meta name="theme-color" content="#6A040F">
+<meta name="description" content="A Central do Amor da UMADCAMP. Responda o questionário, encontre seu par perfeito e dispute o ranking das melhores cantadas. 💘">
+
+<!-- Fontes -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   PALETA DIA DOS NAMORADOS
+   ============================================================ */
+:root{
+  --rosa:        #FF4D6D;
+  --rosa-vibr:   #FF1F57;
+  --rosa-claro:  #FFC2D1;
+  --vinho:       #6A040F;
+  --vinho2:      #9D0208;
+  --cereja:      #C9184A;
+  --creme:       #FFF0F3;
+  --branco:      #FFFFFF;
+  --texto:       #3A0A12;
+  --sombra:      0 10px 30px rgba(106,4,15,.25);
+  --r:           22px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:'Poppins',system-ui,sans-serif;
+  color:var(--texto);
+  background:linear-gradient(160deg,#6A040F 0%,#C9184A 48%,#FF4D6D 100%);
+  background-attachment:fixed;
+  min-height:100vh;
+  overflow-x:hidden;
+  position:relative;
+}
+h1,h2,h3,.serif{font-family:'Playfair Display',serif}
+button{font-family:inherit;cursor:pointer;border:none}
+input,textarea{font-family:inherit}
+
+/* corações flutuantes no fundo */
+.hearts{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.hearts span{
+  position:absolute;bottom:-40px;color:rgba(255,255,255,.18);
+  font-size:22px;animation:float linear infinite;
+}
+@keyframes float{
+  0%{transform:translateY(0) rotate(0);opacity:0}
+  10%{opacity:1}
+  100%{transform:translateY(-110vh) rotate(360deg);opacity:0}
+}
+
+.wrap{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:18px 16px 90px}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-bottom:18px;
+}
+.brand{display:flex;align-items:center;gap:10px;color:#fff}
+.brand .logo{
+  width:42px;height:42px;border-radius:12px;object-fit:cover;
+  background:#fff2;box-shadow:var(--sombra)
+}
+.brand b{font-family:'Playfair Display',serif;font-size:1.15rem;line-height:1}
+.brand small{display:block;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+.userchip{
+  display:flex;align-items:center;gap:8px;background:#ffffff22;
+  border:1px solid #ffffff3a;backdrop-filter:blur(6px);
+  padding:5px 8px 5px 5px;border-radius:30px;color:#fff;font-size:.8rem
+}
+.userchip img{width:30px;height:30px;border-radius:50%;object-fit:cover}
+.userchip button{background:none;color:#fff;opacity:.8;font-size:.72rem;text-decoration:underline}
+
+/* ============================================================
+   CARTÃO BASE
+   ============================================================ */
+.card{
+  background:var(--branco);border-radius:var(--r);box-shadow:var(--sombra);
+  padding:22px;margin-bottom:16px;animation:rise .5s ease both
+}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:linear-gradient(135deg,var(--rosa-vibr),var(--cereja));
+  color:#fff;font-weight:600;font-size:1rem;padding:14px 22px;border-radius:30px;
+  box-shadow:0 8px 20px rgba(201,24,74,.4);transition:transform .15s,box-shadow .15s;width:100%
+}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:#fff;color:var(--cereja);border:2px solid var(--rosa-claro);box-shadow:none}
+.btn.google{background:#fff;color:#3c4043;border:1px solid #dadce0;box-shadow:0 6px 18px rgba(0,0,0,.15)}
+.btn[disabled]{opacity:.5;pointer-events:none}
+
+.screen{display:none}
+.screen.active{display:block}
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+#login .hero{
+  text-align:center;color:#fff;padding:34px 8px 10px
+}
+#login .bigheart{font-size:4.4rem;filter:drop-shadow(0 8px 20px rgba(0,0,0,.3));animation:beat 1.4s ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.15)}30%{transform:scale(1)}45%{transform:scale(1.1)}}
+#login h1{font-size:2.5rem;line-height:1.05;margin:10px 0 6px;text-shadow:0 4px 16px rgba(0,0,0,.25)}
+#login .sub{font-size:1rem;opacity:.92;max-width:420px;margin:0 auto 4px}
+#login .card{text-align:center}
+#login .card p{color:#7a3a48;font-size:.92rem;margin-bottom:18px}
+.steps{display:flex;flex-direction:column;gap:10px;text-align:left;margin:6px 0 20px}
+.steps div{display:flex;gap:10px;align-items:flex-start;font-size:.9rem;color:#6b2f3c}
+.steps .n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--rosa-claro);color:var(--vinho);
+  display:grid;place-items:center;font-weight:700;font-size:.8rem}
+
+/* ============================================================
+   QUIZ
+   ============================================================ */
+.quiz-head{text-align:center;margin-bottom:16px}
+.quiz-head .kicker{color:var(--cereja);font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:.72rem}
+.quiz-head h2{font-size:1.5rem;margin-top:4px}
+.progress{height:8px;background:var(--rosa-claro);border-radius:20px;overflow:hidden;margin:14px 0 4px}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--rosa),var(--cereja));border-radius:20px;transition:width .35s}
+.qcount{text-align:center;font-size:.78rem;color:#a25;margin-bottom:18px}
+.qtext{font-family:'Playfair Display',serif;font-size:1.35rem;text-align:center;margin-bottom:20px;color:var(--vinho)}
+.opts{display:flex;flex-direction:column;gap:11px}
+.opt{
+  display:flex;align-items:center;gap:12px;background:var(--creme);border:2px solid transparent;
+  border-radius:16px;padding:14px 16px;font-size:.98rem;color:var(--texto);text-align:left;transition:.18s;width:100%
+}
+.opt:active{transform:scale(.98)}
+.opt:hover{border-color:var(--rosa-claro)}
+.opt .emo{font-size:1.4rem}
+.opt.sel{border-color:var(--rosa-vibr);background:#fff;box-shadow:0 6px 16px rgba(255,31,87,.18)}
+.d-text{width:100%;border:2px solid var(--rosa-claro);border-radius:16px;padding:14px;font-size:1rem;resize:none;min-height:96px;color:var(--texto);background:var(--creme)}
+.d-text:focus{outline:none;border-color:var(--rosa-vibr);background:#fff}
+.d-continue{margin-top:12px}
+.d-skip{display:block;margin:10px auto 0;background:none;color:#b07;font-size:.82rem;text-decoration:underline}
+
+/* calculando */
+#calc{text-align:center;color:#fff;padding:40px 10px}
+#calc .ring{width:90px;height:90px;border:6px solid #ffffff35;border-top-color:#fff;border-radius:50%;
+  margin:0 auto 22px;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#calc .line{font-size:1.05rem;min-height:1.5em;opacity:.95}
+
+/* ============================================================
+   PAR PERFEITO (card de espera)
+   ============================================================ */
+.match-card{
+  background:linear-gradient(135deg,#fff,#fff5f8);text-align:center;
+  border:2px dashed var(--rosa-claro)
+}
+.match-card .seal{font-size:2.6rem;animation:beat 1.6s infinite}
+.match-card h2{font-size:1.3rem;color:var(--vinho);margin:6px 0}
+.match-card .wait-msg{color:#8a3a48;font-size:.95rem;line-height:1.5;margin:8px 0 14px}
+.countdown{display:flex;justify-content:center;gap:10px;margin:10px 0 16px}
+.countdown div{background:var(--vinho);color:#fff;border-radius:14px;padding:10px 6px;min-width:62px}
+.countdown b{display:block;font-size:1.6rem;font-family:'Playfair Display',serif;line-height:1}
+.countdown small{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;opacity:.8}
+
+/* ============================================================
+   ABAS / MURAL / RANKING
+   ============================================================ */
+.tabs{display:flex;gap:8px;background:#ffffff22;border:1px solid #ffffff35;padding:5px;border-radius:30px;margin-bottom:14px}
+.tabs button{flex:1;background:none;color:#fff;font-weight:600;padding:10px;border-radius:24px;font-size:.92rem;opacity:.85;transition:.2s}
+.tabs button.active{background:#fff;color:var(--cereja);opacity:1;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+
+.post-form textarea{
+  width:100%;border:2px solid var(--rosa-claro);border-radius:16px;padding:14px;font-size:1rem;
+  resize:none;min-height:84px;color:var(--texto);background:var(--creme)
+}
+.post-form textarea:focus{outline:none;border-color:var(--rosa-vibr);background:#fff}
+.post-form .row{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:10px}
+.post-form .count{font-size:.74rem;color:#a25}
+.post-form .btn{width:auto;padding:11px 20px;font-size:.92rem}
+
+.cantada{
+  background:#fff;border-radius:18px;box-shadow:0 6px 18px rgba(106,4,15,.12);padding:16px;margin-bottom:12px;
+  animation:rise .4s ease both;position:relative
+}
+.cantada .meta{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.cantada .meta img{width:34px;height:34px;border-radius:50%;object-fit:cover;background:var(--rosa-claro)}
+.cantada .meta .who{font-size:.85rem;font-weight:600;color:var(--vinho)}
+.cantada .meta .when{font-size:.7rem;color:#b07}
+.cantada .txt{font-family:'Playfair Display',serif;font-size:1.12rem;line-height:1.45;color:var(--texto);font-style:italic}
+.cantada .actions{display:flex;align-items:center;gap:14px;margin-top:12px}
+.like{display:inline-flex;align-items:center;gap:6px;background:var(--creme);border-radius:24px;padding:7px 13px;font-weight:600;color:var(--cereja);font-size:.9rem;transition:.15s}
+.like:active{transform:scale(.92)}
+.like.on{background:var(--rosa-vibr);color:#fff}
+.like .h{font-size:1.05rem}
+.share,.del{background:none;color:#b07;font-size:.82rem;display:inline-flex;align-items:center;gap:5px}
+.del{margin-left:auto;color:#c44}
+
+.rank-item{display:flex;align-items:center;gap:12px;background:#fff;border-radius:16px;padding:13px 14px;margin-bottom:10px;box-shadow:0 5px 14px rgba(106,4,15,.1)}
+.rank-item .pos{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-family:'Playfair Display',serif;background:var(--creme);color:var(--cereja)}
+.rank-item.top1 .pos{background:linear-gradient(135deg,#FFD56B,#FFB347);color:#7a4a00}
+.rank-item.top2 .pos{background:#E6E6E6;color:#555}
+.rank-item.top3 .pos{background:#F6C28B;color:#7a3a00}
+.rank-item .info{flex:1;min-width:0}
+.rank-item .info .t{font-style:italic;font-family:'Playfair Display',serif;font-size:.98rem;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rank-item .info .a{font-size:.72rem;color:#b07;margin-top:3px}
+.rank-item .lk{flex:none;color:var(--cereja);font-weight:700;font-size:.92rem;white-space:nowrap}
+
+/* Estudo bíblico */
+.estudo-top{text-align:center;border-bottom:2px solid var(--rosa-claro);padding-bottom:18px;margin-bottom:18px}
+.estudo-top .badge{display:inline-block;background:var(--creme);color:var(--cereja);font-weight:600;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;padding:6px 14px;border-radius:20px}
+.estudo-top h2{font-size:1.55rem;color:var(--vinho);margin:12px 0 4px;line-height:1.12}
+.estudo-top .subtitle{font-size:.92rem;color:#8a3a48;font-style:italic;margin:0}
+.estudo-wrap{position:relative;overflow:hidden;transition:max-height .45s ease;max-height:6000px}
+.estudo-wrap.collapsed{max-height:132px}
+.estudo-wrap.collapsed::after{content:'';position:absolute;left:0;right:0;bottom:0;height:80px;background:linear-gradient(rgba(255,255,255,0),#fff);pointer-events:none}
+.estudo-actions{display:flex;gap:10px;margin-top:14px}
+.estudo-actions .btn{flex:1;width:auto;padding:12px;font-size:.9rem;margin:0}
+.estudo-body h3{font-family:'Playfair Display',serif;color:var(--cereja);font-size:1.2rem;margin:24px 0 8px}
+.estudo-body h3:first-child,.estudo-body .base:first-child{margin-top:0}
+.estudo-body p{font-size:1rem;line-height:1.72;margin-bottom:12px;color:#41121b}
+.estudo-body ul{margin:0 0 14px;padding-left:20px}
+.estudo-body li{line-height:1.6;margin-bottom:6px;color:#41121b}
+.estudo-body .base{background:var(--creme);border-left:4px solid var(--rosa-vibr);border-radius:0 12px 12px 0;padding:14px 16px;font-style:italic;color:var(--vinho);margin-bottom:20px}
+.estudo-body .base b{font-style:normal;display:block;margin-bottom:4px;color:var(--cereja);font-size:.85rem;letter-spacing:.04em}
+.estudo-body .reflexao{background:var(--creme);border-radius:16px;padding:16px 18px;margin:24px 0}
+.estudo-body .reflexao h3{margin-top:0}
+.estudo-body .reflexao ol{padding-left:20px;margin:0}
+.estudo-body .reflexao li{margin-bottom:10px;font-weight:500;line-height:1.5}
+.estudo-body .oracao{background:linear-gradient(135deg,#fff5f8,#ffe8ef);border-radius:16px;padding:18px;margin-top:22px;font-style:italic;line-height:1.72;color:var(--vinho)}
+.estudo-body .oracao h3{font-style:normal;margin-top:0}
+
+.empty{text-align:center;color:#fff;opacity:.9;padding:30px 10px;font-size:.95rem}
+.empty .big{font-size:2.4rem;display:block;margin-bottom:8px}
+
+/* ============================================================
+   REVELAÇÃO (DEUS)
+   ============================================================ */
+#reveal-overlay{
+  position:fixed;inset:0;z-index:50;display:none;padding:24px 16px 40px;
+  background:radial-gradient(circle at 50% 30%,#9D0208,#3A0008 80%);overflow-y:auto;-webkit-overflow-scrolling:touch
+}
+#reveal-overlay.show{display:block;animation:fadein .6s ease}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.reveal-box{max-width:480px;text-align:center;color:#fff;margin:0 auto}
+.reveal-box .pre{letter-spacing:.18em;text-transform:uppercase;font-size:.72rem;opacity:.8}
+.reveal-box .big{font-family:'Playfair Display',serif;font-size:2.7rem;line-height:1.05;margin:14px 0;
+  background:linear-gradient(90deg,#FFC2D1,#fff,#FFC2D1);-webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 30px rgba(255,194,209,.4);animation:beat 2s infinite}
+.reveal-box .verse{font-style:italic;font-size:1rem;line-height:1.5;opacity:.95;margin:16px auto;max-width:380px}
+.reveal-box .verse b{font-style:normal}
+.reveal-box .body{font-size:.95rem;line-height:1.6;opacity:.92;margin:18px auto;max-width:400px}
+.reveal-box .btn{max-width:240px;margin:18px auto 0}
+.reveal-box .cross{font-size:2.6rem;margin-bottom:6px}
+/* carta */
+.reveal-box .kick{letter-spacing:.18em;text-transform:uppercase;font-size:.7rem;opacity:.75;margin-bottom:10px}
+.letter{text-align:left;max-width:460px;margin:0 auto}
+.letter .open{font-family:'Playfair Display',serif;font-size:1.6rem;text-align:center;margin:6px 0 18px;color:#fff}
+.letter p{font-size:1rem;line-height:1.72;margin:0 0 14px;opacity:.95}
+.letter .em{display:block;text-align:center;font-family:'Playfair Display',serif;font-style:italic;
+  font-size:1.25rem;margin:18px 0;color:#FFC2D1;text-shadow:0 0 20px rgba(255,194,209,.35)}
+.letter .vs{display:block;font-style:italic;background:rgba(255,255,255,.08);border-left:3px solid var(--rosa);
+  border-radius:0 12px 12px 0;padding:11px 15px;margin:16px 0;font-size:.96rem;line-height:1.5}
+.letter .vs b{font-style:normal;display:block;margin-top:5px;opacity:.85;font-size:.84rem;letter-spacing:.03em}
+.letter .sign{text-align:center;font-family:'Playfair Display',serif;font-style:italic;font-size:1.35rem;
+  margin:24px 0 4px;color:#FFC2D1;line-height:1.4}
+
+footer{text-align:center;color:#fff;opacity:.7;font-size:.74rem;padding:10px 0 4px}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#fff;color:var(--vinho);
+  padding:12px 20px;border-radius:30px;box-shadow:var(--sombra);z-index:60;font-size:.9rem;font-weight:500;
+  opacity:0;pointer-events:none;transition:.3s}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
+</style>
+</head>
+<body>
+
+<div class="hearts" id="hearts"></div>
+
+<div class="wrap">
+
+  <!-- ===== HEADER ===== -->
+  <div class="topbar">
+    <div class="brand">
+      <img class="logo" src="images/logo.png" alt="UMADCAMP" onerror="this.style.display='none'">
+      <div><b>Central do Amor</b><small>UMADCAMP · Dia dos Namorados</small></div>
+    </div>
+    <div class="userchip" id="userchip" style="display:none">
+      <img id="uc-photo" src="" alt="">
+      <span id="uc-name"></span>
+      <button onclick="sair()">sair</button>
+    </div>
+  </div>
+
+  <!-- ===== TELA: LOGIN ===== -->
+  <section id="login" class="screen active">
+    <div class="hero">
+      <div class="bigheart">💘</div>
+      <h1>A Central<br>do Amor</h1>
+      <p class="sub">Solta a melhor cantada, dispute o ranking dos corações e descubra quem é o seu par perfeito. 💌</p>
+    </div>
+    <div class="card">
+      <p>Pra começar, entre com sua conta Google:</p>
+      <div class="steps">
+        <div><span class="n">1</span><span>Responda o <b>questionário do amor</b> pra encontrarmos seu par perfeito.</span></div>
+        <div><span class="n">2</span><span>Publique suas <b>cantadas</b> e curta as dos outros.</span></div>
+        <div><span class="n">3</span><span>Volte no dia combinado pra <b>descobrir seu par perfeito</b>. 💍</span></div>
+      </div>
+      <button class="btn google" onclick="entrarComGoogle()">
+        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Entrar com Google
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== TELA: QUIZ ===== -->
+  <section id="quiz" class="screen">
+    <div class="card">
+      <div class="quiz-head">
+        <div class="kicker">Questionário do Amor</div>
+        <h2 class="serif">Encontre seu par perfeito</h2>
+      </div>
+      <div class="progress"><i id="qbar" style="width:0%"></i></div>
+      <div class="qcount" id="qcount"></div>
+      <div class="qtext" id="qtext"></div>
+      <div class="opts" id="qopts"></div>
+    </div>
+  </section>
+
+  <!-- ===== TELA: CONVITE AO QUESTIONÁRIO DETALHADO ===== -->
+  <section id="convite" class="screen">
+    <div class="card" style="text-align:center">
+      <div style="font-size:2.6rem" class="seal">💭</div>
+      <h2 class="serif" style="color:var(--vinho);margin:8px 0 6px">Bora um pouco mais fundo?</h2>
+      <p style="color:#8a3a48;line-height:1.6;margin-bottom:20px">Que tal responder um <b>questionário mais detalhado</b>? São perguntas feitas pra você <b>refletir</b> sobre o seu momento — sem invadir sua privacidade. Leva 1 minutinho. 💕</p>
+      <button class="btn" onclick="iniciarDetalhado()">Sim, quero refletir 💌</button>
+      <button class="btn ghost" style="margin-top:10px" onclick="pularDetalhado()">Agora não, ir pro mural</button>
+    </div>
+  </section>
+
+  <!-- ===== TELA: QUESTIONÁRIO DETALHADO ===== -->
+  <section id="detalhe" class="screen">
+    <div class="card">
+      <div class="quiz-head">
+        <div class="kicker">Questionário Detalhado</div>
+        <h2 class="serif" id="dhead">Reflexão</h2>
+      </div>
+      <div class="progress"><i id="dbar" style="width:0%"></i></div>
+      <div class="qcount" id="dcount"></div>
+      <div class="qtext" id="dtext"></div>
+      <div id="dbody"></div>
+    </div>
+  </section>
+
+  <!-- ===== TELA: CALCULANDO ===== -->
+  <section id="calc" class="screen">
+    <div class="ring"></div>
+    <div class="line" id="calc-line">Lendo o seu coração…</div>
+  </section>
+
+  <!-- ===== TELA: MURAL ===== -->
+  <section id="mural" class="screen">
+
+    <!-- Card par perfeito -->
+    <div class="card match-card" id="matchCard">
+      <div class="seal">💞</div>
+      <h2 class="serif">Seu par perfeito</h2>
+      <div class="wait-msg" id="waitMsg"></div>
+      <div class="countdown" id="countdown"></div>
+      <button class="btn" id="revealBtn" style="display:none" onclick="mostrarRevelacao()">💘 Descobrir meu par perfeito</button>
+    </div>
+
+    <div class="tabs">
+      <button id="tab-estudo" class="active" onclick="trocarAba('estudo')">📖 Estudos</button>
+      <button id="tab-mural" onclick="trocarAba('mural')">💌 Cantadas</button>
+      <button id="tab-rank" onclick="trocarAba('rank')">🏆 Ranking</button>
+    </div>
+
+    <!-- Aba estudos bíblicos -->
+    <div id="aba-estudo">
+      <div id="estudoList"></div>
+    </div>
+
+    <!-- Aba cantadas -->
+    <div id="aba-mural" style="display:none">
+      <div class="card post-form">
+        <textarea id="cantadaInput" maxlength="200" placeholder="Escreva sua melhor cantada… 💕 (ex: Você é a estrofe que faltava no meu louvor)"></textarea>
+        <div class="row">
+          <span class="count"><span id="cChars">0</span>/200</span>
+          <button class="btn" id="postBtn" onclick="publicarCantada()">Publicar cantada 💌</button>
+        </div>
+      </div>
+      <div id="feed"></div>
+    </div>
+
+    <!-- Aba ranking -->
+    <div id="aba-rank" style="display:none">
+      <div id="rankList"></div>
+    </div>
+  </section>
+
+  <footer>Feito com ❤️ pela UMADCAMP · Dia dos Namorados 2026</footer>
+</div>
+
+<!-- ===== OVERLAY REVELAÇÃO ===== -->
+<div id="reveal-overlay">
+  <div class="reveal-box">
+    <div class="cross">✝️</div>
+    <div class="kick">Antes de revelar qualquer nome…</div>
+    <div class="letter">
+      <div class="open">Filho meu,</div>
+
+      <p>Durante esses dias, você respondeu perguntas. Pensou nas qualidades da pessoa ideal. Talvez tenha procurado alguém carinhoso, cuidadoso, leal, paciente, alguém que estivesse ao seu lado nos dias bons e também nos dias difíceis.</p>
+
+      <p>E eu observei cada resposta. Você acreditou que, ao final, descobriria quem é a sua cara-metade. Mas antes de revelar qualquer nome, preciso lhe contar uma verdade: nenhum coração humano será capaz de preencher completamente o espaço que foi criado para Mim.</p>
+
+      <p>Percebi que você se afastou do lugar onde costumávamos nos encontrar. Os dias passaram, e a oração ficou para depois. A Minha Palavra permaneceu fechada enquanto tantas outras vozes ocuparam sua atenção. Não digo isso para condená-lo, mas porque sinto falta da sua companhia.</p>
+
+      <p>Você procura alguém que o escute, mas Eu já conheço cada pensamento seu. Procura alguém que permaneça, mas Eu nunca fui embora. Procura alguém que o ame apesar das falhas, mas Eu entreguei Minha própria vida por você quando ainda estava longe de Mim.</p>
+
+      <p>Você pensa que precisa voltar quando estiver melhor, mais forte ou mais disciplinado. Mas Eu não o chamo porque você está forte; Eu o chamo porque precisa de Mim.</p>
+
+      <span class="vs">"Permanecei em mim, e eu permanecerei em vós." <b>— João 15:4</b></span>
+
+      <p>Eu sei que você deseja ser constante. Sei que muitas vezes prometeu que iria recomeçar, que desta vez seria diferente. Também sei da frustração que sente quando falha novamente. Mas não confunda uma queda com desistência.</p>
+
+      <p>O problema não é ter falhado. O problema é permanecer longe de Mim por causa da culpa. Lembre-se: foi Pedro quem afundou, mas também foi Pedro quem gritou por ajuda. E Eu estendi a mão.</p>
+
+      <span class="vs">"Imediatamente Jesus estendeu a mão e o segurou." <b>— Mateus 14:31</b></span>
+
+      <p>Não espere sentir vontade para voltar. Não espere que o coração esteja aquecido. Venha como está. Abra a Palavra, mesmo que por poucos minutos. Dobre os joelhos, mesmo que não saiba o que dizer. Fale Comigo com sinceridade. Eu prefiro uma oração simples e verdadeira do que muitas palavras sem coração.</p>
+
+      <span class="vs">"Buscar-me-eis e me achareis quando me buscardes de todo o vosso coração." <b>— Jeremias 29:13</b></span>
+
+      <p>Filho, a constância não nasce da força de vontade; ela nasce do amor. Quanto mais perto você estiver de Mim, mais desejará permanecer. E quanto mais permanecer, mais forte se tornará. Não tente apenas encaixar-Me em sua rotina. Entregue-Me seu coração.</p>
+
+      <span class="vs">"Amarás o Senhor teu Deus de todo o teu coração." <b>— Mateus 22:37</b></span>
+
+      <p>Talvez você tenha chegado até aqui esperando descobrir quem era a sua cara-metade. E a resposta é que, antes de qualquer relacionamento, antes de qualquer namoro, antes de qualquer casamento, existe Alguém que o amou primeiro.</p>
+
+      <p>Alguém que conhece seus medos, seus sonhos, suas lutas e suas lágrimas.</p>
+      <p>Alguém que nunca o abandona.</p>
+      <p>Alguém que continua escolhendo você todos os dias.</p>
+
+      <p>Você procura amor.</p>
+      <span class="em">E Eu sou o Amor.</span>
+
+      <p>Você procura alguém para caminhar ao seu lado. E Eu estou à porta, esperando que você Me permita entrar.</p>
+
+      <p>Você não precisa impressionar-Me, não precisa fazer uma longa oração hoje para compensar os dias em que esteve longe.</p>
+
+      <span class="em">Apenas volte.</span>
+
+      <p>Eu não estou esperando uma performance.</p>
+      <span class="em">Estou esperando você.</span>
+
+      <span class="vs">"Chegai-vos a Deus, e ele se chegará a vós." <b>— Tiago 4:8</b></span>
+
+      <p>Venha novamente para a Minha presença. Há graça para o seu recomeço, força para a sua fraqueza e misericórdia para cada manhã.</p>
+
+      <span class="vs">"As suas misericórdias não têm fim; renovam-se cada manhã." <b>— Lamentações 3:22-23</b></span>
+
+      <span class="em">Eu ainda estou aqui.</span>
+
+      <div class="sign">Com amor eterno,<br>Jesus.</div>
+    </div>
+    <button class="btn" onclick="fecharRevelacao()">Amém 🙏</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ===== Firebase ===== -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script>
+/* ============================================================
+   CONFIG  —  ajuste aqui se precisar
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+  authDomain: "umadcamp-patu.firebaseapp.com",
+  projectId: "umadcamp-patu",
+  storageBucket: "umadcamp-patu.firebasestorage.app",
+  messagingSenderId: "1043102355965",
+  appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+  measurementId: "G-S6N9R4F8Z8"
+};
+
+const CANTADAS = 'central-amor-cantadas';   // coleção das cantadas
+const USERS    = 'central-amor-usuarios';   // perfil + respostas do quiz
+
+// 👉 MOMENTO DA REVELAÇÃO (universal, igual pra todo mundo).
+//    Antes desta hora aparece a contagem regressiva; depois, o botão "descobrir".
+const REVEAL_AT = new Date('2026-06-13T12:00:00');
+
+// 👉 PRÉVIA: SOMENTE estes e-mails podem revelar ANTES do tempo acabar.
+//    ⚠️ NÃO adicione '*' nem outros e-mails — isso liberaria a prévia pra mais gente.
+//    Depois do REVEAL_AT, TODO MUNDO vê normalmente (independente desta lista).
+const PREVIEW_EMAILS = [
+  'ravelsoares64@gmail.com',
+  'jonnasazevedo201819@gmail.com'
+];
+
+/* ============================================================
+   QUESTIONÁRIO
+   ============================================================ */
+const QUESTIONS = [
+  { q:'Pra começar, como você chega na Central do Amor?',
+    a:[['🦋','Solteiro(a)'],['💕','Namorando'],['💍','Noivo(a)'],['💒','Casado(a) · líder de jovens']] },
+  { q:'O que mais te conquista numa pessoa?',
+    a:[['😄','Um sorriso sincero'],['🗣️','O jeito de conversar'],['🙏','A fé e o caráter'],['😂','O senso de humor']] },
+  { q:'Qual seria o date dos seus sonhos?',
+    a:[['🌅','Pôr do sol num lugar bonito'],['🍿','Cinema e pipoca'],['☕','Um café e boa conversa'],['⛪','Culto + lanche depois']] },
+  { q:'Sua linguagem do amor é…',
+    a:[['💬','Palavras de afirmação'],['⏳','Tempo de qualidade'],['🤗','Toque / abraço'],['🎁','Presentes']] },
+  { q:'O que você procura de verdade?',
+    a:[['💍','Algo sério'],['🤝','Companheirismo'],['🫂','Alguém que me entenda'],['🕊️','Paz no coração']] },
+  { q:'Pra você, o amor de verdade é…',
+    a:[['⏳','Paciência'],['🎁','Entrega'],['✅','Uma escolha diária'],['❤️','Sacrifício']] },
+  { q:'O que te faz se sentir amado(a)?',
+    a:[['👂','Ser ouvido(a)'],['🤲','Ser cuidado(a)'],['🌟','Ser escolhido(a)'],['🛟','Ser aceito(a) como sou']] },
+  { q:'Qualidade inegociável no seu par?',
+    a:[['💯','Honestidade'],['🔒','Fidelidade'],['😇','Bondade'],['✝️','Fé em Deus']] },
+  { q:'Como está o seu coração hoje?',
+    a:[['✨','Esperançoso(a)'],['💭','Sonhador(a)'],['🥺','Meio carente'],['😮‍💨','Cansado(a) de procurar']] },
+];
+
+/* ============================================================
+   ESTUDO BÍBLICO  (conteúdo da aba "Estudos" e do PDF)
+   ============================================================ */
+const ESTUDOS = [
+{
+  id:'namoro',
+  titulo:'Namoro Cristão',
+  subtitulo:'Preparação para o casamento ou distração do propósito?',
+  html:`
+  <div class="base"><b>Texto base · 1 Coríntios 10:31</b>"Portanto, quer comais, quer bebais ou façais qualquer outra coisa, fazei tudo para a glória de Deus."</div>
+
+  <h3>Introdução</h3>
+  <p>O namoro não é um sacramento, não é um mandamento bíblico e também não é um fim em si mesmo. O namoro é uma ferramenta. A questão não é simplesmente se duas pessoas gostam uma da outra. A questão é: para onde esse relacionamento está conduzindo ambos?</p>
+  <p>Em nossa cultura, o namoro geralmente é tratado como entretenimento, passatempo ou experiência emocional. Muitas pessoas entram em relacionamentos porque sentem atração, carência ou pressão social. Porém, o cristão é chamado a enxergar seus relacionamentos de maneira diferente.</p>
+  <p>O propósito do namoro cristão não é apenas satisfazer desejos emocionais. Seu propósito é discernir, com sabedoria e temor a Deus, se aquela pessoa possui condições de caminhar ao seu lado em uma aliança de casamento.</p>
+  <p>Por isso, um namoro saudável não deve apenas aumentar o amor entre duas pessoas. Deve aumentar também o amor de ambos por Deus.</p>
+
+  <h3>Quando o namoro se torna um ídolo</h3>
+  <p>Um dos maiores perigos para jovens cristãos é transformar o relacionamento em um ídolo. Isso acontece quando:</p>
+  <ul>
+    <li>O relacionamento ocupa mais espaço que Deus.</li>
+    <li>A opinião do namorado ou da namorada vale mais do que a Palavra.</li>
+    <li>A pessoa abandona ministérios, amizades saudáveis e responsabilidades.</li>
+    <li>Toda sua felicidade passa a depender da presença do outro.</li>
+  </ul>
+  <p>Nenhum relacionamento humano suporta carregar o peso de ser um deus. Quando uma pessoa espera que o namorado satisfaça todas as suas necessidades emocionais, espirituais e afetivas, ela está exigindo algo que somente Deus pode oferecer. O relacionamento deixa de ser uma bênção quando ocupa o lugar do Senhor.</p>
+
+  <h3>O amor bíblico é mais profundo do que sentimento</h3>
+  <p>Vivemos em uma geração que define amor principalmente como emoção. Mas a Bíblia apresenta uma visão mais profunda. O amor bíblico não é apenas sentir. É servir. É sacrificar. É escolher honrar o outro mesmo quando as emoções oscilam.</p>
+  <p>Muitos relacionamentos começam porque existe química. Porém, química sozinha não sustenta um casamento. Atração é importante. Compatibilidade é importante. Mas caráter é indispensável.</p>
+  <p>Uma pergunta importante para qualquer casal cristão é: <i>"Eu admiro o caráter dessa pessoa tanto quanto admiro sua aparência?"</i> A beleza pode mudar com o tempo. O caráter tende a se revelar cada vez mais.</p>
+
+  <h3>Santidade dentro do namoro</h3>
+  <p>Poucos assuntos geram tanta dificuldade quanto este. Muitos jovens perguntam: <i>"Até onde podemos ir?"</i> Mas talvez a pergunta correta seja: <i>"Como podemos honrar a Deus neste relacionamento?"</i></p>
+  <p>A preocupação do cristão não deve ser descobrir o limite do pecado sem ultrapassá-lo. A preocupação deve ser agradar a Deus. O namoro foi criado para aproximar duas pessoas, mas não para substituir os limites estabelecidos pelo Senhor.</p>
+  <p>Quando um casal normaliza práticas que alimentam a imoralidade sexual, frequentemente está construindo um relacionamento baseado na satisfação imediata e não na obediência. A santidade não existe para impedir a felicidade. Ela existe para proteger aquilo que Deus deseja abençoar.</p>
+
+  <h3>Sinais de um namoro saudável</h3>
+  <p>Um relacionamento saudável produz frutos visíveis. O casal:</p>
+  <ul>
+    <li>Ora junto.</li>
+    <li>Cresce espiritualmente.</li>
+    <li>Respeita limites.</li>
+    <li>Resolve conflitos com maturidade.</li>
+    <li>Incentiva o desenvolvimento um do outro.</li>
+    <li>Mantém comunhão com a igreja.</li>
+    <li>Recebe correção quando necessário.</li>
+  </ul>
+  <p>Um namoro saudável produz crescimento. Não dependência.</p>
+
+  <h3>Sinais de alerta</h3>
+  <p>Alguns comportamentos merecem atenção:</p>
+  <ul>
+    <li>Ciúme excessivo.</li>
+    <li>Controle.</li>
+    <li>Manipulação emocional.</li>
+    <li>Mentiras frequentes.</li>
+    <li>Falta de transparência.</li>
+    <li>Isolamento de amigos e familiares.</li>
+    <li>Desprezo pela fé cristã.</li>
+    <li>Pressão para quebrar princípios bíblicos.</li>
+  </ul>
+  <p>Muitas pessoas ignoram sinais claros durante o namoro e depois enfrentam problemas ainda maiores no casamento. O namoro é justamente o período de observação. Aquilo que hoje parece pequeno pode tornar-se um problema muito maior no futuro.</p>
+
+  <h3>A pergunta mais importante</h3>
+  <p>Muitos jovens perguntam: <i>"Essa pessoa é a pessoa certa?"</i> Mas existe uma pergunta ainda melhor: <i>"Estamos construindo um relacionamento da maneira certa?"</i></p>
+  <p>Porque duas pessoas sinceras podem ter sentimentos verdadeiros e ainda assim construir um relacionamento de forma imprudente. A questão central não é apenas encontrar alguém. É glorificar a Deus durante todo o processo.</p>
+
+  <h3>Conclusão</h3>
+  <p>O namoro cristão não é uma busca egoísta por felicidade. É uma caminhada de discernimento, crescimento e santidade. O objetivo não é apenas permanecer juntos. O objetivo é descobrir se Deus está conduzindo esse relacionamento para uma aliança que O glorifique.</p>
+  <p>Se o namoro aproxima vocês de Cristo, fortalece o caráter, promove santidade e gera maturidade, ele está cumprindo seu propósito. Mas se afasta de Deus, alimenta o pecado ou destrói áreas importantes da vida espiritual, é necessário reavaliar seriamente sua direção.</p>
+  <p>O melhor relacionamento não é aquele em que duas pessoas estão apaixonadas uma pela outra. É aquele em que ambas estão apaixonadas por Cristo e, por causa disso, aprendem a amar uma à outra de forma bíblica.</p>
+
+  <div class="reflexao">
+    <h3>Perguntas para Reflexão</h3>
+    <ol>
+      <li>Meu relacionamento me aproxima ou me afasta de Deus?</li>
+      <li>Meu namoro fortalece minha vida espiritual?</li>
+      <li>Existem áreas em que estamos comprometendo princípios bíblicos?</li>
+      <li>Estamos construindo intimidade espiritual ou apenas intimidade emocional?</li>
+      <li>Se nos casássemos hoje, quais problemas do namoro levaríamos para o casamento?</li>
+      <li>Nosso relacionamento produz os frutos do Espírito?</li>
+      <li>Cristo é o centro do nosso namoro ou apenas um visitante ocasional?</li>
+    </ol>
+  </div>
+
+  <div class="oracao">
+    <h3>Oração Final</h3>
+    <p>Senhor, ajuda-nos a viver nossos relacionamentos para a Tua glória. Dá-nos sabedoria para discernir Tua vontade, coragem para obedecer aos Teus princípios e maturidade para construir relacionamentos saudáveis. Que Cristo seja o centro de nossas decisões, sentimentos e planos. Guarda nossos corações, fortalece nossa fé e conduz-nos segundo o Teu propósito. Em nome de Jesus. Amém.</p>
+  </div>
+`
+},
+{
+  id:'solteiro',
+  titulo:'Solteiro por Enquanto, Completo em Cristo',
+  subtitulo:'Sua identidade está em Cristo, não no seu estado civil.',
+  html:`
+  <div class="base"><b>Texto base · Salmo 37:4-5</b>"Agrada-te do Senhor, e ele satisfará os desejos do teu coração. Entrega o teu caminho ao Senhor; confia nele, e ele tudo fará."</div>
+
+  <p>Quando falamos sobre solteirice, muitos jovens enxergam essa fase apenas como uma espera até encontrar alguém especial. Porém, a Bíblia ensina que Deus também trabalha poderosamente durante esse período. A solteirice não é uma pausa nos planos de Deus; ela faz parte deles.</p>
+  <p>Vivemos em uma geração que valoriza a rapidez. Nas redes sociais vemos fotos de casais felizes, declarações românticas, pedidos de namoro e vídeos que fazem parecer que todos encontraram alguém, menos nós. Muitas vezes, ao abrir o celular, um jovem pode pensar: "Por que todos estão namorando e eu não?" ou "Será que tem algo de errado comigo?".</p>
+  <p>Mas a realidade é diferente daquilo que aparece na internet. As redes sociais mostram momentos selecionados, não a vida inteira. Muitos relacionamentos que parecem perfeitos nas fotos enfrentam problemas que ninguém vê. Comparar sua vida com a vitrine da vida dos outros pode gerar ansiedade, frustração e decisões precipitadas.</p>
+  <p>A Palavra de Deus nos ensina que existe tempo para todas as coisas. Nem tudo o que é bom precisa acontecer agora. Uma fruta retirada da árvore antes da hora não está pronta para ser consumida. Da mesma forma, um relacionamento iniciado sem maturidade pode trazer sofrimento desnecessário.</p>
+  <p>Muitos jovens sentem pressão para namorar cedo. Às vezes essa pressão vem dos amigos da escola, das redes sociais ou até de familiares que perguntam constantemente sobre namoro. Entretanto, a pergunta mais importante não é "Quando vou encontrar alguém?", mas "Quem estou me tornando?".</p>
+  <p>A Bíblia apresenta o exemplo de José. Ainda jovem, ele recebeu promessas de Deus, mas precisou passar por um longo período de preparação. Deus estava moldando seu caráter antes de confiar grandes responsabilidades a ele. O mesmo princípio pode ser aplicado aos relacionamentos. Deus frequentemente trabalha primeiro em nós antes de nos entregar aquilo que desejamos.</p>
+  <p>Outra armadilha comum é a carência emocional. Algumas pessoas entram em relacionamentos apenas porque se sentem sozinhas. Outras acreditam que um namorado ou uma namorada resolverá seus problemas emocionais. No entanto, nenhum ser humano foi criado para ocupar o lugar que pertence a Deus em nosso coração.</p>
+  <p>Pense em algumas situações comuns:</p>
+  <ul>
+    <li>Um jovem que verifica o celular a cada minuto esperando uma mensagem específica.</li>
+    <li>Alguém que muda sua personalidade apenas para ser aceito por outra pessoa.</li>
+    <li>Uma pessoa que se sente sem valor quando não recebe atenção.</li>
+    <li>Alguém que aceita ser maltratado por medo de ficar sozinho.</li>
+  </ul>
+  <p>Essas atitudes geralmente revelam dependência emocional, não amor verdadeiro.</p>
+  <p>O amor saudável nasce quando duas pessoas que já encontram sua identidade em Deus decidem caminhar juntas. Por isso, a melhor preparação para um relacionamento não é procurar desesperadamente alguém, mas fortalecer sua comunhão com Cristo.</p>
+  <p>Durante a solteirice, Deus oferece oportunidades preciosas para crescimento. É tempo de desenvolver uma vida de oração, aprender mais da Palavra, servir na igreja, amadurecer emocionalmente e construir um bom testemunho.</p>
+  <p>Também é um período para desenvolver responsabilidades. Muitos jovens sonham com casamento, mas ainda não aprenderam a administrar o próprio tempo, lidar com conflitos ou assumir compromissos. O casamento não resolve problemas de maturidade; muitas vezes ele os expõe.</p>
+  <p>A história de Rute nos ensina algo importante. Ela não passou sua vida perseguindo um relacionamento. Seu foco estava em ser fiel a Deus e cumprir suas responsabilidades diárias. No momento certo, Deus conduziu sua história e abriu portas que ela jamais poderia abrir sozinha.</p>
+  <p>Isso nos ensina que esperar em Deus não significa ficar parado. Significa continuar crescendo enquanto confiamos nEle. Quem espera em Deus não vive apenas olhando para o futuro; aprende a viver bem o presente.</p>
+  <p>Talvez você ainda não tenha encontrado alguém especial. Talvez veja amigos iniciando relacionamentos enquanto você permanece solteiro. Isso não significa que Deus se esqueceu de você. Sua identidade não está em seu estado civil, mas em quem você é diante de Cristo.</p>
+  <p>Seu valor não aumenta quando alguém gosta de você nem diminui quando alguém o rejeita. Seu valor foi definido por Deus quando Ele o criou e demonstrado plenamente através do amor de Cristo na cruz.</p>
+  <p>Por isso, aproveite esta fase. Estude, cresça, sirva, desenvolva seu caráter e fortaleça sua fé. Quando o tempo de Deus chegar, você estará mais preparado para viver um relacionamento saudável, maduro e fundamentado nos princípios bíblicos.</p>
+
+  <div class="reflexao">
+    <h3>Perguntas para Reflexão</h3>
+    <ol>
+      <li>Tenho comparado minha vida com aquilo que vejo nas redes sociais?</li>
+      <li>Minha felicidade depende da atenção de outra pessoa?</li>
+      <li>O que Deus está tentando desenvolver em meu caráter hoje?</li>
+      <li>Estou usando bem meu tempo para crescer espiritualmente?</li>
+      <li>Se Deus me apresentasse hoje a pessoa certa, eu estaria preparado para esse relacionamento?</li>
+    </ol>
+  </div>
+
+  <div class="reflexao">
+    <h3>Desafio da Semana</h3>
+    <p>Durante os próximos dias:</p>
+    <ul>
+      <li>Ore cinco minutos diariamente pedindo sabedoria para o futuro.</li>
+      <li>Reduza o tempo gasto comparando sua vida com a dos outros nas redes sociais.</li>
+      <li>Anote três áreas nas quais você deseja amadurecer.</li>
+    </ul>
+  </div>
+
+  <div class="oracao">
+    <h3>Oração Final</h3>
+    <p>Senhor, ajuda-me a confiar em Teu tempo. Livra-me da ansiedade, da comparação e da carência. Ensina-me a encontrar minha identidade em Ti e a aproveitar esta fase para crescer em sabedoria, fé e maturidade. Que eu aprenda a viver o presente que o Senhor me deu enquanto espero pelos Teus planos para o futuro. Em nome de Jesus. Amém.</p>
+  </div>
+`
+}
+];
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+let db, auth, user=null, userDoc=null;
+let cantadas=[], unsub=null, tickTimer=null;
+let qIndex=0; const qAnswers=[];
+
+/* ============================================================
+   INIT
+   ============================================================ */
+firebase.initializeApp(firebaseConfig);
+db = firebase.firestore();
+auth = firebase.auth();
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});
+
+spawnHearts();
+renderEstudos();
+
+// trata o retorno do login via redirect (fallback de popup bloqueado)
+auth.getRedirectResult().catch(err=>console.warn('redirect',err));
+
+auth.onAuthStateChanged(async (u)=>{
+  user = u;
+  if(!u){ show('login'); document.getElementById('userchip').style.display='none'; return; }
+  // header
+  const uc = document.getElementById('userchip');
+  uc.style.display='flex';
+  document.getElementById('uc-photo').src = u.photoURL || '';
+  document.getElementById('uc-name').textContent = (u.displayName||'').split(' ')[0] || 'você';
+  await carregarPerfil();
+});
+
+/* ============================================================
+   AUTENTICAÇÃO
+   ============================================================ */
+function entrarComGoogle(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt:'select_account' });
+  auth.signInWithPopup(provider).catch(err=>{
+    console.warn('popup falhou, tentando redirect', err);
+    if(err && (err.code==='auth/popup-blocked' || err.code==='auth/cancelled-popup-request' || err.code==='auth/popup-closed-by-user')){
+      auth.signInWithRedirect(provider);
+    } else {
+      toast('Não consegui entrar. Tente de novo.');
+    }
+  });
+}
+function sair(){ if(unsub) unsub(); auth.signOut(); }
+
+async function carregarPerfil(){
+  const ref = db.collection(USERS).doc(user.uid);
+  let snap;
+  try { snap = await ref.get(); } catch(e){ console.warn(e); toast('Sem conexão com o servidor.'); }
+  if(snap && snap.exists){
+    userDoc = snap.data();
+  } else {
+    userDoc = { name:user.displayName||'', email:user.email||'', photo:user.photoURL||'', quizDone:false };
+    try { await ref.set(userDoc, {merge:true}); } catch(e){ console.warn(e); }
+  }
+  if(!userDoc.quizDone){ iniciarQuiz(); }
+  else { entrarNoMural(); }
+}
+
+/* ============================================================
+   NAVEGAÇÃO ENTRE TELAS
+   ============================================================ */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if(el) el.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============================================================
+   QUIZ
+   ============================================================ */
+function iniciarQuiz(){ qIndex=0; qAnswers.length=0; show('quiz'); renderPergunta(); }
+
+function renderPergunta(){
+  const item = QUESTIONS[qIndex];
+  document.getElementById('qbar').style.width = (qIndex/QUESTIONS.length*100)+'%';
+  document.getElementById('qcount').textContent = `Pergunta ${qIndex+1} de ${QUESTIONS.length}`;
+  document.getElementById('qtext').textContent = item.q;
+  const box = document.getElementById('qopts');
+  box.innerHTML = '';
+  item.a.forEach((opt,i)=>{
+    const b = document.createElement('button');
+    b.className='opt';
+    b.innerHTML = `<span class="emo">${opt[0]}</span><span>${escapeHtml(opt[1])}</span>`;
+    b.onclick = ()=>responder(i, b);
+    box.appendChild(b);
+  });
+}
+
+function responder(i, btn){
+  document.querySelectorAll('#qopts .opt').forEach(o=>o.classList.remove('sel'));
+  btn.classList.add('sel');
+  qAnswers[qIndex] = QUESTIONS[qIndex].a[i][1];
+  setTimeout(()=>{
+    qIndex++;
+    if(qIndex < QUESTIONS.length){ renderPergunta(); }
+    else { document.getElementById('qbar').style.width='100%'; finalizarQuiz(); }
+  }, 280);
+}
+
+async function finalizarQuiz(){
+  // salva respostas + marca quiz concluído
+  try{
+    await db.collection(USERS).doc(user.uid).set({
+      name:user.displayName||'', email:user.email||'', photo:user.photoURL||'',
+      quizDone:true, quizAnswers:qAnswers, quizAt: Date.now()
+    }, {merge:true});
+    userDoc = {...(userDoc||{}), quizDone:true, quizAnswers:qAnswers};
+  }catch(e){ console.warn('salvar quiz',e); }
+
+  // convida pro questionário detalhado
+  show('convite');
+}
+
+function calcularEEntrar(){
+  show('calc');
+  const linhas = [
+    'Lendo o seu coração…',
+    'Cruzando 1.248 respostas compatíveis…',
+    'Procurando alguém que te ame de verdade…',
+    'Calculando a sua compatibilidade…',
+    'Encontramos um par perfeito pra você 💞'
+  ];
+  let li=0;
+  const lineEl = document.getElementById('calc-line');
+  lineEl.textContent = linhas[0];
+  const it = setInterval(()=>{
+    li++;
+    if(li<linhas.length){ lineEl.textContent = linhas[li]; }
+    else { clearInterval(it); entrarNoMural(); }
+  }, 1100);
+}
+
+/* ============================================================
+   QUESTIONÁRIO DETALHADO  (ramifica pela 1ª resposta)
+   ============================================================ */
+let dIndex=0, dList=null; const dAnswers=[];
+
+function montarDetalhe(status){
+  if(status === 'Solteiro(a)'){
+    return { titulo:'Sobre a sua solteirice', qs:[
+      {type:'choice', q:'Qual sentimento melhor descreve como você se sente solteiro(a) hoje?',
+        a:[['😌','Em paz, vivendo bem essa fase'],['🌱','Aprendendo e crescendo'],['🥺','Às vezes me sinto sozinho(a)'],['😣','Ansioso(a) pra que mude logo']]},
+      {type:'choice', q:'Há quanto tempo você está solteiro(a)?',
+        a:[['🍃','Menos de 6 meses'],['📆','De 6 meses a 2 anos'],['⏳','Mais de 2 anos'],['❓','Nunca namorei']]},
+      {type:'text', q:'O que você busca encontrar em outra pessoa?', placeholder:'Escreva com sinceridade… 💭'},
+      {type:'choice', q:'Você tem planos e sonhos pessoais pra viver nessa fase?',
+        a:[['🎯','Sim, bem definidos'],['🌤️','Alguns, ainda formando'],['🤷','Ainda não parei pra pensar']]},
+      {type:'choice', q:'Sente que tem usado esse tempo pra crescer espiritualmente?',
+        a:[['🔥','Sim, bastante'],['🙂','Mais ou menos'],['😔','Tenho deixado de lado']]},
+      {type:'text', q:'Se pudesse pedir a Deus uma coisa sobre o seu futuro afetivo, o que seria?', placeholder:'Sua oração em uma frase… 🙏'},
+    ]};
+  }
+  const casado = status === 'Casado(a) · líder de jovens';
+  const qs = [
+    {type:'choice', q:'Há quanto tempo vocês estão juntos?',
+      a:[['🌱','Menos de 1 ano'],['💞','De 1 a 3 anos'],['💍','De 3 a 7 anos'],['🏡','Mais de 7 anos']]},
+    {type:'choice', q:'Seu(sua) parceiro(a) te leva pra mais perto de Deus?',
+      a:[['✝️','Sim, sempre'],['🙂','Na maioria das vezes'],['😐','Mais ou menos'],['😔','Sinto que me afasta']]},
+    {type:'choice', q:'Você sente que Deus confirmou esse relacionamento de forma clara?',
+      a:[['🕊️','Sim, com clareza'],['🤔','Ainda estou buscando'],['😬','Tenho dúvidas']]},
+    {type:'choice', q:'De modo geral, esse relacionamento tem te aproximado de Deus?',
+      a:[['📈','Sim, tem me edificado'],['➖','Tem ficado neutro'],['📉','Tem me esfriado']]},
+    {type:'choice', q:'Vocês têm conversas sobre propósito e futuro?',
+      a:[['💬','Sim, com frequência'],['🗨️','De vez em quando'],['🤐','Quase nunca']]},
+    {type:'choice', q:'Vocês têm propósitos em comum (fé, valores, sonhos)?',
+      a:[['🤝','Sim, bem alinhados'],['🧭','Em parte'],['↔️','Somos bem diferentes nisso']]},
+    {type:'text', q:'O que você mais valoriza nessa pessoa hoje?', placeholder:'Em poucas palavras… 💕'},
+  ];
+  qs.push(
+    {type:'choice', q:'Existe a pretensão de casar?',
+      a:[['💍','Sim, já é um plano'],['🌤️','Sim, mas sem data'],['🤔','Ainda não sei'],['🚫','Não pensamos nisso'],['💒','Já sou casado(a)']]},
+    {type:'choice', q:'Se pretendem casar, mais ou menos quando?',
+      skipIf:(ans)=>{ const p=(ans.find(x=>x && /pretens/i.test(x.q))||{}).a||''; return !/^Sim/.test(p); },
+      a:[['⏳','Em menos de 1 ano'],['📆','De 1 a 2 anos'],['🗓️','Mais de 2 anos'],['❓','Ainda sem previsão']]},
+  );
+  return { titulo: casado ? 'Sobre o seu casamento' : 'Sobre o seu relacionamento', qs };
+}
+
+function iniciarDetalhado(){
+  const status = (qAnswers && qAnswers[0]) || 'Solteiro(a)';
+  dList = montarDetalhe(status);
+  dIndex = 0; dAnswers.length = 0;
+  document.getElementById('dhead').textContent = dList.titulo;
+  show('detalhe');
+  renderDetalhe();
+}
+
+function pularDetalhado(){ calcularEEntrar(); }
+
+function renderDetalhe(){
+  const q = dList.qs[dIndex];
+  document.getElementById('dbar').style.width = (dIndex/dList.qs.length*100)+'%';
+  document.getElementById('dcount').textContent = `Pergunta ${dIndex+1} de ${dList.qs.length}`;
+  document.getElementById('dtext').textContent = q.q;
+  const body = document.getElementById('dbody');
+  if(q.type === 'choice'){
+    body.innerHTML = '<div class="opts"></div>';
+    const opts = body.querySelector('.opts');
+    q.a.forEach(opt=>{
+      const b = document.createElement('button');
+      b.className = 'opt';
+      b.innerHTML = `<span class="emo">${opt[0]}</span><span>${escapeHtml(opt[1])}</span>`;
+      b.onclick = ()=>responderDetalhe(opt[1], b);
+      opts.appendChild(b);
+    });
+  } else {
+    body.innerHTML = `<textarea class="d-text" id="dInput" maxlength="300" placeholder="${escapeAttr(q.placeholder||'')}"></textarea>
+      <button class="btn d-continue" onclick="responderDetalheTexto()">Continuar 💌</button>
+      <button class="d-skip" onclick="responderDetalheTexto(true)">prefiro não responder</button>`;
+    const inp = document.getElementById('dInput'); if(inp) inp.focus();
+  }
+}
+
+function responderDetalhe(val, btn){
+  document.querySelectorAll('#dbody .opt').forEach(o=>o.classList.remove('sel'));
+  btn.classList.add('sel');
+  dAnswers[dIndex] = { q: dList.qs[dIndex].q, a: val };
+  setTimeout(avancarDetalhe, 280);
+}
+
+function responderDetalheTexto(skip){
+  const inp = document.getElementById('dInput');
+  const v = skip ? '' : (inp ? inp.value.trim() : '');
+  dAnswers[dIndex] = { q: dList.qs[dIndex].q, a: v };
+  avancarDetalhe();
+}
+
+function avancarDetalhe(){
+  dIndex++;
+  // pula perguntas que não se aplicam (ex.: "quando casar" pra quem não pretende)
+  while(dIndex < dList.qs.length && typeof dList.qs[dIndex].skipIf === 'function' && dList.qs[dIndex].skipIf(dAnswers)){
+    dAnswers[dIndex] = { q: dList.qs[dIndex].q, a: '—' };
+    dIndex++;
+  }
+  if(dIndex < dList.qs.length){ renderDetalhe(); }
+  else { document.getElementById('dbar').style.width='100%'; finalizarDetalhe(); }
+}
+
+async function finalizarDetalhe(){
+  try{
+    await db.collection(USERS).doc(user.uid).set({
+      detalhadoFeito:true,
+      detalhadoTipo: (qAnswers && qAnswers[0]) || '',
+      detalhadoAnswers: dAnswers,
+      detalhadoAt: Date.now()
+    }, {merge:true});
+    userDoc = {...(userDoc||{}), detalhadoFeito:true, detalhadoAnswers:dAnswers};
+  }catch(e){ console.warn('salvar detalhado',e); }
+  calcularEEntrar();
+}
+
+/* ============================================================
+   MURAL + PAR PERFEITO
+   ============================================================ */
+function entrarNoMural(){
+  show('mural');
+  trocarAba('estudo');          // depois das perguntas, abre no estudo
+  atualizarMatchCard();
+  if(tickTimer) clearInterval(tickTimer);
+  tickTimer = setInterval(atualizarMatchCard, 1000);
+  ouvirCantadas();
+}
+
+function atualizarMatchCard(){
+  const diff = REVEAL_AT.getTime() - Date.now();
+  const waitMsg = document.getElementById('waitMsg');
+  const cd = document.getElementById('countdown');
+  const btn = document.getElementById('revealBtn');
+  // SOMENTE os e-mails da lista podem adiantar a prévia (antes do tempo)
+  const adiantar = !!(user && PREVIEW_EMAILS.includes((user.email||'').toLowerCase()));
+
+  if(diff > 0){
+    let s = Math.floor(diff/1000);
+    const d = Math.floor(s/86400); s-=d*86400;
+    const h = Math.floor(s/3600);  s-=h*3600;
+    const m = Math.floor(s/60);    s-=m*60;
+    const partes = d>0 ? `${d} dia${d>1?'s':''}, ${h} horas e ${m} minutos` : `${h} horas e ${m} minutos`;
+    cd.style.display='flex';
+    cd.innerHTML =
+      (d>0?cell(d,'dias'):'') +
+      cell(h,'horas') + cell(m,'min') + cell(s,'seg');
+    if(adiantar){
+      waitMsg.innerHTML = `Faltam <b>${partes}</b> para todos descobrirem.<br><span style="opacity:.75">🔓 Prévia liberada só para você.</span>`;
+      btn.style.display='flex';
+    } else {
+      waitMsg.innerHTML = `Volte daqui a <b>${partes}</b> para encontrar seu par perfeito.<br><span style="opacity:.7">Aguardando mais respostas…</span>`;
+      btn.style.display='none';
+    }
+  } else {
+    waitMsg.innerHTML = `O momento chegou. Já encontramos quem ama você de verdade. 💘`;
+    cd.style.display='none';
+    btn.style.display='flex';
+  }
+}
+function cell(v,l){ return `<div><b>${String(v).padStart(2,'0')}</b><small>${l}</small></div>`; }
+
+function mostrarRevelacao(){
+  const ov = document.getElementById('reveal-overlay');
+  ov.classList.add('show');
+  ov.scrollTop = 0;   // abre no começo da carta
+  requestAnimationFrame(()=>{ ov.scrollTop = 0; });  // garante o topo após o layout
+  burstHearts();
+  // registra que viu (opcional)
+  if(user) db.collection(USERS).doc(user.uid).set({revealed:true, revealedAt:Date.now()},{merge:true}).catch(()=>{});
+}
+function fecharRevelacao(){ document.getElementById('reveal-overlay').classList.remove('show'); }
+
+/* ============================================================
+   CANTADAS (tempo real)
+   ============================================================ */
+function ouvirCantadas(){
+  if(unsub) unsub();
+  unsub = db.collection(CANTADAS).orderBy('createdAt','desc').onSnapshot(
+    snap=>{
+      cantadas = snap.docs.map(d=>({id:d.id, ...d.data()}));
+      renderFeed();
+      renderRank();
+    },
+    err=>{ console.warn('snapshot',err); toast('Não consegui carregar as cantadas.'); }
+  );
+}
+
+async function publicarCantada(){
+  const inp = document.getElementById('cantadaInput');
+  const text = inp.value.trim();
+  if(!text){ inp.focus(); return; }
+  const btn = document.getElementById('postBtn');
+  btn.disabled = true;
+  try{
+    await db.collection(CANTADAS).add({
+      text, author:user.displayName||'Anônimo', photo:user.photoURL||'', uid:user.uid,
+      likes:0, likedBy:[], createdAt: Date.now()
+    });
+    inp.value=''; document.getElementById('cChars').textContent='0';
+    toast('Cantada publicada! 💌');
+    window.scrollTo({top:document.getElementById('feed').offsetTop-80,behavior:'smooth'});
+  }catch(e){ console.warn(e); toast('Não consegui publicar. Tente de novo.'); }
+  finally{ btn.disabled=false; }
+}
+
+async function curtir(id, btn){
+  const c = cantadas.find(x=>x.id===id);
+  if(!c) return;
+  const liked = (c.likedBy||[]).includes(user.uid);
+  // otimista
+  if(liked){ c.likes=Math.max(0,(c.likes||0)-1); c.likedBy=(c.likedBy||[]).filter(u=>u!==user.uid); }
+  else { c.likes=(c.likes||0)+1; c.likedBy=[...(c.likedBy||[]),user.uid]; }
+  renderFeed(); renderRank();
+  try{
+    await db.collection(CANTADAS).doc(id).update({
+      likes: firebase.firestore.FieldValue.increment(liked?-1:1),
+      likedBy: liked ? firebase.firestore.FieldValue.arrayRemove(user.uid)
+                     : firebase.firestore.FieldValue.arrayUnion(user.uid)
+    });
+  }catch(e){ console.warn('like',e); }
+}
+
+async function apagar(id){
+  if(!confirm('Apagar sua cantada?')) return;
+  try{ await db.collection(CANTADAS).doc(id).delete(); toast('Cantada apagada.'); }
+  catch(e){ console.warn(e); toast('Não consegui apagar.'); }
+}
+
+function compartilhar(text){
+  const msg = `💘 Cantada na Central do Amor da UMADCAMP:\n\n"${text}"\n\nManda a sua também!`;
+  if(navigator.share){ navigator.share({title:'Central do Amor',text:msg}).catch(()=>{}); }
+  else if(navigator.clipboard){ navigator.clipboard.writeText(msg); toast('Copiado! 📋'); }
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function renderFeed(){
+  const feed = document.getElementById('feed');
+  if(!cantadas.length){
+    feed.innerHTML = `<div class="empty"><span class="big">💌</span>Ninguém soltou cantada ainda.<br>Seja o primeiro a conquistar o ranking!</div>`;
+    return;
+  }
+  feed.innerHTML = cantadas.map(c=>{
+    const liked = (c.likedBy||[]).includes(user.uid);
+    const mine = c.uid===user.uid;
+    return `<div class="cantada">
+      <div class="meta">
+        <img src="${escapeAttr(c.photo)}" onerror="this.style.visibility='hidden'" alt="">
+        <div><div class="who">${escapeHtml(firstName(c.author))}</div><div class="when">${tempo(c.createdAt)}</div></div>
+      </div>
+      <div class="txt">"${escapeHtml(c.text)}"</div>
+      <div class="actions">
+        <button class="like ${liked?'on':''}" onclick="curtir('${c.id}',this)"><span class="h">${liked?'❤️':'🤍'}</span> <span>${c.likes||0}</span></button>
+        <button class="share" onclick="compartilhar('${escapeAttr(c.text)}')">🔗 Compartilhar</button>
+        ${mine?`<button class="del" onclick="apagar('${c.id}')">🗑️ apagar</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderRank(){
+  const list = document.getElementById('rankList');
+  const ranked = [...cantadas].sort((a,b)=>(b.likes||0)-(a.likes||0)).slice(0,20);
+  if(!ranked.length || (ranked[0].likes||0)===0){
+    list.innerHTML = `<div class="empty"><span class="big">🏆</span>O ranking começa quando as curtidas chegarem.<br>Curta suas cantadas favoritas!</div>`;
+    return;
+  }
+  list.innerHTML = ranked.map((c,i)=>{
+    const cls = i===0?'top1':i===1?'top2':i===2?'top3':'';
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
+    return `<div class="rank-item ${cls}">
+      <div class="pos">${medal}</div>
+      <div class="info"><div class="t">"${escapeHtml(c.text)}"</div><div class="a">— ${escapeHtml(firstName(c.author))}</div></div>
+      <div class="lk">❤️ ${c.likes||0}</div>
+    </div>`;
+  }).join('');
+}
+
+function trocarAba(which){
+  ['estudo','mural','rank'].forEach(t=>{
+    document.getElementById('aba-'+t).style.display = (t===which)?'block':'none';
+    document.getElementById('tab-'+t).classList.toggle('active', t===which);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+document.getElementById('cantadaInput').addEventListener('input', e=>{
+  document.getElementById('cChars').textContent = e.target.value.length;
+});
+
+function firstName(n){ return (n||'Anônimo').split(' ').slice(0,2).join(' '); }
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function escapeAttr(s){ return escapeHtml(s).replace(/\n/g,' '); }
+function tempo(ts){
+  if(!ts) return 'agora';
+  const diff = Date.now()-ts, m=Math.floor(diff/60000), h=Math.floor(m/60), d=Math.floor(h/24);
+  if(m<1) return 'agora'; if(m<60) return `há ${m} min`; if(h<24) return `há ${h}h`; return `há ${d}d`;
+}
+let toastTimer;
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+/* ============================================================
+   ESTUDOS  (lista com prévia + "ver mais")
+   ============================================================ */
+function renderEstudos(){
+  const box = document.getElementById('estudoList');
+  box.innerHTML = ESTUDOS.map(e=>`
+    <div class="card estudo">
+      <div class="estudo-top">
+        <span class="badge">📖 Estudo Bíblico</span>
+        <h2 class="serif">${escapeHtml(e.titulo)}</h2>
+        <p class="subtitle">${escapeHtml(e.subtitulo)}</p>
+      </div>
+      <div class="estudo-wrap collapsed" id="wrap-${e.id}">
+        <div class="estudo-body">${e.html}</div>
+      </div>
+      <div class="estudo-actions">
+        <button class="btn ghost" onclick="toggleEstudo('${e.id}',this)">📖 Ver mais</button>
+        <button class="btn" onclick="baixarPdf('${e.id}')">📄 Baixar PDF</button>
+      </div>
+    </div>`).join('');
+}
+
+function toggleEstudo(id, btn){
+  const wrap = document.getElementById('wrap-'+id);
+  wrap.classList.toggle('collapsed');
+  if(wrap.classList.contains('collapsed')){
+    btn.innerHTML = '📖 Ver mais';
+    wrap.scrollIntoView({behavior:'smooth',block:'nearest'});
+  } else {
+    btn.innerHTML = '📖 Ver menos';
+  }
+}
+
+/* ============================================================
+   PDF DO ESTUDO  (via diálogo de impressão -> "Salvar como PDF")
+   ============================================================ */
+function buildPrintHtml(estudo){
+  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+  <title>${estudo.titulo} — Central do Amor UMADCAMP</title>
+  <style>
+    @page{ margin:18mm 16mm; }
+    *{box-sizing:border-box}
+    body{font-family:Georgia,'Times New Roman',serif;color:#222;line-height:1.6;max-width:720px;margin:0 auto;padding:10px}
+    .cabec{text-align:center;border-bottom:3px solid #C9184A;padding-bottom:14px;margin-bottom:22px}
+    .cabec .kick{letter-spacing:.18em;text-transform:uppercase;font-size:11px;color:#C9184A;font-family:Arial,sans-serif}
+    .cabec h1{font-size:26px;margin:8px 0 4px;color:#6A040F}
+    .cabec .sub{font-style:italic;color:#9D0208;font-size:14px}
+    h3{color:#C9184A;font-size:17px;margin:20px 0 6px;border-left:0}
+    p{margin:0 0 10px;text-align:justify}
+    ul,ol{margin:0 0 12px;padding-left:22px}
+    li{margin-bottom:4px}
+    .base{background:#FFF0F3;border-left:4px solid #FF1F57;padding:12px 14px;font-style:italic;color:#6A040F;margin-bottom:20px}
+    .base b{display:block;font-style:normal;font-size:12px;color:#C9184A;margin-bottom:4px;letter-spacing:.04em}
+    .reflexao{background:#FFF0F3;border-radius:10px;padding:12px 16px;margin:22px 0;page-break-inside:avoid}
+    .reflexao h3{margin-top:0}
+    .oracao{background:#FFF0F3;border-radius:10px;padding:14px 16px;margin-top:18px;font-style:italic;color:#6A040F;page-break-inside:avoid}
+    .oracao h3{font-style:normal;margin-top:0}
+    .rodape{text-align:center;margin-top:26px;padding-top:12px;border-top:1px solid #FFC2D1;font-size:12px;color:#9D0208;font-family:Arial,sans-serif}
+  </style></head><body>
+    <div class="cabec">
+      <div class="kick">UMADCAMP · Central do Amor</div>
+      <h1>${estudo.titulo}</h1>
+      <div class="sub">${estudo.subtitulo}</div>
+    </div>
+    ${estudo.html}
+    <div class="rodape">UMADCAMP · Dia dos Namorados 2026 — "Fazei tudo para a glória de Deus" (1Co 10:31)</div>
+  </body></html>`;
+}
+
+function baixarPdf(id){
+  const estudo = ESTUDOS.find(e=>e.id===id);
+  if(!estudo) return;
+  const html = buildPrintHtml(estudo);
+  const win = window.open('', '_blank');
+  if(win){
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(()=>{ try{ win.print(); }catch(e){ console.warn(e); } }, 500);
+  } else {
+    // popup bloqueado -> imprime via iframe
+    const f = document.createElement('iframe');
+    f.style.cssText = 'position:fixed;left:-9999px;width:0;height:0;border:0';
+    document.body.appendChild(f);
+    const d = f.contentWindow.document;
+    d.open(); d.write(html); d.close();
+    setTimeout(()=>{ f.contentWindow.focus(); f.contentWindow.print(); }, 600);
+    setTimeout(()=>f.remove(), 60000);
+    toast('Use "Salvar como PDF" na janela de impressão 📄');
+  }
+}
+
+function spawnHearts(){
+  const box=document.getElementById('hearts'); const emos=['❤️','💕','💖','💗','💓','🩷'];
+  for(let i=0;i<14;i++){
+    const s=document.createElement('span');
+    s.textContent=emos[i%emos.length];
+    s.style.left=(Math.random()*100)+'%';
+    s.style.fontSize=(14+Math.random()*22)+'px';
+    s.style.animationDuration=(9+Math.random()*10)+'s';
+    s.style.animationDelay=(-Math.random()*12)+'s';
+    box.appendChild(s);
+  }
+}
+function burstHearts(){
+  const emos=['❤️','💖','💕','✨','💗'];
+  for(let i=0;i<24;i++){
+    const s=document.createElement('span');
+    s.textContent=emos[i%emos.length];
+    s.style.cssText=`position:fixed;left:50%;top:40%;font-size:${18+Math.random()*20}px;z-index:55;pointer-events:none;transition:all 1.6s ease-out`;
+    document.body.appendChild(s);
+    requestAnimationFrame(()=>{
+      const ang=Math.random()*Math.PI*2, dist=120+Math.random()*220;
+      s.style.transform=`translate(${Math.cos(ang)*dist}px,${Math.sin(ang)*dist}px) scale(${.5+Math.random()})`;
+      s.style.opacity='0';
+    });
+    setTimeout(()=>s.remove(),1700);
+  }
+}
+</script>
+</body>
+</html>

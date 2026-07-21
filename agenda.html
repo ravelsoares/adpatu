@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda - Censo UMADCAMP</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .nav-links {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border: 1px solid white;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .nav-links a:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .agenda-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .month-group {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #e0e6ed;
+        }
+
+        .month-group h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            text-transform: uppercase;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            border-left: 5px solid #667eea;
+        }
+
+        .event-date {
+            text-align: center;
+            color: #667eea;
+            flex-shrink: 0;
+        }
+
+        .event-date .day {
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .event-date .month {
+            font-size: 1em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .event-details h3 {
+            font-size: 1.3em;
+            color: #34495e;
+            margin-bottom: 5px;
+        }
+
+        .event-details p {
+            color: #7f8c8d;
+            font-size: 1em;
+        }
+
+        .no-events {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+            font-size: 1.2em;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="nav-links">
+                <a href="home.html">Home</a>
+                <a href="index-censo.html">Censo</a>
+                <a href="admin">Admin</a>
+            </div>
+            <h1>Agenda UMADCAMP</h1>
+            <p>Calendário de Atividades e Congressos</p>
+        </div>
+
+        <div class="main-content">
+            <div id="agendaContainer" class="agenda-container">
+                <!-- Eventos serão carregados aqui -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+            authDomain: "umadcamp-patu.firebaseapp.com",
+            projectId: "umadcamp-patu",
+            storageBucket: "umadcamp-patu.firebasestorage.app",
+            messagingSenderId: "1043102355965",
+            appId: "1:1043102355965:web:734bcffb30d37a7d2b8994",
+            measurementId: "G-S6N9R4F8Z8"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        function showLoading(show = true) {
+            const existingOverlay = document.getElementById('loadingOverlay');
+            if (existingOverlay) {
+                existingOverlay.remove();
+            }
+
+            if (show) {
+                const overlay = document.createElement('div');
+                overlay.className = 'loading-overlay';
+                overlay.id = 'loadingOverlay';
+                overlay.innerHTML = `
+                    <div class="loading-content">
+                        <div class="loading"></div>
+                        <p style="margin-top: 15px;">Carregando agenda...</p>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+            }
+        }
+
+        function formatEventDate(startDateStr, endDateStr) {
+            const startDate = new Date(startDateStr + 'T00:00:00');
+            const startDay = startDate.getDate();
+
+            if (!endDateStr || startDateStr === endDateStr) {
+                return `${startDay}`;
+            }
+
+            const endDate = new Date(endDateStr + 'T00:00:00');
+            const endDay = endDate.getDate();
+
+            if (startDate.getMonth() === endDate.getMonth()) {
+                return `${startDay} a ${endDay}`;
+            } else {
+                const startMonth = startDate.toLocaleString('pt-BR', { month: 'short' }).replace('.', '');
+                const endMonth = endDate.toLocaleString('pt-BR', { month: 'short' }).replace('.', '');
+                return `${startDay}/${startMonth} a ${endDay}/${endMonth}`;
+            }
+        }
+
+        async function carregarAgenda() {
+            showLoading(true);
+            const container = document.getElementById('agendaContainer');
+            container.innerHTML = '';
+
+            try {
+                const snapshot = await db.collection('agenda').orderBy('dataInicio', 'asc').get();
+
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="no-events">Nenhum evento na agenda no momento.</p>';
+                    return;
+                }
+
+                const eventos = [];
+                snapshot.forEach(doc => {
+                    eventos.push(doc.data());
+                });
+
+                const eventosPorMes = eventos.reduce((acc, evento) => {
+                    const mes = evento.mes.toUpperCase();
+                    if (!acc[mes]) {
+                        acc[mes] = [];
+                    }
+                    acc[mes].push(evento);
+                    return acc;
+                }, {});
+
+                const mesesOrdenados = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
+
+                for (const mes of mesesOrdenados) {
+                    if (eventosPorMes[mes]) {
+                        const monthGroup = document.createElement('div');
+                        monthGroup.className = 'month-group';
+
+                        let eventsHtml = `<h2>${mes}</h2>`;
+
+                        eventosPorMes[mes].forEach(evento => {
+                            const dateDisplay = formatEventDate(evento.dataInicio, evento.dataFim);
+                            const monthDisplay = new Date(evento.dataInicio + 'T00:00:00').toLocaleString('pt-BR', { month: 'short' }).replace('.', '');
+
+                            eventsHtml += `
+                                <div class="event-card">
+                                    <div class="event-date">
+                                        <div class="day">${dateDisplay}</div>
+                                        <div class="month">${monthDisplay}</div>
+                                    </div>
+                                    <div class="event-details">
+                                        <h3>${evento.titulo}</h3>
+                                        <p><strong>Local:</strong> ${evento.local}</p>
+                                    </div>
+                                </div>
+                            `;
+                        });
+
+                        monthGroup.innerHTML = eventsHtml;
+                        container.appendChild(monthGroup);
+                    }
+                }
+
+                if (!eventosPorMes['DEZEMBRO']) {
+                    const monthGroup = document.createElement('div');
+                    monthGroup.className = 'month-group';
+                    monthGroup.innerHTML = `
+                        <h2>DEZEMBRO</h2>
+                        <div class="event-card">
+                            <div class="event-details">
+                                <p>Não há agenda para este mês.</p>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(monthGroup);
+                }
+
+
+            } catch (error) {
+                console.error("Erro ao carregar agenda: ", error);
+                container.innerHTML = '<p class="no-events">Ocorreu um erro ao carregar a agenda. Tente novamente mais tarde.</p>';
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', carregarAgenda);
+    </script>
+</body>
+
+</html>

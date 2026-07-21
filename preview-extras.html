@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview Cartas Extras</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            min-height: 100vh;
+            padding: 40px 20px;
+            background-image:
+                linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        h1 {
+            text-align: center;
+            color: #ffd700;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+            margin-bottom: 8px;
+        }
+        .sub {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.55rem;
+            letter-spacing: 1px;
+            margin-bottom: 40px;
+        }
+
+        .grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        @media (min-width: 700px) {
+            .grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 28px; }
+        }
+
+        .extra-card {
+            aspect-ratio: 3 / 4;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            padding: 8px;
+            background: conic-gradient(from 0deg, #ff5cd0, #ffd700, #5cf2ff, #ff5cd0, #ffd700, #5cf2ff, #ff5cd0);
+            background-size: 200% 200%;
+            animation: holo-shift 5s linear infinite;
+            box-shadow: 0 0 24px rgba(255, 92, 208, 0.5), 0 0 60px rgba(255, 215, 0, 0.3);
+            transition: transform 0.25s ease;
+        }
+        .extra-card:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 0 36px rgba(255, 215, 0, 0.8);
+        }
+        @keyframes holo-shift {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 200%; }
+        }
+
+        .ec-art {
+            flex: 1;
+            background: #0a0a0a;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .ec-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .ec-art .placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.6rem;
+            letter-spacing: 1px;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .ec-title {
+            background: rgba(0, 0, 0, 0.78);
+            color: #fff;
+            text-align: center;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            padding: 8px 6px;
+            margin-top: 6px;
+            border-radius: 0 0 8px 8px;
+            letter-spacing: 0.3px;
+            min-height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .info {
+            max-width: 700px;
+            margin: 50px auto 0;
+            padding: 22px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            font-family: Georgia, serif;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            text-align: center;
+        }
+        .info strong { color: #ffd700; }
+    </style>
+</head>
+
+<body>
+    <h1>✨ PREVIEW · CARTAS EXTRAS ✨</h1>
+    <p class="sub">como vão aparecer no álbum</p>
+
+    <div class="grid">
+        <div class="extra-card">
+            <div class="ec-art">
+                <img src="images/album/resenha/01.png" alt="Ah Heresia"
+                    onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder',innerText:'(imagem não encontrada)\\n01.png'}))">
+            </div>
+            <div class="ec-title">Ah Heresia...</div>
+        </div>
+
+        <div class="extra-card">
+            <div class="ec-art">
+                <img src="images/album/resenha/02.png" alt="Pega ele Jesus"
+                    onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder',innerText:'(imagem não encontrada)\\n02.png'}))">
+            </div>
+            <div class="ec-title">Pega Ele Jesus!</div>
+        </div>
+
+        <div class="extra-card">
+            <div class="ec-art">
+                <img src="images/album/resenha/03.png" alt="Profeta Chorão"
+                    onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder',innerText:'(imagem não encontrada)\\n03.png'}))">
+            </div>
+            <div class="ec-title">Profeta Chorão</div>
+        </div>
+
+        <div class="extra-card">
+            <div class="ec-art">
+                <img src="images/album/resenha/04.png" alt="Carta Extra 4"
+                    onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder',innerText:'(imagem não encontrada)\\n04.png'}))">
+            </div>
+            <div class="ec-title">Bigode Santo</div>
+        </div>
+
+        <div class="extra-card">
+            <div class="ec-art">
+                <img src="images/album/resenha/05.png" alt="Carta Extra 5"
+                    onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder',innerText:'(imagem não encontrada)\\n05.png'}))">
+            </div>
+            <div class="ec-title">O Belo</div>
+        </div>
+
+        <div class="extra-card">
+            <div class="ec-art">
+                <img src="images/album/resenha/06.png" alt="Carta Extra 6"
+                    onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder',innerText:'(imagem não encontrada)\\n06.png'}))">
+            </div>
+            <div class="ec-title">Tudo Bom, Meu Amigo?</div>
+        </div>
+
+        <div class="extra-card">
+            <div class="ec-art">
+                <img src="images/album/resenha/07.png" alt="Carta Extra 7"
+                    onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder',innerText:'(imagem não encontrada)\\n07.png'}))">
+            </div>
+            <div class="ec-title">Açude Paulista</div>
+        </div>
+
+        <div class="extra-card">
+            <div class="ec-art">
+                <img src="images/album/resenha/08.png" alt="Carta Extra 8"
+                    onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder',innerText:'(imagem não encontrada)\\n08.png'}))">
+            </div>
+            <div class="ec-title">Eu Tenho 8 Empregos</div>
+        </div>
+
+        <div class="extra-card">
+            <div class="ec-art">
+                <img src="images/album/resenha/09.png" alt="Carta Extra 9"
+                    onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'placeholder',innerText:'(imagem não encontrada)\\n09.png'}))">
+            </div>
+            <div class="ec-title">Os Cabra da Peste</div>
+        </div>
+    </div>
+
+    <div class="info">
+        <strong>Como abrir:</strong> dê duplo clique neste arquivo ou arraste pro navegador.<br>
+        Não precisa de servidor, não precisa de deploy.<br><br>
+        A primeira carta carrega de <code>images/album/resenha/01.png</code> — se sua imagem está nessa pasta, aparece automático.<br>
+        Passa o mouse pra ver hover, observa a borda holográfica girando.
+    </div>
+</body>
+
+</html>
