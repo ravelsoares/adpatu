@@ -61,6 +61,10 @@
         "destination": "/agenda-adpatu.html"
       },
       {
+        "source": "/80anos",
+        "destination": "/80-anos.html"
+      },
+      {
         "source": "/umadcamp",
         "destination": "/home.html"
       },
