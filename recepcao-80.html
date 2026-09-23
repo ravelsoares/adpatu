@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recepção · AD Patu 80</title>
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#0f1f52">
+    <link rel="icon" href="/images/80anos/logo-80.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/80-anos.css">
+    <link rel="stylesheet" href="/styles/80-anos-area.css">
+    <style>
+        .rec-main { max-width: 760px; }
+        .rec-user { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: rgba(255,255,255,.75); }
+        .rec-user img { width: 28px; height: 28px; border-radius: 50%; }
+        .center { text-align: center; }
+        .abas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 14px; }
+        .abas button, .seg button {
+            padding: 10px 6px; border-radius: 12px; border: 1px solid rgba(255,255,255,.18);
+            background: rgba(255,255,255,.05); color: #fff; font: inherit; font-weight: 700; font-size: .9rem; cursor: pointer;
+        }
+        .abas button[aria-selected="true"], .seg button[aria-pressed="true"] {
+            background: linear-gradient(135deg, var(--carvalho-claro), var(--carvalho)); border-color: transparent;
+        }
+        .seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+        .seg small { display: block; font-weight: 400; opacity: .8; font-size: .75rem; }
+        .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+        .kpi { padding: 12px 8px; border-radius: 14px; text-align: center; background: rgba(255,255,255,.06); }
+        .kpi b { display: block; font-size: 1.6rem; line-height: 1.1; color: var(--carvalho-palido); }
+        .kpi span { font-size: .72rem; text-transform: uppercase; letter-spacing: 1px; opacity: .7; }
+        .resultados { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
+        .resultados button {
+            width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left;
+            padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.1);
+            background: rgba(255,255,255,.05); color: #fff; font: inherit; cursor: pointer;
+        }
+        .resultados button:hover { background: rgba(255,255,255,.1); }
+        .resultados small { display: block; font-size: .8rem; opacity: .65; }
+        .tag-ok { flex-shrink: 0; font-size: .75rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--carvalho); }
+        .ficha h2 { font-size: 1.7rem; margin-bottom: 4px; }
+        .ficha .dias { margin: 14px 0; }
+        .btn-grande { min-height: 60px; font-size: 1.05rem; }
+        .btn-link { background: none; border: 0; color: rgba(255,255,255,.7); text-decoration: underline; font: inherit; font-size: .85rem; cursor: pointer; margin-top: 10px; }
+        .grid-form { display: grid; gap: 10px; }
+        .grid-form label { display: grid; gap: 4px; font-size: .85rem; }
+        .grid-form .campo { font-size: 1rem; letter-spacing: 0; min-height: 46px; }
+        select.campo option { color: #1d1a16; }
+        .linha { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+        .linha:last-child { border-bottom: 0; }
+        .linha small { display: block; font-size: .8rem; opacity: .65; }
+        .presencas { flex-shrink: 0; display: flex; gap: 4px; }
+        .presencas i { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: .7rem; font-weight: 700; border: 1px dashed rgba(255,255,255,.3); }
+        .presencas i.on { border: 0; background: var(--carvalho); }
+        .toolbar { display: flex; gap: 8px; margin-bottom: 10px; }
+        .toolbar .campo { flex: 1; font-size: 1rem; letter-spacing: 0; min-height: 46px; }
+        .btn-sm { min-height: 46px; padding: 8px 16px; font-size: .85rem; }
+        .switch { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; }
+        .switch input { width: 22px; height: 22px; accent-color: var(--carvalho); }
+        .mat-item { display: grid; gap: 6px; padding: 12px; margin-bottom: 8px; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); }
+        .mat-item .campo { font-size: .92rem; letter-spacing: 0; min-height: 42px; }
+        .mat-item .btn-link { justify-self: end; margin: 0; color: #ffb4a8; }
+        .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); padding: 12px 20px; border-radius: 999px; background: #1f7a45; color: #fff; font-weight: 700; box-shadow: 0 8px 24px rgba(0,0,0,.3); z-index: 99; }
+        .toast.erro { background: #a33; }
+    </style>
+</head>
+
+<body class="area">
+    <header class="area-top rec-main">
+        <a href="/80anos" class="area-back">← Site dos 80 anos</a>
+        <div class="rec-user" id="rec-user" hidden>
+            <img id="me-foto" alt=""><span id="me-nome"></span>
+            <button type="button" class="area-sair" id="btn-sair">Sair</button>
+        </div>
+    </header>
+
+    <main class="area-main rec-main">
+        <img class="area-logo" src="/images/80anos/logo-80-branca.png" alt="ADPatu 80 anos" width="1200" height="942">
+
+        <section class="area-card center" id="tela-login" hidden>
+            <p class="eyebrow">EBO · Recepção</p>
+            <h1>Check-in</h1>
+            <p class="area-sub">Acesso restrito à equipe da recepção. Entre com sua conta Google autorizada.</p>
+            <button type="button" class="btn btn-oak btn-block" id="btn-google">Entrar com Google</button>
+        </section>
+
+        <section class="area-card center" id="tela-negado" hidden>
+            <h1>Acesso negado</h1>
+            <p class="area-sub">A conta <b id="negado-email"></b> não está autorizada. Peça para incluí-la na lista da
+                recepção (ADMIN_EMAILS em recepcao-80.html e em firestore.rules).</p>
+            <button type="button" class="btn btn-ghost btn-block" id="btn-trocar">Entrar com outra conta</button>
+        </section>
+
+        <p class="area-sub center" id="tela-carregando">Carregando…</p>
+
+        <div id="tela-app" hidden>
+            <div class="abas" role="tablist">
+                <button role="tab" aria-selected="true" data-aba="checkin">Check-in</button>
+                <button role="tab" aria-selected="false" data-aba="inscritos">Inscritos</button>
+                <button role="tab" aria-selected="false" data-aba="config">Configurações</button>
+            </div>
+
+            <!-- ===== Check-in ===== -->
+            <div data-painel="checkin">
+                <div class="seg" id="seg-dias"></div>
+                <div class="kpis">
+                    <div class="kpi"><b id="k-hoje">0</b><span>Presentes</span></div>
+                    <div class="kpi"><b id="k-total">0</b><span>Inscritos</span></div>
+                    <div class="kpi"><b id="k-falta">0</b><span>Faltam</span></div>
+                </div>
+
+                <section class="area-card">
+                    <label for="busca" class="area-sub" style="display:block;margin-bottom:6px">CPF ou nome do obreiro</label>
+                    <input id="busca" class="campo" type="search" autocomplete="off" placeholder="Digite o CPF ou o nome">
+                    <ul class="resultados" id="resultados"></ul>
+                </section>
+
+                <section class="area-card ficha" id="ficha" hidden></section>
+
+                <section class="area-card" id="novo" hidden>
+                    <h2>Cadastrar na recepção</h2>
+                    <p class="area-sub">Nenhuma inscrição com o CPF <b id="novo-cpf"></b>. Cadastre e confirme a presença de uma vez.</p>
+                    <form class="grid-form" id="form-novo">
+                        <label>Nome completo <input class="campo" name="nome" required minlength="3"></label>
+                        <label>Função
+                            <select class="campo" name="funcao" required>
+                                <option value="">Selecione</option>
+                                <option>Pastor</option><option>Evangelista</option><option>Presbítero</option>
+                                <option>Diácono</option><option>Auxiliar</option><option>Líder de departamento</option><option>Outro</option>
+                            </select>
+                        </label>
+                        <label>Congregação / cidade <input class="campo" name="congregacao" required></label>
+                        <label>WhatsApp <input class="campo" name="whatsapp" type="tel"></label>
+                        <button type="submit" class="btn btn-oak btn-block">Cadastrar e confirmar presença</button>
+                    </form>
+                </section>
+            </div>
+
+            <!-- ===== Inscritos ===== -->
+            <div data-painel="inscritos" hidden>
+                <section class="area-card">
+                    <div class="toolbar">
+                        <input id="filtro" class="campo" type="search" placeholder="Filtrar por nome, CPF ou congregação">
+                        <button type="button" class="btn btn-ghost btn-sm" id="btn-csv">CSV</button>
+                    </div>
+                    <p class="area-sub" id="lista-resumo"></p>
+                    <div id="lista"></div>
+                </section>
+            </div>
+
+            <!-- ===== Configurações ===== -->
+            <div data-painel="config" hidden>
+                <section class="area-card">
+                    <h2>Certificado</h2>
+                    <label class="switch">
+                        <span>Liberar certificado para download<br><small class="area-sub">Ligue depois da última palestra.</small></span>
+                        <input type="checkbox" id="cfg-liberado">
+                    </label>
+                    <label class="switch">
+                        <span>Dias de presença exigidos</span>
+                        <select class="campo" id="cfg-minima" style="width:auto;min-height:42px;font-size:1rem">
+                            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        </select>
+                    </label>
+                </section>
+
+                <section class="area-card">
+                    <h2>Materiais</h2>
+                    <p class="area-sub">Links que aparecem na Área do Obreiro (Google Drive, PDF no site etc.).</p>
+                    <div id="cfg-materiais"></div>
+                    <button type="button" class="btn btn-ghost btn-block btn-sm" id="btn-add-mat">+ Adicionar material</button>
+                </section>
+
+                <button type="button" class="btn btn-oak btn-block" id="btn-salvar-cfg">Salvar configurações</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="/scripts/80anos-comum.js"></script>
+    <script>
+        // ============================================================
+        //  Quem pode usar a recepção (manter igual à lista em firestore.rules)
+        // ============================================================
+        var ADMIN_EMAILS = [
+            'ravelsoares64@gmail.com',
+            // adicione aqui os e-mails da equipe da recepção…
+        ];
+
+        (function () {
+            var db = iniciarFirebase80();
+            var auth = firebase.auth();
+            var col = db.collection(COL_INSCRICOES_80);
+            var inscritos = [];      // lista ao vivo
+            var cancelar = null;     // onSnapshot
+            var selecionado = null;  // cpf da ficha aberta
+            var cfg = null;
+            var $ = function (id) { return document.getElementById(id); };
+
+            // Dia do check-in: hoje se for dia de EBO, senão o primeiro
+            var hojeChave = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Fortaleza', day: '2-digit', month: '2-digit', year: 'numeric' });
+            var diaAtual = (DIAS_EBO_80.filter(function (d) { return hojeChave === d.dia + '/11/2026'; })[0] || DIAS_EBO_80[0]).dia;
+
+            function telas(qual) {
+                ['tela-login', 'tela-negado', 'tela-carregando', 'tela-app'].forEach(function (id) { $(id).hidden = id !== qual; });
+                $('rec-user').hidden = qual !== 'tela-app';
+            }
+
+            function toast(texto, erro) {
+                var t = document.createElement('div');
+                t.className = 'toast' + (erro ? ' erro' : '');
+                t.textContent = texto;
+                document.body.appendChild(t);
+                setTimeout(function () { t.remove(); }, 2600);
+            }
+
+            function normalizar(s) {
+                return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+            }
+
+            // ===== Login =====
+            function entrarGoogle() {
+                var p = new firebase.auth.GoogleAuthProvider();
+                p.setCustomParameters({ prompt: 'select_account' });
+                auth.signInWithPopup(p).catch(function (e) { if (e.code && e.code.indexOf('popup') >= 0) auth.signInWithRedirect(p); });
+            }
+            $('btn-google').onclick = entrarGoogle;
+            $('btn-trocar').onclick = function () { auth.signOut().then(entrarGoogle); };
+            $('btn-sair').onclick = function () { auth.signOut(); };
+
+            auth.onAuthStateChanged(function (u) {
+                if (cancelar) { cancelar(); cancelar = null; }
+                if (!u) return telas('tela-login');
+                if (ADMIN_EMAILS.indexOf((u.email || '').toLowerCase()) < 0) {
+                    $('negado-email').textContent = u.email;
+                    return telas('tela-negado');
+                }
+                $('me-foto').src = u.photoURL || '';
+                $('me-foto').hidden = !u.photoURL;
+                $('me-nome').textContent = (u.displayName || u.email).split(' ')[0];
+                telas('tela-carregando');
+                iniciar();
+            });
+
+            function iniciar() {
+                lerConfig80(db).then(function (c) { cfg = c; renderConfig(); });
+                cancelar = col.onSnapshot(function (snap) {
+                    inscritos = snap.docs.map(function (d) { return d.data(); })
+                        .sort(function (a, b) { return a.nome.localeCompare(b.nome, 'pt-BR'); });
+                    telas('tela-app');
+                    renderKpis();
+                    buscar();
+                    if (selecionado) abrirFicha(selecionado);
+                    renderLista();
+                }, function (err) {
+                    console.error(err);
+                    $('tela-carregando').textContent = 'Erro ao carregar: ' + err.message;
+                    telas('tela-carregando');
+                });
+            }
+
+            // ===== Abas =====
+            document.querySelectorAll('.abas button').forEach(function (b) {
+                b.onclick = function () {
+                    document.querySelectorAll('.abas button').forEach(function (x) { x.setAttribute('aria-selected', x === b); });
+                    document.querySelectorAll('[data-painel]').forEach(function (p) { p.hidden = p.dataset.painel !== b.dataset.aba; });
+                };
+            });
+
+            // ===== Check-in =====
+            function renderDias() {
+                $('seg-dias').innerHTML = DIAS_EBO_80.map(function (d) {
+                    return '<button type="button" data-dia="' + d.dia + '" aria-pressed="' + (d.dia === diaAtual) + '">'
+                        + d.rotulo.split(' · ')[1] + '<small>' + d.tema + '</small></button>';
+                }).join('');
+                $('seg-dias').querySelectorAll('button').forEach(function (b) {
+                    b.onclick = function () {
+                        diaAtual = b.dataset.dia;
+                        renderDias();
+                        renderKpis();
+                        buscar();
+                        if (selecionado) abrirFicha(selecionado);
+                    };
+                });
+            }
+            renderDias();
+
+            function renderKpis() {
+                var presentes = inscritos.filter(function (i) { return i.presenca && i.presenca[diaAtual]; }).length;
+                $('k-hoje').textContent = presentes;
+                $('k-total').textContent = inscritos.length;
+                $('k-falta').textContent = inscritos.length - presentes;
+            }
+
+            function buscar() {
+                var termo = $('busca').value.trim();
+                var digitos = cpfSoNumeros(termo);
+                var ul = $('resultados');
+                $('novo').hidden = true;
+                if (!termo) { ul.innerHTML = ''; return; }
+
+                var achados;
+                if (/^[\d.\-\s]+$/.test(termo)) {
+                    achados = inscritos.filter(function (i) { return i.cpf.indexOf(digitos) === 0; });
+                    // CPF completo e válido sem inscrição: oferece cadastro na hora
+                    if (!achados.length && digitos.length === 11 && cpfValido(digitos)) {
+                        $('novo-cpf').textContent = cpfFormatar(digitos);
+                        $('novo').hidden = false;
+                        $('ficha').hidden = true;
+                    }
+                } else {
+                    var n = normalizar(termo);
+                    achados = inscritos.filter(function (i) { return normalizar(i.nome).indexOf(n) >= 0; });
+                }
+                ul.innerHTML = achados.slice(0, 8).map(function (i) {
+                    var ok = i.presenca && i.presenca[diaAtual];
+                    return '<li><button type="button" data-cpf="' + i.cpf + '"><span>' + escaparHtml(i.nome)
+                        + '<small>' + cpfFormatar(i.cpf) + ' · ' + escaparHtml(i.congregacao || '') + '</small></span>'
+                        + (ok ? '<span class="tag-ok">Presente</span>' : '') + '</button></li>';
+                }).join('') || (($('novo').hidden) ? '<li class="area-sub">Nenhum inscrito encontrado.</li>' : '');
+                ul.querySelectorAll('button').forEach(function (b) { b.onclick = function () { abrirFicha(b.dataset.cpf); }; });
+
+                // Achou exatamente um CPF completo: abre direto
+                if (digitos.length === 11 && achados.length === 1 && selecionado !== achados[0].cpf) abrirFicha(achados[0].cpf);
+            }
+            $('busca').addEventListener('input', buscar);
+
+            function abrirFicha(cpf) {
+                var i = inscritos.filter(function (x) { return x.cpf === cpf; })[0];
+                var ficha = $('ficha');
+                if (!i) { ficha.hidden = true; selecionado = null; return; }
+                selecionado = cpf;
+                var p = i.presenca || {};
+                var dia = DIAS_EBO_80.filter(function (d) { return d.dia === diaAtual; })[0];
+                var presente = !!p[diaAtual];
+                ficha.hidden = false;
+                ficha.innerHTML = '<p class="eyebrow">' + escaparHtml(i.funcao || '') + '</p>'
+                    + '<h2>' + escaparHtml(i.nome) + '</h2>'
+                    + '<p class="area-sub">' + cpfFormatar(i.cpf) + ' · ' + escaparHtml(i.congregacao || '')
+                    + (i.hospedagem ? ' · <b>precisa de hospedagem</b>' : '') + '</p>'
+                    + '<ul class="dias">' + DIAS_EBO_80.map(function (d) {
+                        var ts = p[d.dia];
+                        var hora = ts && ts.toDate ? ts.toDate().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
+                        return '<li class="dia ' + (ts ? 'dia-ok' : '') + '"><span class="dia-icone">' + (ts ? '✓' : '') + '</span>'
+                            + '<span class="dia-txt"><b>' + d.rotulo + '</b><small>' + (ts ? 'Presente' + (hora ? ' · ' + hora : '') : 'Sem check-in') + '</small></span></li>';
+                    }).join('') + '</ul>'
+                    + (presente
+                        ? '<p class="area-msg ok">Presença de ' + dia.rotulo + ' já confirmada.</p><button type="button" class="btn-link" id="btn-desfazer">Desfazer check-in deste dia</button>'
+                        : '<button type="button" class="btn btn-oak btn-block btn-grande" id="btn-checkin">Confirmar presença · ' + dia.rotulo + '</button>');
+                if ($('btn-checkin')) $('btn-checkin').onclick = function () { marcar(cpf, true, this); };
+                if ($('btn-desfazer')) $('btn-desfazer').onclick = function () {
+                    if (confirm('Remover a presença de ' + i.nome + ' em ' + dia.rotulo + '?')) marcar(cpf, false, this);
+                };
+            }
+
+            function marcar(cpf, presente, botao) {
+                botao.disabled = true;
+                var valor = presente ? firebase.firestore.FieldValue.serverTimestamp() : firebase.firestore.FieldValue.delete();
+                col.doc(cpf).update(new firebase.firestore.FieldPath('presenca', diaAtual), valor).then(function () {
+                    toast(presente ? 'Presença confirmada ✓' : 'Check-in removido');
+                    if (presente) { $('busca').value = ''; $('resultados').innerHTML = ''; $('busca').focus(); }
+                }).catch(function (err) {
+                    console.error(err);
+                    toast('Erro: ' + err.message, true);
+                    botao.disabled = false;
+                });
+            }
+
+            $('form-novo').addEventListener('submit', function (e) {
+                e.preventDefault();
+                var f = e.target;
+                var cpf = cpfSoNumeros($('busca').value);
+                if (!cpfValido(cpf)) return toast('CPF inválido', true);
+                var presenca = {};
+                presenca[diaAtual] = firebase.firestore.FieldValue.serverTimestamp();
+                col.doc(cpf).set({
+                    cpf: cpf,
+                    nome: f.nome.value.trim().replace(/\s+/g, ' '),
+                    funcao: f.funcao.value,
+                    congregacao: f.congregacao.value.trim(),
+                    whatsapp: f.whatsapp.value.trim(),
+                    hospedagem: false,
+                    origem: 'recepcao',
+                    criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
+                    presenca: presenca
+                }).then(function () {
+                    toast('Cadastrado e presente ✓');
+                    f.reset();
+                    $('novo').hidden = true;
+                    $('busca').value = '';
+                    $('resultados').innerHTML = '';
+                }).catch(function (err) { toast('Erro: ' + err.message, true); });
+            });
+
+            // ===== Lista de inscritos =====
+            function filtrados() {
+                var t = normalizar($('filtro').value.trim());
+                var d = cpfSoNumeros(t);
+                if (!t) return inscritos;
+                return inscritos.filter(function (i) {
+                    return normalizar(i.nome + ' ' + i.congregacao + ' ' + i.funcao).indexOf(t) >= 0 || (d && i.cpf.indexOf(d) >= 0);
+                });
+            }
+
+            function renderLista() {
+                var l = filtrados();
+                var hosp = l.filter(function (i) { return i.hospedagem; }).length;
+                $('lista-resumo').textContent = l.length + ' inscrito(s)' + (hosp ? ' · ' + hosp + ' precisam de hospedagem' : '');
+                $('lista').innerHTML = l.map(function (i) {
+                    var p = i.presenca || {};
+                    return '<div class="linha"><span>' + escaparHtml(i.nome) + '<small>' + escaparHtml([i.funcao, i.congregacao].filter(Boolean).join(' · '))
+                        + (i.whatsapp ? ' · ' + escaparHtml(i.whatsapp) : '') + '</small></span>'
+                        + '<span class="presencas">' + DIAS_EBO_80.map(function (d) {
+                            return '<i class="' + (p[d.dia] ? 'on' : '') + '" title="' + d.rotulo + '">' + d.dia + '</i>';
+                        }).join('') + '</span></div>';
+                }).join('') || '<p class="area-sub">Nenhuma inscrição ainda.</p>';
+            }
+            $('filtro').addEventListener('input', renderLista);
+
+            $('btn-csv').onclick = function () {
+                var cab = ['CPF', 'Nome', 'Função', 'Congregação', 'WhatsApp', 'Hospedagem', 'Origem']
+                    .concat(DIAS_EBO_80.map(function (d) { return 'Presença ' + d.dia + '/11'; })).concat(['Total']);
+                var linhas = inscritos.map(function (i) {
+                    var p = i.presenca || {};
+                    return [cpfFormatar(i.cpf), i.nome, i.funcao, i.congregacao, i.whatsapp, i.hospedagem ? 'sim' : 'não', i.origem]
+                        .concat(DIAS_EBO_80.map(function (d) { return p[d.dia] ? 'sim' : ''; }))
+                        .concat([contarPresencas(i)]);
+                });
+                var csv = [cab].concat(linhas).map(function (r) {
+                    return r.map(function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }).join(';');
+                }).join('\r\n');
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
+                a.download = 'inscritos-ebo-80anos.csv';
+                a.click();
+            };
+
+            // ===== Configurações =====
+            function renderConfig() {
+                $('cfg-liberado').checked = cfg.certificadoLiberado;
+                $('cfg-minima').value = String(cfg.presencaMinima);
+                renderMateriais();
+            }
+
+            function renderMateriais() {
+                $('cfg-materiais').innerHTML = cfg.materiais.map(function (m, idx) {
+                    return '<div class="mat-item" data-idx="' + idx + '">'
+                        + '<input class="campo" data-k="titulo" placeholder="Título (ex.: Apostila · Dia 1)" value="' + escaparHtml(m.titulo) + '">'
+                        + '<input class="campo" data-k="descricao" placeholder="Descrição (opcional)" value="' + escaparHtml(m.descricao || '') + '">'
+                        + '<input class="campo" data-k="url" placeholder="https://..." value="' + escaparHtml(m.url) + '">'
+                        + '<button type="button" class="btn-link" data-remover="' + idx + '">Remover</button></div>';
+                }).join('') || '<p class="area-sub">Nenhum material cadastrado.</p>';
+                $('cfg-materiais').querySelectorAll('input').forEach(function (inp) {
+                    inp.oninput = function () { cfg.materiais[inp.parentNode.dataset.idx][inp.dataset.k] = inp.value; };
+                });
+                $('cfg-materiais').querySelectorAll('[data-remover]').forEach(function (b) {
+                    b.onclick = function () { cfg.materiais.splice(Number(b.dataset.remover), 1); renderMateriais(); };
+                });
+            }
+
+            $('btn-add-mat').onclick = function () {
+                cfg.materiais.push({ titulo: '', descricao: '', url: '' });
+                renderMateriais();
+            };
+
+            $('btn-salvar-cfg').onclick = function () {
+                var materiais = cfg.materiais
+                    .map(function (m) { return { titulo: (m.titulo || '').trim(), descricao: (m.descricao || '').trim(), url: (m.url || '').trim() }; })
+                    .filter(function (m) { return m.titulo && m.url; });
+                var invalido = materiais.filter(function (m) { return !/^(https?:\/\/|\/)/i.test(m.url); })[0];
+                if (invalido) return toast('Link inválido em "' + invalido.titulo + '"', true);
+                db.doc(DOC_CONFIG_80).set({
+                    certificadoLiberado: $('cfg-liberado').checked,
+                    presencaMinima: Number($('cfg-minima').value),
+                    materiais: materiais,
+                    atualizadoEm: firebase.firestore.FieldValue.serverTimestamp(),
+                    atualizadoPor: auth.currentUser.email
+                }).then(function () {
+                    cfg.materiais = materiais;
+                    renderMateriais();
+                    toast('Configurações salvas ✓');
+                }).catch(function (err) { toast('Erro: ' + err.message, true); });
+            };
+        })();
+    </script>
+</body>
+
+</html>

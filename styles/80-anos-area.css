@@ -1,0 +1,291 @@
+/* ===== 80 anos · Área do Obreiro e Recepção (usa as variáveis de 80-anos.css) ===== */
+body.area {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(22, 41, 107, 0.9), transparent 60%),
+        linear-gradient(180deg, var(--azul-escuro), var(--azul-noite));
+    background-attachment: fixed;
+}
+
+.area-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    max-width: 640px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.area-back {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.area-sair {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: transparent;
+    color: #fff;
+    border-radius: 999px;
+    padding: 6px 16px;
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.area-main {
+    flex: 1;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 16px 32px;
+}
+
+.area-logo {
+    display: block;
+    width: 150px;
+    height: auto;
+    margin: 4px auto 20px;
+}
+
+.area-card {
+    padding: 22px 20px;
+    margin-bottom: 14px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.area-card h1 {
+    font-size: 2.1rem;
+    margin-bottom: 8px;
+}
+
+.area-card h2 {
+    font-size: 1.5rem;
+}
+
+.area-card .eyebrow {
+    color: var(--carvalho-claro);
+}
+
+.area-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.area-sub {
+    margin: 0 0 14px;
+    font-size: 0.92rem;
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.area-hello h1 {
+    font-size: 1.9rem;
+}
+
+.area-hello .area-sub {
+    margin: 0;
+}
+
+.area-form {
+    display: grid;
+    gap: 10px;
+}
+
+.area-form label {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.area-form input,
+.campo {
+    width: 100%;
+    min-height: 52px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(10, 21, 56, 0.6);
+    color: #fff;
+    font: inherit;
+    font-size: 1.15rem;
+    letter-spacing: 1px;
+}
+
+.area-form input:focus,
+.campo:focus {
+    outline: 2px solid var(--carvalho-claro);
+    outline-offset: 1px;
+}
+
+.area-msg {
+    margin: 0;
+    min-height: 1.2em;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.area-msg.erro {
+    color: #ffb4a8;
+}
+
+.area-msg.ok {
+    color: #9fe3b0;
+}
+
+.area-msg a {
+    color: var(--carvalho-claro);
+    font-weight: 700;
+}
+
+.pill {
+    flex-shrink: 0;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: rgba(196, 154, 108, 0.2);
+    color: var(--carvalho-palido);
+}
+
+/* ===== Dias de presença ===== */
+.dias {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.dia {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dia-icone {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    font-weight: 700;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+}
+
+.dia-txt b {
+    display: block;
+    font-size: 0.95rem;
+}
+
+.dia-txt small {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.dia-ok {
+    border-color: rgba(196, 154, 108, 0.5);
+    background: rgba(139, 90, 43, 0.18);
+}
+
+.dia-ok .dia-icone {
+    border: 0;
+    background: linear-gradient(135deg, var(--carvalho-claro), var(--carvalho));
+}
+
+.dia-ok small {
+    color: var(--carvalho-palido);
+}
+
+.dia-falta .dia-icone {
+    border-style: solid;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* ===== Materiais ===== */
+.materiais {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.materiais a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.materiais a:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.mat-icone {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: var(--carvalho);
+    font-weight: 700;
+}
+
+.materiais b {
+    display: block;
+    font-size: 0.95rem;
+}
+
+.materiais small {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.materiais .vazio {
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+/* ===== Certificado ===== */
+.cert-status {
+    margin: 8px 0 6px;
+    font-weight: 700;
+}
+
+.cadeado {
+    margin-right: 6px;
+}
+
+.area-cert.liberado {
+    border-color: rgba(196, 154, 108, 0.6);
+    background: linear-gradient(160deg, rgba(139, 90, 43, 0.35), rgba(255, 255, 255, 0.04));
+}
+
+.area-foot {
+    padding: 20px 16px 28px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+}

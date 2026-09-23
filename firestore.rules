@@ -30,5 +30,47 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == uid;
     }
+
+    // ============================================================
+    //  80 ANOS AD PATU · EBO (inscrição por CPF, check-in na recepção)
+    //  Manter a lista de e-mails igual a ADMIN_EMAILS em recepcao-80.html
+    // ============================================================
+    function isRecepcao80() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() in [
+          'ravelsoares64@gmail.com'
+        ];
+    }
+
+    match /inscricoes-80anos/{cpf} {
+      // Quem sabe o CPF consulta a própria inscrição; listar todas só a recepção
+      allow get: if true;
+      allow list: if isRecepcao80();
+
+      // Inscrição pelo site: só campos esperados, sem presença, id = CPF
+      allow create: if isRecepcao80() || (
+        cpf.matches('^[0-9]{11}$')
+        && request.resource.data.keys().hasOnly(
+             ['cpf', 'nome', 'whatsapp', 'funcao', 'congregacao', 'hospedagem', 'origem', 'criadoEm'])
+        && request.resource.data.cpf == cpf
+        && request.resource.data.nome is string
+        && request.resource.data.nome.size() >= 3 && request.resource.data.nome.size() <= 120
+        && request.resource.data.whatsapp is string && request.resource.data.whatsapp.size() <= 30
+        && request.resource.data.funcao is string && request.resource.data.funcao.size() <= 40
+        && request.resource.data.congregacao is string && request.resource.data.congregacao.size() <= 120
+        && request.resource.data.hospedagem is bool
+        && request.resource.data.origem == 'site'
+        && request.resource.data.criadoEm == request.time
+      );
+
+      // Check-in, correções e exclusões: só a recepção
+      allow update, delete: if isRecepcao80();
+    }
+
+    match /config-80anos/{doc} {
+      allow read: if true;
+      allow write: if isRecepcao80();
+    }
   }
 }

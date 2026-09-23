@@ -65,6 +65,14 @@
         "destination": "/80-anos.html"
       },
       {
+        "source": "/80anos/obreiro",
+        "destination": "/obreiro-80.html"
+      },
+      {
+        "source": "/80anos/recepcao",
+        "destination": "/recepcao-80.html"
+      },
+      {
         "source": "/umadcamp",
         "destination": "/home.html"
       },

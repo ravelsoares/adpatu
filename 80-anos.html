@@ -32,6 +32,7 @@
             <a href="#ebo">EBO</a>
             <a href="#preletores">Preletores</a>
             <a href="#galeria">Fotos</a>
+            <a href="/80anos/obreiro">Área do Obreiro</a>
             <a href="#inscricoes" class="nav-cta">Inscreva-se</a>
         </nav>
     </header>
@@ -301,7 +302,10 @@
                 das aulas da Escola Bíblica.</p>
 
             <form class="form" id="form-inscricao" novalidate>
-                <label>Nome completo
+                <label>CPF
+                    <input type="text" name="cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" maxlength="14" required>
+                </label>
+                <label>Nome completo <small class="form-hint">como deve sair no certificado</small>
                     <input type="text" name="nome" autocomplete="name" required>
                 </label>
                 <label>WhatsApp
@@ -328,9 +332,22 @@
                     <input type="checkbox" name="hospedagem">
                     <span>Preciso de hospedagem</span>
                 </label>
-                <button type="submit" class="btn btn-oak btn-block">Enviar inscrição</button>
+                <button type="submit" class="btn btn-oak btn-block" id="btn-inscrever">Enviar inscrição</button>
                 <p class="form-msg" id="form-msg" role="status"></p>
             </form>
+
+            <div class="form-done" id="form-done" hidden>
+                <p class="form-done-icon" aria-hidden="true">✓</p>
+                <h3 id="done-titulo">Inscrição confirmada!</h3>
+                <p id="done-texto">Guarde o seu CPF: é com ele que você entra na Área do Obreiro para baixar os
+                    materiais, acompanhar sua presença e, no fim, emitir o certificado.</p>
+                <a href="/80anos/obreiro" class="btn btn-oak btn-block" id="done-link">Abrir a Área do Obreiro</a>
+            </div>
+
+            <a href="/80anos/obreiro" class="area-link">
+                <span>Já se inscreveu?</span>
+                <b>Entrar na Área do Obreiro →</b>
+            </a>
         </div>
     </section>
 
@@ -358,6 +375,9 @@
         <a href="/">Voltar para a página inicial</a>
     </footer>
 
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="scripts/80anos-comum.js"></script>
     <script>
         (function () {
             // Menu mobile
@@ -410,19 +430,56 @@
                 });
             });
 
-            // Formulário (protótipo: ainda não grava em lugar nenhum)
+            // Inscrição: grava em inscricoes-80anos/{cpf}
+            var db = iniciarFirebase80();
             var form = document.getElementById('form-inscricao');
             var msg = document.getElementById('form-msg');
+            var btn = document.getElementById('btn-inscrever');
+            cpfMascarar(form.cpf);
+
+            function erro(t) { msg.textContent = t; msg.className = 'form-msg erro'; }
+
+            function concluir(cpf, jaInscrito, nome) {
+                if (jaInscrito) {
+                    document.getElementById('done-titulo').textContent = 'Você já está inscrito(a)!';
+                    document.getElementById('done-texto').textContent = 'Encontramos uma inscrição com este CPF'
+                        + (nome ? ' em nome de ' + nome : '') + '. É só entrar na Área do Obreiro.';
+                }
+                document.getElementById('done-link').href = '/80anos/obreiro?cpf=' + cpf;
+                try { localStorage.setItem('obreiro80-cpf', cpf); } catch (e) { }
+                form.hidden = true;
+                document.getElementById('form-done').hidden = false;
+            }
+
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
-                if (!form.checkValidity()) {
-                    msg.textContent = 'Preencha todos os campos para continuar.';
-                    msg.className = 'form-msg erro';
-                    return;
-                }
-                msg.textContent = 'Inscrição recebida! (protótipo: os dados ainda não são salvos)';
-                msg.className = 'form-msg ok';
-                form.reset();
+                var cpf = cpfSoNumeros(form.cpf.value);
+                if (!cpfValido(cpf)) return erro('CPF inválido. Confira os números.');
+                if (!form.checkValidity()) return erro('Preencha todos os campos para continuar.');
+
+                btn.disabled = true;
+                btn.textContent = 'Enviando...';
+                msg.textContent = '';
+                var ref = db.collection(COL_INSCRICOES_80).doc(cpf);
+                ref.get().then(function (snap) {
+                    if (snap.exists) return concluir(cpf, true, snap.data().nome);
+                    return ref.set({
+                        cpf: cpf,
+                        nome: form.nome.value.trim().replace(/\s+/g, ' '),
+                        whatsapp: form.whatsapp.value.trim(),
+                        funcao: form.funcao.value,
+                        congregacao: form.congregacao.value.trim(),
+                        hospedagem: form.hospedagem.checked,
+                        origem: 'site',
+                        criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+                    }).then(function () { concluir(cpf, false); });
+                }).catch(function (err) {
+                    console.error(err);
+                    erro('Não foi possível enviar agora. Verifique sua internet e tente de novo.');
+                }).then(function () {
+                    btn.disabled = false;
+                    btn.textContent = 'Enviar inscrição';
+                });
             });
 
             // Revela as seções ao rolar
