@@ -239,17 +239,15 @@ h3 {
 }
 
 .hero-logo {
-    margin: 0 auto 20px;
-    width: min(78vw, 320px);
+    margin: -8px auto 12px;
+    width: min(92vw, 400px);
 }
 
 .hero-logo img {
     display: block;
     width: 100%;
     height: auto;
-    border-radius: 28px;
-    border: 1px solid rgba(196, 154, 108, 0.45);
-    box-shadow: 0 0 0 6px rgba(196, 154, 108, 0.12), 0 18px 40px rgba(0, 0, 0, 0.45);
+    filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.4));
     animation: surgir 1s ease-out both;
 }
 
@@ -1118,7 +1116,7 @@ h3 {
     }
 
     .hero-logo {
-        width: 360px;
+        width: 500px;
     }
 
     /* linha do tempo com o ano à esquerda */
