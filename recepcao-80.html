@@ -342,7 +342,7 @@
                 ficha.innerHTML = '<p class="eyebrow">' + escaparHtml(i.funcao || '') + '</p>'
                     + '<h2>' + escaparHtml(i.nome) + '</h2>'
                     + '<p class="area-sub">' + cpfFormatar(i.cpf) + ' · ' + escaparHtml(i.congregacao || '')
-                    + (i.hospedagem ? ' · <b>precisa de hospedagem</b>' : '') + '</p>'
+                    + '</p>'
                     + '<ul class="dias">' + DIAS_EBO_80.map(function (d) {
                         var ts = p[d.dia];
                         var hora = ts && ts.toDate ? ts.toDate().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
@@ -384,7 +384,6 @@
                     funcao: f.funcao.value,
                     congregacao: f.congregacao.value.trim(),
                     whatsapp: f.whatsapp.value.trim(),
-                    hospedagem: false,
                     origem: 'recepcao',
                     criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
                     presenca: presenca
@@ -409,8 +408,7 @@
 
             function renderLista() {
                 var l = filtrados();
-                var hosp = l.filter(function (i) { return i.hospedagem; }).length;
-                $('lista-resumo').textContent = l.length + ' inscrito(s)' + (hosp ? ' · ' + hosp + ' precisam de hospedagem' : '');
+                $('lista-resumo').textContent = l.length + ' inscrito(s)';
                 $('lista').innerHTML = l.map(function (i) {
                     var p = i.presenca || {};
                     return '<div class="linha"><span>' + escaparHtml(i.nome) + '<small>' + escaparHtml([i.funcao, i.congregacao].filter(Boolean).join(' · '))
@@ -423,11 +421,11 @@
             $('filtro').addEventListener('input', renderLista);
 
             $('btn-csv').onclick = function () {
-                var cab = ['CPF', 'Nome', 'Função', 'Congregação', 'WhatsApp', 'Hospedagem', 'Origem']
+                var cab = ['CPF', 'Nome', 'Função', 'Congregação', 'WhatsApp', 'Origem']
                     .concat(DIAS_EBO_80.map(function (d) { return 'Presença ' + d.dia + '/11'; })).concat(['Total']);
                 var linhas = inscritos.map(function (i) {
                     var p = i.presenca || {};
-                    return [cpfFormatar(i.cpf), i.nome, i.funcao, i.congregacao, i.whatsapp, i.hospedagem ? 'sim' : 'não', i.origem]
+                    return [cpfFormatar(i.cpf), i.nome, i.funcao, i.congregacao, i.whatsapp, i.origem]
                         .concat(DIAS_EBO_80.map(function (d) { return p[d.dia] ? 'sim' : ''; }))
                         .concat([contarPresencas(i)]);
                 });

@@ -328,10 +328,6 @@
                         <input type="text" name="congregacao" required>
                     </label>
                 </div>
-                <label class="check">
-                    <input type="checkbox" name="hospedagem">
-                    <span>Preciso de hospedagem</span>
-                </label>
                 <button type="submit" class="btn btn-oak btn-block" id="btn-inscrever">Enviar inscrição</button>
                 <p class="form-msg" id="form-msg" role="status"></p>
             </form>
@@ -469,13 +465,14 @@
                         whatsapp: form.whatsapp.value.trim(),
                         funcao: form.funcao.value,
                         congregacao: form.congregacao.value.trim(),
-                        hospedagem: form.hospedagem.checked,
                         origem: 'site',
                         criadoEm: firebase.firestore.FieldValue.serverTimestamp()
                     }).then(function () { concluir(cpf, false); });
                 }).catch(function (err) {
                     console.error(err);
-                    erro('Não foi possível enviar agora. Verifique sua internet e tente de novo.');
+                    erro(err && err.code === 'permission-denied'
+                        ? 'As inscrições ainda não estão abertas no sistema. Tente novamente mais tarde.'
+                        : 'Não foi possível enviar agora. Verifique sua internet e tente de novo.');
                 }).then(function () {
                     btn.disabled = false;
                     btn.textContent = 'Enviar inscrição';

@@ -52,14 +52,13 @@ service cloud.firestore {
       allow create: if isRecepcao80() || (
         cpf.matches('^[0-9]{11}$')
         && request.resource.data.keys().hasOnly(
-             ['cpf', 'nome', 'whatsapp', 'funcao', 'congregacao', 'hospedagem', 'origem', 'criadoEm'])
+             ['cpf', 'nome', 'whatsapp', 'funcao', 'congregacao', 'origem', 'criadoEm'])
         && request.resource.data.cpf == cpf
         && request.resource.data.nome is string
         && request.resource.data.nome.size() >= 3 && request.resource.data.nome.size() <= 120
         && request.resource.data.whatsapp is string && request.resource.data.whatsapp.size() <= 30
         && request.resource.data.funcao is string && request.resource.data.funcao.size() <= 40
         && request.resource.data.congregacao is string && request.resource.data.congregacao.size() <= 120
-        && request.resource.data.hospedagem is bool
         && request.resource.data.origem == 'site'
         && request.resource.data.criadoEm == request.time
       );
