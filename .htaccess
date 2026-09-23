@@ -9,7 +9,8 @@ RewriteRule ^cadastro/?$ cadastro-adpatu.html [L]
 RewriteRule ^agenda/?$ agenda-adpatu.html [L]
 
 # 80 anos AD Patu
-RewriteRule ^80anos/?$ 80-anos.html [L]
+RewriteRule ^80anos/$ /80anos [R=301,L]
+RewriteRule ^80anos$ 80-anos.html [L]
 RewriteRule ^80anos/obreiro/?$ obreiro-80.html [L]
 RewriteRule ^80anos/recepcao/?$ recepcao-80.html [L]
 
