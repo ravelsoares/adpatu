@@ -8,6 +8,11 @@ RewriteRule ^login/?$ login-adpatu.html [L]
 RewriteRule ^cadastro/?$ cadastro-adpatu.html [L]
 RewriteRule ^agenda/?$ agenda-adpatu.html [L]
 
+# 80 anos AD Patu
+RewriteRule ^80anos/?$ 80-anos.html [L]
+RewriteRule ^80anos/obreiro/?$ obreiro-80.html [L]
+RewriteRule ^80anos/recepcao/?$ recepcao-80.html [L]
+
 # Umadcamp section mappings
 RewriteRule ^umadcamp/?$ home.html [L]
 RewriteRule ^umadcamp/home/?$ home.html [L]
