@@ -33,11 +33,71 @@
             <a href="#">Notícias e anúncios</a> -->
         </div>
 
+        <!-- Player da Rádio Libertadora 96.3 FM (Mossoró/RN) -->
+        <div class="radio-player" id="radio-player">
+            <button class="radio-btn" id="radio-btn" aria-label="Ouvir rádio">
+                <svg class="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                <svg class="icon-pause" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z" /></svg>
+                <span class="radio-spinner"></span>
+            </button>
+            <div class="radio-info">
+                <span class="radio-live"><span class="radio-dot"></span>AO VIVO</span>
+                <strong>Rádio Libertadora 96,3 FM</strong>
+                <small id="radio-status">Toque para ouvir</small>
+            </div>
+            <input type="range" id="radio-volume" class="radio-volume" min="0" max="1" step="0.05" value="1"
+                aria-label="Volume">
+        </div>
+
         <div class="footer">
             <p><img src="images/instagram-logo.png" height="24px"> Siga <a href="https://instagram.com/adpatu"
                     target="_blank">@adpatu</a></p>
         </div>
     </div>
+
+    <script>
+        (function () {
+            // Stream ao vivo (Shoutcast via HTTPS)
+            var STREAM = 'https://stm12.pluscast.com.br:7222/;';
+            var player = document.getElementById('radio-player');
+            var btn = document.getElementById('radio-btn');
+            var status = document.getElementById('radio-status');
+            var volume = document.getElementById('radio-volume');
+            var audio = new Audio();
+            audio.preload = 'none';
+
+            function setState(state, msg) {
+                player.dataset.state = state;
+                status.textContent = msg;
+            }
+
+            btn.addEventListener('click', function () {
+                if (player.dataset.state === 'playing' || player.dataset.state === 'loading') {
+                    // Em rádio ao vivo, pausar = desconectar; ao voltar, entra no "agora"
+                    audio.pause();
+                    audio.removeAttribute('src');
+                    audio.load();
+                    setState('idle', 'Toque para ouvir');
+                    return;
+                }
+                setState('loading', 'Conectando...');
+                audio.src = STREAM + '?t=' + Date.now();
+                audio.play().catch(function () {
+                    setState('error', 'Não foi possível conectar. Tente de novo.');
+                });
+            });
+
+            audio.addEventListener('playing', function () { setState('playing', 'Tocando agora'); });
+            audio.addEventListener('waiting', function () {
+                if (player.dataset.state === 'playing') setState('loading', 'Carregando...');
+            });
+            audio.addEventListener('error', function () {
+                if (audio.getAttribute('src')) setState('error', 'Rádio fora do ar no momento.');
+            });
+
+            volume.addEventListener('input', function () { audio.volume = volume.value; });
+        })();
+    </script>
 </body>
 
 </html>
