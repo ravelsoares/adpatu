@@ -1,5 +1,8 @@
 RewriteEngine On
 
+# Bloqueia acesso publico a pasta .git e arquivos ocultos
+RewriteRule (^|/)\.(git|env) - [F,L]
+
 # Define index file
 DirectoryIndex home-adpatu.html
 
