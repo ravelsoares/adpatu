@@ -432,6 +432,28 @@ h3 {
     color: rgba(255, 255, 255, 0.78);
 }
 
+.free-badge {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: -12px 0 28px;
+    padding: 16px 20px;
+    border: 2px solid var(--carvalho-claro);
+    border-radius: var(--raio);
+    background: rgba(196, 154, 108, 0.15);
+}
+
+.free-badge b {
+    font-size: 1.15rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--carvalho-palido);
+}
+
+.free-badge span {
+    color: rgba(255, 255, 255, 0.9);
+}
+
 .section-oak {
     color: #fff;
     background:
