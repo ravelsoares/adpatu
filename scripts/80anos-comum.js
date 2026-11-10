@@ -14,9 +14,9 @@ var DOC_CONFIG_80 = 'config-80anos/geral';   // materiais, liberação do certif
 
 // Dias da EBO com check-in (chave = dia de novembro/2026)
 var DIAS_EBO_80 = [
-    { dia: '26', rotulo: 'Qui · 26/11', tema: 'Medite', inicio: '2026-11-26T00:00:00-03:00' },
-    { dia: '27', rotulo: 'Sex · 27/11', tema: 'Ensine', inicio: '2026-11-27T00:00:00-03:00' },
-    { dia: '28', rotulo: 'Sáb · 28/11', tema: 'Persevere', inicio: '2026-11-28T00:00:00-03:00' }
+    { dia: '26', rotulo: 'Qui · 26/11', tema: 'Meditar', inicio: '2026-11-26T00:00:00-03:00' },
+    { dia: '27', rotulo: 'Sex · 27/11', tema: 'Ensinar', inicio: '2026-11-27T00:00:00-03:00' },
+    { dia: '28', rotulo: 'Sáb · 28/11', tema: 'Perseverar', inicio: '2026-11-28T00:00:00-03:00' }
 ];
 
 // Valores padrão quando o documento de configuração ainda não existe
