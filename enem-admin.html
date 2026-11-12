@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<script>if(location.protocol!=="file:")document.write('<base href="/">')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Inscritos · ENEM Bíblico</title>
+<link rel="icon" href="images/djad/djad-fundo-escuro.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<style>
+:root { --gold: #CAAB5B; --bg: #0f0e0c; --panel: #191814; --line: #302d26; --muted: #a39d90; --err: #ff8a7a; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: #f1ece1; font-family: Inter, system-ui, sans-serif; }
+header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 2px solid var(--gold); background: #0a0a09; position: sticky; top: 0; z-index: 5; }
+header img { height: 40px; }
+header h1 { margin: 0; font: 900 18px Montserrat, sans-serif; letter-spacing: .03em; flex: 1; }
+header h1 span { color: var(--gold); }
+main { max-width: 1000px; margin: 0 auto; padding: 16px 16px 48px; }
+.btn { font: 700 14px Inter, sans-serif; border: 1px solid #3c382f; background: #22201b; color: #eee; border-radius: 10px; padding: 9px 14px; cursor: pointer; }
+.btn.gold { background: var(--gold); color: #000; border-color: var(--gold); }
+.btn.small { padding: 6px 10px; font-size: 12px; }
+.btn.danger { color: var(--err); }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+.card h2 { margin: 0 0 12px; font: 900 15px Montserrat, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+.center { text-align: center; padding: 40px 16px; }
+.muted { color: var(--muted); font-size: 14px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.kpi { background: #121110; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.kpi b { display: block; font: 900 34px/1 Montserrat, sans-serif; }
+.kpi span { display: block; font-size: 12px; color: var(--muted); margin-top: 6px; letter-spacing: .04em; }
+.kpi.hl { border-color: var(--gold); }
+.kpi.hl b { color: var(--gold); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; align-items: end; }
+label { display: block; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+input[type=text], input[type=date], input[type=email], input[type=search] { width: 100%; background: #121110; border: 1px solid #3a362d; color: #fff; border-radius: 9px; padding: 10px 11px; font: 500 14px Inter, sans-serif; outline: none; color-scheme: dark; }
+input:focus { border-color: var(--gold); }
+.check { display: flex; gap: 8px; align-items: center; font-size: 14px; cursor: pointer; }
+.check input { accent-color: var(--gold); width: 18px; height: 18px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.toolbar input { flex: 1 1 220px; }
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 9px 8px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+th { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); cursor: pointer; user-select: none; }
+td a { color: var(--gold); text-decoration: none; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; border: 1px solid #4a4538; }
+.tag.jovem { color: #9fd0ff; border-color: #2e4c69; }
+.tag.adulto { color: #f2d48a; border-color: #5c4d28; }
+.cad { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1px solid #777; vertical-align: -1px; margin-right: 6px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.chip { display: inline-flex; gap: 6px; align-items: center; background: #121110; border: 1px solid var(--line); border-radius: 999px; padding: 4px 6px 4px 12px; font-size: 13px; }
+.chip button { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 15px; }
+.toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--gold); color: #000; font-weight: 700; padding: 11px 16px; border-radius: 10px; opacity: 0; transition: .25s; pointer-events: none; }
+.toast.show { opacity: 1; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <img src="images/djad/djad-fundo-escuro.png" alt="">
+  <h1>ENEM <span>BÍBLICO</span> · inscritos</h1>
+  <button class="btn small" id="btnSair" hidden>Sair</button>
+</header>
+<main>
+  <section class="card center" id="vLogin">
+    <p class="muted">Entre com a sua conta Google para ver as inscrições.</p>
+    <button class="btn gold" id="btnLogin">Entrar com Google</button>
+  </section>
+
+  <section class="card center" id="vClaim" hidden>
+    <p>Ainda não há administrador do ENEM.</p>
+    <p class="muted">Quem clicar abaixo primeiro vira o administrador e depois pode adicionar outras pessoas.</p>
+    <button class="btn gold" id="btnClaim">Tornar-me administrador</button>
+  </section>
+
+  <section class="card center" id="vNo" hidden>
+    <p>Sua conta (<b id="meEmail"></b>) não está na lista de administradores.</p>
+    <p class="muted">Peça para quem já é administrador adicionar o seu e-mail.</p>
+  </section>
+
+  <div id="vAdmin" hidden>
+    <section class="card">
+      <h2>Resumo</h2>
+      <div class="kpis">
+        <div class="kpi hl"><b id="kTotal">0</b><span>inscritos</span></div>
+        <div class="kpi"><b id="kJovem">0</b><span>jovens</span></div>
+        <div class="kpi"><b id="kAdulto">0</b><span>adultos</span></div>
+        <div class="kpi"><b id="kImp">0</b><span>provas para imprimir (+15% de sobra)</span></div>
+        <div class="kpi"><b id="kCad">0</b><span>de cada caderno (4 cores)</span></div>
+      </div>
+      <p class="muted" id="kCong" style="margin:12px 0 0"></p>
+    </section>
+
+    <section class="card">
+      <h2>Inscritos</h2>
+      <div class="toolbar">
+        <input type="search" id="busca" placeholder="Buscar por nome, WhatsApp ou congregação">
+        <button class="btn" id="btnCsv">Baixar planilha (CSV)</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th data-s="i">#</th><th data-s="nome">Nome</th><th data-s="whatsapp">WhatsApp</th><th data-s="congregacao">Congregação</th><th data-s="faixa">Faixa</th><th data-s="criadoEm">Inscrição</th><th></th></tr></thead>
+          <tbody id="lista"></tbody>
+        </table>
+      </div>
+      <p class="muted" id="vazio" hidden>Nenhuma inscrição ainda.</p>
+    </section>
+
+    <section class="card">
+      <h2>Página de inscrição</h2>
+      <div class="grid">
+        <div><label>Data da prova</label><input type="date" id="cData"></div>
+        <div><label>Horário</label><input type="text" id="cHora" placeholder="19h"></div>
+        <div><label>Local</label><input type="text" id="cLocal" placeholder="Templo Sede · AD Patu/RN"></div>
+        <div><label>Inscrições até</label><input type="date" id="cPrazo"></div>
+      </div>
+      <div class="toolbar" style="margin:14px 0 0">
+        <label class="check" style="margin:0;text-transform:none;letter-spacing:0;font-size:14px;color:#eee"><input type="checkbox" id="cAberta"> Inscrições abertas</label>
+        <span style="flex:1"></span>
+        <a class="btn" href="djad/enem-inscricao" target="_blank">Abrir página</a>
+        <button class="btn gold" id="btnSalvar">Salvar</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Administradores</h2>
+      <div class="chips" id="admins"></div>
+      <div class="toolbar">
+        <input type="email" id="novoAdmin" placeholder="email@gmail.com">
+        <button class="btn" id="btnAddAdmin">Adicionar</button>
+      </div>
+      <p class="muted" style="margin:0">Administradores veem a lista, mudam as configurações e apagam inscrições.</p>
+    </section>
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+  authDomain: "umadcamp-patu.firebaseapp.com",
+  projectId: "umadcamp-patu",
+  storageBucket: "umadcamp-patu.firebasestorage.app",
+  messagingSenderId: "1043102355965",
+  appId: "1:1043102355965:web:734bcffb30d37a7d2b8994"
+});
+const auth = firebase.auth(), db = firebase.firestore();
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const CORES = [['Azul', '#1f5fd6'], ['Amarelo', '#f2c200'], ['Rosa', '#e2559a'], ['Branco', '#ffffff']];
+const ADM = db.collection('config-enem').doc('admins');
+const PUB = db.collection('config-enem').doc('publico');
+let ROWS = [], SORT = { k: 'criadoEm', dir: 1 }, ADMINS = [], unsub = null;
+
+function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 2600); }
+function show(id) { ['#vLogin', '#vClaim', '#vNo', '#vAdmin'].forEach(v => $(v).hidden = v !== id); }
+const fmtTel = t => t.length === 11 ? `(${t.slice(0, 2)}) ${t[2]} ${t.slice(3, 7)}-${t.slice(7)}` : t.length === 10 ? `(${t.slice(0, 2)}) ${t.slice(2, 6)}-${t.slice(6)}` : t;
+const fmtDt = ts => { const d = ts?.toDate?.(); return d ? d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : ''; };
+
+$('#btnLogin').onclick = () => {
+  const p = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(p).catch(e => {
+    if (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment') auth.signInWithRedirect(p);
+    else if (e.code !== 'auth/popup-closed-by-user') toast('Não consegui entrar: ' + e.message);
+  });
+};
+$('#btnSair').onclick = () => auth.signOut();
+
+auth.onAuthStateChanged(async u => {
+  if (unsub) { unsub(); unsub = null; }
+  $('#btnSair').hidden = !u;
+  if (!u) return show('#vLogin');
+  try {
+    const snap = await ADM.get();
+    if (!snap.exists) return show('#vClaim');
+    ADMINS = snap.data().emails || [];
+    if (!ADMINS.includes(u.email)) { $('#meEmail').textContent = u.email; return show('#vNo'); }
+    show('#vAdmin');
+    renderAdmins();
+    loadConfig();
+    listen();
+  } catch (e) { console.error(e); toast('Erro ao verificar acesso: ' + e.message); }
+});
+
+$('#btnClaim').onclick = async () => {
+  try { await ADM.set({ emails: [auth.currentUser.email] }); location.reload(); }
+  catch (e) { console.error(e); toast('Não foi possível (alguém pode ter virado admin antes).'); }
+};
+
+function listen() {
+  unsub = db.collection('enem-inscricoes').onSnapshot(snap => {
+    ROWS = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (a.criadoEm?.toMillis?.() || 0) - (b.criadoEm?.toMillis?.() || 0))
+      .map((r, i) => ({ ...r, i: i + 1 }));
+    render();
+  }, e => { console.error(e); toast('Sem permissão para ler as inscrições.'); });
+}
+
+function render() {
+  const total = ROWS.length, jov = ROWS.filter(r => r.faixa === 'jovem').length;
+  const imp = Math.ceil(total * 1.15);
+  $('#kTotal').textContent = total;
+  $('#kJovem').textContent = jov;
+  $('#kAdulto').textContent = total - jov;
+  $('#kImp').textContent = imp;
+  $('#kCad').textContent = Math.ceil(imp / 4);
+  const cong = {};
+  ROWS.forEach(r => { const k = (r.congregacao || 'Não informada').trim(); cong[k] = (cong[k] || 0) + 1; });
+  $('#kCong').textContent = total ? 'Por congregação: ' + Object.entries(cong).sort((a, b) => b[1] - a[1]).map(([k, n]) => `${k} (${n})`).join(' · ') : '';
+
+  const q = $('#busca').value.trim().toLowerCase();
+  const qd = q.replace(/\D/g, '');
+  let rows = ROWS.filter(r => !q || (r.nome || '').toLowerCase().includes(q) || (r.congregacao || '').toLowerCase().includes(q) || (qd && r.whatsapp.includes(qd)));
+  const k = SORT.k, dir = SORT.dir;
+  rows = rows.slice().sort((a, b) => {
+    const va = k === 'criadoEm' ? (a.criadoEm?.toMillis?.() || 0) : a[k], vb = k === 'criadoEm' ? (b.criadoEm?.toMillis?.() || 0) : b[k];
+    return (typeof va === 'number' ? va - vb : String(va || '').localeCompare(String(vb || ''), 'pt-BR')) * dir;
+  });
+  $('#vazio').hidden = total > 0;
+  $('#lista').innerHTML = rows.map(r => {
+    const c = CORES[(r.i - 1) % 4];
+    return `<tr>
+      <td><span class="cad" title="Sugestão: caderno ${c[0]}" style="background:${c[1]}"></span>${r.i}</td>
+      <td>${esc(r.nome)}</td>
+      <td><a href="https://wa.me/55${esc(r.whatsapp)}" target="_blank" rel="noopener">${fmtTel(r.whatsapp)}</a></td>
+      <td>${esc(r.congregacao || '—')}</td>
+      <td><span class="tag ${esc(r.faixa)}">${r.faixa === 'jovem' ? 'Jovem' : 'Adulto'}</span></td>
+      <td>${fmtDt(r.criadoEm)}</td>
+      <td><button class="btn small danger" data-del="${esc(r.id)}" title="Apagar">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+$('#busca').oninput = render;
+document.querySelectorAll('th[data-s]').forEach(th => th.onclick = () => {
+  SORT = { k: th.dataset.s, dir: SORT.k === th.dataset.s ? -SORT.dir : 1 };
+  render();
+});
+$('#lista').onclick = async e => {
+  const id = e.target.dataset?.del;
+  if (!id) return;
+  const r = ROWS.find(x => x.id === id);
+  if (!confirm(`Apagar a inscrição de ${r?.nome || id}?`)) return;
+  try { await db.collection('enem-inscricoes').doc(id).delete(); toast('Inscrição apagada.'); }
+  catch (ex) { toast('Não consegui apagar: ' + ex.message); }
+};
+
+$('#btnCsv').onclick = () => {
+  const head = ['#', 'Nome', 'WhatsApp', 'Congregação', 'Faixa', 'Caderno sugerido', 'Inscrição'];
+  const cell = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const lines = ROWS.map(r => [r.i, r.nome, fmtTel(r.whatsapp), r.congregacao, r.faixa, CORES[(r.i - 1) % 4][0], fmtDt(r.criadoEm)].map(cell).join(';'));
+  const blob = new Blob(['﻿' + [head.map(cell).join(';'), ...lines].join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'inscritos-enem-biblico.csv';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+};
+
+async function loadConfig() {
+  const s = await PUB.get().catch(() => null);
+  const c = s?.exists ? s.data() : {};
+  $('#cData').value = c.data || '';
+  $('#cHora').value = c.hora || '';
+  $('#cLocal').value = c.local || '';
+  $('#cPrazo').value = c.prazo || '';
+  $('#cAberta').checked = c.aberta !== false;
+}
+$('#btnSalvar').onclick = async () => {
+  try {
+    await PUB.set({ data: $('#cData').value, hora: $('#cHora').value.trim(), local: $('#cLocal').value.trim(), prazo: $('#cPrazo').value, aberta: $('#cAberta').checked });
+    toast('Configurações salvas!');
+  } catch (e) { toast('Não consegui salvar: ' + e.message); }
+};
+
+function renderAdmins() {
+  $('#admins').innerHTML = ADMINS.map(e => `<span class="chip">${esc(e)}${e !== auth.currentUser.email ? `<button data-rm="${esc(e)}" title="Remover">✕</button>` : ''}</span>`).join('');
+}
+$('#admins').onclick = async e => {
+  const em = e.target.dataset?.rm;
+  if (!em || !confirm(`Remover ${em} dos administradores?`)) return;
+  try { await ADM.update({ emails: firebase.firestore.FieldValue.arrayRemove(em) }); ADMINS = ADMINS.filter(x => x !== em); renderAdmins(); }
+  catch (ex) { toast('Erro: ' + ex.message); }
+};
+$('#btnAddAdmin').onclick = async () => {
+  const em = $('#novoAdmin').value.trim().toLowerCase();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) return toast('E-mail inválido.');
+  try { await ADM.update({ emails: firebase.firestore.FieldValue.arrayUnion(em) }); if (!ADMINS.includes(em)) ADMINS.push(em); renderAdmins(); $('#novoAdmin').value = ''; toast('Administrador adicionado.'); }
+  catch (ex) { toast('Erro: ' + ex.message); }
+};
+</script>
+</body>
+</html>

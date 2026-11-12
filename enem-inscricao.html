@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<script>if(location.protocol!=="file:")document.write('<base href="/">')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inscrição · ENEM Bíblico</title>
+<meta name="description" content="Inscrição gratuita para o ENEM Bíblico da DJAD Patu.">
+<link rel="icon" href="images/djad/djad-fundo-escuro.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,500;1,700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<style>
+:root { --gold: #CAAB5B; --gold-2: #E3C985; --bg: #0c0c0b; --panel: #171613; --line: #2f2c25; --muted: #a39d90; --err: #ff8a7a; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  min-height: 100vh; color: #f3eee3; font-family: Inter, system-ui, sans-serif;
+  background:
+    radial-gradient(circle at -10% 0%, rgba(202, 171, 91, .28), transparent 45%),
+    radial-gradient(circle at 110% 100%, rgba(202, 171, 91, .2), transparent 45%),
+    var(--bg);
+}
+main { max-width: 520px; margin: 0 auto; padding: 32px 16px 48px; }
+.brand { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.brand img { height: 92px; width: auto; }
+.brand .ap { font: 800 12px Montserrat, sans-serif; letter-spacing: .45em; color: var(--gold); margin-top: 10px; padding-left: .45em; text-transform: uppercase; }
+h1 { margin: 8px 0 0; font: 900 clamp(64px, 22vw, 104px)/.88 Montserrat, sans-serif; letter-spacing: -.035em; text-align: center; }
+.bib { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 4px; }
+.bib i { width: 36px; height: 3px; background: var(--gold); }
+.bib b { font: 900 clamp(26px, 8vw, 36px)/1 Montserrat, sans-serif; letter-spacing: .14em; color: var(--gold); margin-right: -.14em; }
+.lead { text-align: center; font: italic 500 20px/1.35 'Playfair Display', serif; margin: 18px 0 0; color: #e8e2d4; }
+.lead em { color: var(--gold-2); font-weight: 700; }
+.when { display: flex; margin: 22px 0 0; border-radius: 14px; overflow: hidden; background: var(--gold); color: #0c0c0b; }
+.when .d { flex: none; background: #f4efe4; padding: 12px 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 92px; }
+.when .d b { font: 900 38px/1 Montserrat, sans-serif; }
+.when .d small { font: 900 12px Montserrat, sans-serif; letter-spacing: .24em; margin-top: 3px; }
+.when .r { padding: 12px 16px; display: flex; flex-direction: column; justify-content: center; gap: 3px; }
+.when .r b { font: 900 18px Montserrat, sans-serif; text-transform: uppercase; }
+.when .r span { font: 600 14px Inter, sans-serif; }
+.prazo { text-align: center; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.prazo b { color: var(--gold-2); }
+
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 20px 18px; margin-top: 22px; }
+.card h2 { margin: 0 0 4px; font: 900 18px Montserrat, sans-serif; letter-spacing: .04em; text-transform: uppercase; }
+.card .sub { margin: 0 0 18px; font-size: 14px; color: var(--muted); }
+.field { margin-bottom: 16px; }
+label, .lbl { display: block; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+input[type=text], input[type=tel] {
+  width: 100%; background: #0f0e0c; border: 1px solid #3a362d; color: #fff; border-radius: 12px;
+  padding: 14px; font: 500 16px Inter, sans-serif; outline: none;
+}
+input:focus { border-color: var(--gold); }
+input.bad { border-color: var(--err); }
+.msg-err { color: var(--err); font-size: 13px; margin-top: 6px; min-height: 0; }
+.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.opts button {
+  font: 700 15px Inter, sans-serif; padding: 14px 8px; border-radius: 12px; cursor: pointer;
+  border: 1px solid #3a362d; background: #0f0e0c; color: #ddd;
+}
+.opts button small { display: block; font-weight: 500; font-size: 12px; color: var(--muted); margin-top: 2px; }
+.opts button.on { border-color: var(--gold); background: rgba(202, 171, 91, .15); color: #fff; }
+.go {
+  width: 100%; margin-top: 6px; padding: 16px; border: 0; border-radius: 14px; cursor: pointer;
+  background: var(--gold); color: #0c0c0b; font: 900 16px Montserrat, sans-serif; letter-spacing: .1em; text-transform: uppercase;
+}
+.go:disabled { opacity: .6; cursor: wait; }
+.fine { font-size: 12px; color: var(--muted); margin: 12px 0 0; line-height: 1.45; text-align: center; }
+
+.done { text-align: center; }
+.done .ok { width: 74px; height: 74px; margin: 0 auto 12px; border-radius: 50%; background: var(--gold); color: #0c0c0b; display: flex; align-items: center; justify-content: center; font: 900 40px Montserrat, sans-serif; }
+.done h2 { font-size: 22px; }
+.done ul { text-align: left; margin: 16px 0 0; padding-left: 20px; line-height: 1.6; font-size: 15px; }
+.closed { text-align: center; }
+.verse { text-align: center; font: italic 500 15px/1.5 'Playfair Display', serif; color: #cfc8b9; margin: 28px 8px 0; }
+.verse em { color: var(--gold-2); font-weight: 700; }
+.verse cite { display: block; font: 800 11px Montserrat, sans-serif; letter-spacing: .24em; color: var(--gold); margin-top: 6px; font-style: normal; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">
+    <img src="images/djad/djad-fundo-escuro.png" alt="DJAD Patu">
+    <div class="ap">apresenta</div>
+  </div>
+  <h1>ENEM</h1>
+  <div class="bib"><i></i><b>BÍBLICO</b><i></i></div>
+  <p class="lead">Você conhece a Palavra?<br>Chegou a hora de <em>provar</em>.</p>
+
+  <div class="when" id="when" hidden>
+    <div class="d"><b id="wDia">--</b><small id="wMes"></small></div>
+    <div class="r"><b id="wSemana"></b><span id="wLocal"></span></div>
+  </div>
+  <div class="prazo" id="prazo" hidden></div>
+
+  <section class="card" id="formCard">
+    <h2>Inscrição gratuita</h2>
+    <p class="sub">Leva menos de um minuto. Para jovens e adultos.</p>
+    <form id="form" novalidate>
+      <div class="field">
+        <label for="nome">Nome completo</label>
+        <input type="text" id="nome" autocomplete="name" maxlength="80" required>
+        <div class="msg-err" id="eNome"></div>
+      </div>
+      <div class="field">
+        <label for="tel">WhatsApp</label>
+        <input type="tel" id="tel" inputmode="numeric" autocomplete="tel-national" placeholder="(84) 9 0000-0000" maxlength="16" required>
+        <div class="msg-err" id="eTel"></div>
+      </div>
+      <div class="field">
+        <label for="cong">Congregação</label>
+        <input type="text" id="cong" maxlength="60" placeholder="Ex.: Templo Sede" list="congs">
+        <datalist id="congs"><option value="Templo Sede"></option><option value="Visitante (outra igreja)"></option></datalist>
+      </div>
+      <div class="field">
+        <span class="lbl">Você é</span>
+        <div class="opts" id="faixa">
+          <button type="button" data-v="jovem">Jovem<small>até 35 anos</small></button>
+          <button type="button" data-v="adulto">Adulto<small>acima de 35</small></button>
+        </div>
+        <div class="msg-err" id="eFaixa"></div>
+      </div>
+      <button class="go" id="go" type="submit">Quero participar</button>
+      <div class="msg-err" id="eGeral" style="text-align:center"></div>
+      <p class="fine">Usamos seu nome e WhatsApp só para a organização da prova e o envio do resultado.</p>
+    </form>
+  </section>
+
+  <section class="card done" id="doneCard" hidden>
+    <div class="ok">✓</div>
+    <h2 id="doneTitle">Inscrição feita!</h2>
+    <p class="sub" style="margin:0">Nos vemos no dia da prova.</p>
+    <ul>
+      <li>Leve <b>caneta esferográfica preta</b> e sua Bíblia (não vale consultar na prova 😉).</li>
+      <li>Chegue <b>15 minutos antes</b> para receber o seu caderno.</li>
+      <li>Revise a Bíblia toda: Pentateuco, Históricos, Poéticos, Proféticos, Evangelhos, Atos, Epístolas e Apocalipse.</li>
+    </ul>
+    <p class="fine"><a href="#" id="again" style="color:var(--gold)">Inscrever outra pessoa</a></p>
+  </section>
+
+  <section class="card closed" id="closedCard" hidden>
+    <h2>Inscrições encerradas</h2>
+    <p class="sub" style="margin:8px 0 0">Fale com a liderança da DJAD para saber se ainda há vagas no dia.</p>
+  </section>
+
+  <p class="verse">“Procura apresentar-te a Deus <em>aprovado</em>, como obreiro que não tem de que se envergonhar, que maneja bem a palavra da verdade.”<cite>2 TIMÓTEO 2.15</cite></p>
+</main>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+  authDomain: "umadcamp-patu.firebaseapp.com",
+  projectId: "umadcamp-patu",
+  storageBucket: "umadcamp-patu.firebasestorage.app",
+  messagingSenderId: "1043102355965",
+  appId: "1:1043102355965:web:734bcffb30d37a7d2b8994"
+});
+const db = firebase.firestore();
+const $ = s => document.querySelector(s);
+const SEMANA = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+const MES = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+const pd = s => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); return m ? new Date(+m[1], m[2] - 1, +m[3]) : null; };
+const digits = s => String(s || '').replace(/\D/g, '');
+let faixa = '';
+
+// Data, local e prazo vêm do admin (config-enem/publico)
+db.collection('config-enem').doc('publico').get().then(snap => {
+  const c = snap.exists ? snap.data() : {};
+  const d = pd(c.data);
+  if (d || c.local) {
+    $('#when').hidden = false;
+    $('#wDia').textContent = d ? String(d.getDate()).padStart(2, '0') : '--';
+    $('#wMes').textContent = d ? MES[d.getMonth()] : '';
+    $('#wSemana').textContent = (d ? SEMANA[d.getDay()] : 'Em breve') + (c.hora ? ' · ' + c.hora : '');
+    $('#wLocal').textContent = c.local || '';
+  }
+  const prazo = pd(c.prazo);
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+  if (c.aberta === false || (prazo && prazo < hoje)) {
+    $('#formCard').hidden = true;
+    $('#closedCard').hidden = false;
+  } else if (prazo) {
+    $('#prazo').hidden = false;
+    $('#prazo').innerHTML = `Inscrições até <b>${String(prazo.getDate()).padStart(2, '0')}/${String(prazo.getMonth() + 1).padStart(2, '0')}</b>`;
+  }
+}).catch(() => { });
+
+// Máscara do WhatsApp: (84) 9 0000-0000
+$('#tel').addEventListener('input', e => {
+  const d = digits(e.target.value).slice(0, 11);
+  let v = d;
+  if (d.length > 2) v = `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  if (d.length > 3 && d.length === 11) v = `(${d.slice(0, 2)}) ${d[2]} ${d.slice(3, 7)}-${d.slice(7)}`;
+  else if (d.length > 6) v = `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  e.target.value = v;
+});
+
+document.querySelectorAll('#faixa button').forEach(b => b.onclick = () => {
+  faixa = b.dataset.v;
+  document.querySelectorAll('#faixa button').forEach(x => x.classList.toggle('on', x === b));
+  $('#eFaixa').textContent = '';
+});
+
+function err(id, inp, msg) { $(id).textContent = msg; if (inp) inp.classList.toggle('bad', !!msg); return !msg; }
+
+$('#form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const nome = $('#nome').value.trim().replace(/\s+/g, ' ');
+  const tel = digits($('#tel').value);
+  const cong = $('#cong').value.trim().slice(0, 60);
+  let ok = true;
+  ok = err('#eNome', $('#nome'), nome.split(' ').length < 2 || nome.length < 5 ? 'Escreva nome e sobrenome.' : '') && ok;
+  ok = err('#eTel', $('#tel'), tel.length < 10 || tel.length > 11 ? 'WhatsApp com DDD, ex.: (84) 9 9999-9999.' : '') && ok;
+  ok = err('#eFaixa', null, faixa ? '' : 'Escolha uma opção.') && ok;
+  $('#eGeral').textContent = '';
+  if (!ok) return;
+
+  const btn = $('#go');
+  btn.disabled = true; btn.textContent = 'Enviando…';
+  try {
+    // O WhatsApp é o ID: a regra do Firestore só deixa criar, então o mesmo número não se inscreve duas vezes
+    await db.collection('enem-inscricoes').doc(tel).set({
+      nome, whatsapp: tel, congregacao: cong, faixa,
+      criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    $('#doneTitle').textContent = `Inscrição feita, ${nome.split(' ')[0]}!`;
+    $('#formCard').hidden = true;
+    $('#doneCard').hidden = false;
+    scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (ex) {
+    console.error(ex);
+    $('#eGeral').textContent = ex.code === 'permission-denied'
+      ? 'Esse WhatsApp já está inscrito (ou as inscrições foram encerradas).'
+      : 'Não consegui enviar. Confira a internet e tente de novo.';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Quero participar';
+  }
+});
+
+$('#again').onclick = e => {
+  e.preventDefault();
+  $('#form').reset(); faixa = '';
+  document.querySelectorAll('#faixa button').forEach(x => x.classList.remove('on'));
+  $('#doneCard').hidden = true; $('#formCard').hidden = false;
+};
+</script>
+</body>
+</html>

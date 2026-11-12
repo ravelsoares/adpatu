@@ -216,6 +216,14 @@
         "destination": "/cartaz-enem.html"
       },
       {
+        "source": "/djad/enem-inscricao",
+        "destination": "/enem-inscricao.html"
+      },
+      {
+        "source": "/djad/enem-admin",
+        "destination": "/enem-admin.html"
+      },
+      {
         "source": "/djad/fabrica-artes",
         "destination": "/fabrica-artes.html"
       },

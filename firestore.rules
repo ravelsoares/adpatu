@@ -45,5 +45,50 @@ service cloud.firestore {
     match /config-80anos/{doc} {
       allow read, write: if true;
     }
+
+    // ============================================================
+    //  ENEM BÍBLICO · DJAD (inscrição pública, lista só para admins)
+    //  O WhatsApp é o ID: só dá para CRIAR, então o mesmo número não
+    //  se inscreve duas vezes e ninguém de fora lê a lista.
+    //  Admins: e-mails em config-enem/admins (o 1º login no admin reivindica).
+    // ============================================================
+    function enemAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/config-enem/admins)
+        && request.auth.token.email in get(/databases/$(database)/documents/config-enem/admins).data.emails;
+    }
+    function enemAberta() {
+      return !exists(/databases/$(database)/documents/config-enem/publico)
+        || get(/databases/$(database)/documents/config-enem/publico).data.get('aberta', true) != false;
+    }
+
+    match /enem-inscricoes/{tel} {
+      allow create: if tel.matches('^[0-9]{10,11}$')
+        && request.resource.data.keys().hasOnly(['nome', 'whatsapp', 'congregacao', 'faixa', 'criadoEm'])
+        && request.resource.data.whatsapp == tel
+        && request.resource.data.nome is string
+        && request.resource.data.nome.size() >= 5 && request.resource.data.nome.size() <= 80
+        && request.resource.data.congregacao is string && request.resource.data.congregacao.size() <= 60
+        && request.resource.data.faixa in ['jovem', 'adulto']
+        && request.resource.data.criadoEm == request.time
+        && enemAberta();
+      allow read, update, delete: if enemAdmin();
+    }
+
+    match /config-enem/publico {
+      allow read: if true;
+      allow write: if enemAdmin();
+    }
+
+    match /config-enem/admins {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.auth.token.email_verified == true
+        && request.resource.data.keys().hasOnly(['emails'])
+        && request.resource.data.emails == [request.auth.token.email];
+      allow update: if enemAdmin()
+        && request.resource.data.keys().hasOnly(['emails'])
+        && request.resource.data.emails is list;
+    }
   }
 }

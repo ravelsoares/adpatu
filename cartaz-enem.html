@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="scripts/fabrica-logos.js"></script>
 <style>
 :root { --gold: #CAAB5B; --gold-2: #E3C985; --ink: #0c0c0b; --line: #2c2a25; --muted: #9a958a; }
@@ -121,6 +122,14 @@ input:focus, textarea:focus { border-color: var(--gold); }
 
 .art .insc { margin-top: 20px; font: 800 28px/1.3 Montserrat, sans-serif; letter-spacing: .04em; text-transform: uppercase; }
 .art .insc span { color: var(--gold); }
+.art .qrrow { display: flex; align-items: center; gap: 28px; margin-top: 26px; width: 100%; text-align: left; }
+.art .qrrow img { flex: none; width: 176px; height: 176px; background: #fff; padding: 12px; border-radius: 14px; image-rendering: pixelated; }
+.art .qrrow .tx { flex: 1; min-width: 0; }
+.art .qrrow b { display: block; font: 900 40px/1.05 Montserrat, sans-serif; text-transform: uppercase; color: var(--gold); }
+.art .qrrow span { display: block; font: 700 26px/1.3 Inter, sans-serif; margin-top: 8px; }
+.art .qrrow small { display: block; font: 600 19px Inter, sans-serif; color: var(--muted); margin-top: 8px; word-break: break-all; }
+.art.fmt-feed .qrrow { margin-top: 20px; }
+.art.fmt-feed .qrrow img { width: 150px; height: 150px; }
 .art .pub { display: inline-block; margin-top: 16px; font: 800 20px Montserrat, sans-serif; letter-spacing: .28em; text-transform: uppercase; color: #e9e3d6; border: 2px solid rgba(202, 171, 91, .6); border-radius: 999px; padding: 10px 24px 10px calc(24px + .28em); }
 
 .art .verse { margin-top: 18px; font: italic 500 26px/1.38 'Playfair Display', serif; color: #d8d2c4; max-width: 860px; }
@@ -169,6 +178,11 @@ input:focus, textarea:focus { border-color: var(--gold); }
         <div class="hint">Deixe vazio para não mostrar.</div>
       </div>
       <div class="field">
+        <label class="check"><input type="checkbox" data-k="qr"> QR code da inscrição</label>
+        <input type="text" data-k="qrUrl" style="margin-top:8px">
+        <div class="hint">O QR leva para a página de inscrição. Com o QR ligado, o texto de inscrições aparece ao lado dele.</div>
+      </div>
+      <div class="field">
         <label>Números da prova</label>
         <div class="row2" style="grid-template-columns:1fr 2fr;margin-bottom:6px"><input type="text" data-k="n1"><input type="text" data-k="l1"></div>
         <div class="row2" style="grid-template-columns:1fr 2fr;margin-bottom:6px"><input type="text" data-k="n2"><input type="text" data-k="l2"></div>
@@ -213,7 +227,7 @@ function pd(s) { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); return m ? 
 
 function defaults() {
   return {
-    fmt: 'a4', data: '', hora: '19h', local: 'Templo Sede · AD Patu/RN', insc: '',
+    fmt: 'a4', data: '', hora: '19h', local: 'Templo Sede · AD Patu/RN', insc: '', qr: true, qrUrl: 'https://umadcamp-patu.web.app/djad/enem-inscricao',
     publico: 'Para jovens e adultos',
     frase: 'Você conhece a Palavra?\nChegou a hora de *provar*.',
     n1: '5', l1: 'Áreas', n2: '2h', l2: 'De prova', n3: '4', l3: 'Cadernos',
@@ -230,6 +244,15 @@ const GRAIN = (() => {
   for (let i = 0; i < img.data.length; i += 4) { const v = Math.random() * 255; img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255; }
   x.putImageData(img, 0, 0); return c.toDataURL('image/png');
 })();
+
+const QR_CACHE = {};
+function qrSrc(url) {
+  if (!QR_CACHE[url]) {
+    const q = qrcode(0, 'M'); q.addData(url); q.make();
+    QR_CACHE[url] = q.createDataURL(8, 0);
+  }
+  return QR_CACHE[url];
+}
 
 function rings(cx, cy, n, r0, step) {
   return Array.from({ length: n }, (_, i) => { const r = r0 + i * step; return `<div class="ring" style="width:${2 * r}px;height:${2 * r}px;left:${cx - r}px;top:${cy - r}px"></div>`; }).join('');
@@ -263,7 +286,10 @@ function build(fmt) {
         <div class="d"><b>${dia}</b><small>${mes}</small></div>
         <div class="r"><div class="wd">${esc(wdLine)}</div>${S.local ? `<div class="loc">${esc(S.local)}</div>` : ''}</div>
       </div>
-      ${S.insc ? `<div class="insc">${hl(S.insc).replace(/<em>/g, '<span>').replace(/<\/em>/g, '</span>')}</div>` : ''}
+      ${S.qr && S.qrUrl ? `<div class="qrrow"><img src="${qrSrc(S.qrUrl)}" alt="QR"><div class="tx"><b>Inscrições gratuitas</b>
+        <span>${S.insc ? hl(S.insc).replace(/<em>/g, '<span style="display:inline;color:var(--gold)">').replace(/<\/em>/g, '</span>') : 'Aponte a câmera do celular e garanta sua vaga'}</span>
+        <small>${esc(S.qrUrl.replace(/^https?:\/\//, ''))}</small></div></div>`
+      : S.insc ? `<div class="insc">${hl(S.insc).replace(/<em>/g, '<span>').replace(/<\/em>/g, '</span>')}</div>` : ''}
       ${S.publico ? `<div class="pub">${esc(S.publico)}</div>` : ''}
       <div class="sp"></div>
       ${S.versiculo ? `<div class="verse">“Procura apresentar-te a Deus <em>aprovado</em>, como obreiro que não tem de que se envergonhar, que maneja bem a palavra da verdade.”<cite>2 Timóteo 2.15</cite></div>` : ''}
