@@ -168,6 +168,13 @@ input:focus, textarea:focus { border-color: var(--gold); }
         <input type="text" data-k="insc" placeholder="Ex.: Inscrições com a liderança da DJAD até 25/11">
         <div class="hint">Deixe vazio para não mostrar.</div>
       </div>
+      <div class="field">
+        <label>Números da prova</label>
+        <div class="row2" style="grid-template-columns:1fr 2fr;margin-bottom:6px"><input type="text" data-k="n1"><input type="text" data-k="l1"></div>
+        <div class="row2" style="grid-template-columns:1fr 2fr;margin-bottom:6px"><input type="text" data-k="n2"><input type="text" data-k="l2"></div>
+        <div class="row2" style="grid-template-columns:1fr 2fr"><input type="text" data-k="n3"><input type="text" data-k="l3"></div>
+        <div class="hint">Número + texto. Deixe o número vazio para esconder aquele item. Se escrever “Cadernos”, aparecem as bolinhas coloridas.</div>
+      </div>
       <div class="field"><label>Público</label><input type="text" data-k="publico"></div>
     </div>
     <div class="card">
@@ -209,6 +216,7 @@ function defaults() {
     fmt: 'a4', data: '', hora: '19h', local: 'Templo Sede · AD Patu/RN', insc: '',
     publico: 'Para jovens e adultos',
     frase: 'Você conhece a Palavra?\nChegou a hora de *provar*.',
+    n1: '5', l1: 'Áreas', n2: '2h', l2: 'De prova', n3: '4', l3: 'Cadernos',
     areas: true, versiculo: true, ftrL: '@djadpatu', ftrR: 'AD Patu · Templo Sede'
   };
 }
@@ -235,6 +243,7 @@ function build(fmt) {
   const mes = d ? MES_C[d.getMonth()] : 'DATA';
   const wd = d ? SEMANA[d.getDay()] : 'Em breve';
   const wdLine = wd + (S.hora ? ` · ${S.hora}` : '');
+  const stats = [[S.n1, S.l1], [S.n2, S.l2], [S.n3, S.l3]].filter(([n]) => String(n || '').trim());
   el.innerHTML = `
     <div class="glow g1"></div><div class="glow g2"></div>
     ${rings(-40, F.h * 0.2, 10, 120, 26)}${rings(1120, F.h * 0.62, 11, 130, 26)}
@@ -246,12 +255,8 @@ function build(fmt) {
       <div class="head"><div class="enem">ENEM</div><div class="bib"><i></i><b>BÍBLICO</b><i></i></div></div>
       ${S.frase ? `<div class="tag">${hl(S.frase)}</div>` : ''}
       <div class="bubbles"><em class="n">01</em><span>A</span><span>B</span><span class="on">C</span><span>D</span><span>E</span></div>
-      <div class="stats">
-        <div class="stat"><b>45</b><small>Questões</small></div>
-        <div class="stat"><b>2h</b><small>De prova</small></div>
-        <div class="stat"><b>4</b><small>Cadernos</small>
-          <div class="dots"><i style="background:#1f5fd6"></i><i style="background:#f2c200"></i><i style="background:#e2559a"></i><i style="background:#fff"></i></div></div>
-      </div>
+      ${stats.length ? `<div class="stats">${stats.map(([n, l]) => `<div class="stat"><b>${esc(n)}</b><small>${esc(l)}</small>
+        ${/caderno/i.test(l) ? '<div class="dots"><i style="background:#1f5fd6"></i><i style="background:#f2c200"></i><i style="background:#e2559a"></i><i style="background:#fff"></i></div>' : ''}</div>`).join('')}</div>` : ''}
       ${S.areas ? `<div class="areas"><h3>O que cai na prova</h3>${AREAS.map((a, i) => `<div class="area"><b>0${i + 1}</b><span>${a[0]}</span><em>${a[1]}</em></div>`).join('')}</div>` : ''}
       <div class="sp"></div>
       <div class="info">
