@@ -117,6 +117,9 @@ input:focus, textarea:focus { border-color: var(--gold); }
 .art .info .r { flex: 1; padding: 22px 32px; display: flex; flex-direction: column; justify-content: center; text-align: left; gap: 8px; }
 .art .info .r .wd { font: 900 44px/1.05 Montserrat, sans-serif; text-transform: uppercase; }
 .art .info .r .loc { font: 700 27px/1.25 Inter, sans-serif; }
+.art .gate { display: flex; flex-wrap: wrap; gap: 10px; }
+.art .gate span { font: 800 22px Montserrat, sans-serif; letter-spacing: .06em; text-transform: uppercase; background: rgba(12, 12, 11, .12); border: 2px solid rgba(12, 12, 11, .45); border-radius: 999px; padding: 6px 16px; }
+.art .gate b { font-weight: 900; font-size: 1.25em; }
 .art.fmt-feed .info { margin-top: 30px; }
 .art.fmt-feed .info .d b { font-size: 80px; }
 
@@ -169,9 +172,12 @@ input:focus, textarea:focus { border-color: var(--gold); }
       <h2>Quando e onde</h2>
       <div class="row2">
         <div class="field"><label>Data</label><input type="date" data-k="data"></div>
-        <div class="field"><label>Horário</label><input type="text" data-k="hora" placeholder="19h"></div>
+        <div class="field"><label>Local</label><input type="text" data-k="local"></div>
       </div>
-      <div class="field"><label>Local</label><input type="text" data-k="local"></div>
+      <div class="row2">
+        <div class="field"><label>Portão abre</label><input type="text" data-k="abre" placeholder="14h30"></div>
+        <div class="field"><label>Portão fecha</label><input type="text" data-k="fecha" placeholder="15h"></div>
+      </div>
       <div class="field">
         <label>Inscrições (opcional)</label>
         <input type="text" data-k="insc" placeholder="Ex.: Inscrições com a liderança da DJAD até 25/11">
@@ -227,7 +233,7 @@ function pd(s) { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); return m ? 
 
 function defaults() {
   return {
-    fmt: 'a4', data: '', hora: '19h', local: 'Templo Sede · AD Patu/RN', insc: '', qr: true, qrUrl: 'https://umadcamp-patu.web.app/djad/enem-inscricao',
+    fmt: 'a4', data: '2026-11-22', abre: '14h30', fecha: '15h', local: 'Templo Sede · AD Patu/RN', insc: '', qr: true, qrUrl: 'https://umadcamp-patu.web.app/djad/enem-inscricao',
     publico: 'Para jovens e adultos',
     frase: 'Você conhece a Palavra?\nChegou a hora de *provar*.',
     n1: '5', l1: 'Áreas', n2: '2h', l2: 'De prova', n3: '4', l3: 'Cadernos',
@@ -235,8 +241,8 @@ function defaults() {
   };
 }
 let S = defaults();
-try { Object.assign(S, JSON.parse(localStorage.getItem('cartaz-enem') || '{}')); } catch (e) { }
-const save = () => { try { localStorage.setItem('cartaz-enem', JSON.stringify(S)); } catch (e) { } };
+try { Object.assign(S, JSON.parse(localStorage.getItem('cartaz-enem-v2') || '{}')); } catch (e) { }
+const save = () => { try { localStorage.setItem('cartaz-enem-v2', JSON.stringify(S)); } catch (e) { } };
 
 const GRAIN = (() => {
   const c = document.createElement('canvas'); c.width = c.height = 240;
@@ -265,7 +271,6 @@ function build(fmt) {
   const dia = d ? String(d.getDate()).padStart(2, '0') : '--';
   const mes = d ? MES_C[d.getMonth()] : 'DATA';
   const wd = d ? SEMANA[d.getDay()] : 'Em breve';
-  const wdLine = wd + (S.hora ? ` · ${S.hora}` : '');
   const stats = [[S.n1, S.l1], [S.n2, S.l2], [S.n3, S.l3]].filter(([n]) => String(n || '').trim());
   el.innerHTML = `
     <div class="glow g1"></div><div class="glow g2"></div>
@@ -284,7 +289,9 @@ function build(fmt) {
       <div class="sp"></div>
       <div class="info">
         <div class="d"><b>${dia}</b><small>${mes}</small></div>
-        <div class="r"><div class="wd">${esc(wdLine)}</div>${S.local ? `<div class="loc">${esc(S.local)}</div>` : ''}</div>
+        <div class="r"><div class="wd">${esc(wd)}</div>
+          ${(S.abre || S.fecha) ? `<div class="gate">${S.abre ? `<span>Portão abre <b>${esc(S.abre)}</b></span>` : ''}${S.fecha ? `<span>Fecha <b>${esc(S.fecha)}</b></span>` : ''}</div>` : ''}
+          ${S.local ? `<div class="loc">${esc(S.local)}</div>` : ''}</div>
       </div>
       ${S.qr && S.qrUrl ? `<div class="qrrow"><img src="${qrSrc(S.qrUrl)}" alt="QR"><div class="tx"><b>Inscrições gratuitas</b>
         <span>${S.insc ? hl(S.insc).replace(/<em>/g, '<span style="display:inline;color:var(--gold)">').replace(/<\/em>/g, '</span>') : 'Aponte a câmera do celular e garanta sua vaga'}</span>
@@ -336,7 +343,7 @@ function sync() {
 }
 document.addEventListener('input', e => { const k = e.target.dataset?.k; if (!k) return; S[k] = e.target.type === 'checkbox' ? e.target.checked : e.target.value; render(); });
 $$('#fmtSeg button').forEach(b => b.onclick = () => { S.fmt = b.dataset.fmt; sync(); render(); });
-$('#btnReset').onclick = () => { if (!confirm('Voltar os textos para o padrão?')) return; const keep = { fmt: S.fmt, data: S.data, hora: S.hora, local: S.local, insc: S.insc }; S = Object.assign(defaults(), keep); sync(); render(); };
+$('#btnReset').onclick = () => { if (!confirm('Voltar os textos para o padrão?')) return; const keep = { fmt: S.fmt, data: S.data, abre: S.abre, fecha: S.fecha, local: S.local, insc: S.insc }; S = Object.assign(defaults(), keep); sync(); render(); };
 addEventListener('resize', layout);
 
 function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 2600); }

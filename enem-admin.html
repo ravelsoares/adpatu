@@ -114,7 +114,8 @@ td a { color: var(--gold); text-decoration: none; }
       <h2>Página de inscrição</h2>
       <div class="grid">
         <div><label>Data da prova</label><input type="date" id="cData"></div>
-        <div><label>Horário</label><input type="text" id="cHora" placeholder="19h"></div>
+        <div><label>Portão abre</label><input type="text" id="cAbre" placeholder="14h30"></div>
+        <div><label>Portão fecha</label><input type="text" id="cFecha" placeholder="15h"></div>
         <div><label>Local</label><input type="text" id="cLocal" placeholder="Templo Sede · AD Patu/RN"></div>
         <div><label>Inscrições até</label><input type="date" id="cPrazo"></div>
       </div>
@@ -252,15 +253,16 @@ $('#btnCsv').onclick = () => {
 async function loadConfig() {
   const s = await PUB.get().catch(() => null);
   const c = s?.exists ? s.data() : {};
-  $('#cData').value = c.data || '';
-  $('#cHora').value = c.hora || '';
-  $('#cLocal').value = c.local || '';
+  $('#cData').value = c.data || '2026-11-22';
+  $('#cAbre').value = c.abre || '14h30';
+  $('#cFecha').value = c.fecha || '15h';
+  $('#cLocal').value = c.local || 'Templo Sede · AD Patu/RN';
   $('#cPrazo').value = c.prazo || '';
   $('#cAberta').checked = c.aberta !== false;
 }
 $('#btnSalvar').onclick = async () => {
   try {
-    await PUB.set({ data: $('#cData').value, hora: $('#cHora').value.trim(), local: $('#cLocal').value.trim(), prazo: $('#cPrazo').value, aberta: $('#cAberta').checked });
+    await PUB.set({ data: $('#cData').value, abre: $('#cAbre').value.trim(), fecha: $('#cFecha').value.trim(), local: $('#cLocal').value.trim(), prazo: $('#cPrazo').value, aberta: $('#cAberta').checked });
     toast('Configurações salvas!');
   } catch (e) { toast('Não consegui salvar: ' + e.message); }
 };
