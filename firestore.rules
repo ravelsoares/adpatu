@@ -48,8 +48,8 @@ service cloud.firestore {
 
     // ============================================================
     //  ENEM BÍBLICO · DJAD (inscrição pública, lista só para admins)
-    //  O WhatsApp é o ID: só dá para CRIAR, então o mesmo número não
-    //  se inscreve duas vezes e ninguém de fora lê a lista.
+    //  O nome (sem acento, minúsculo, com hífens) é o ID: só dá para CRIAR,
+    //  então o mesmo nome não se inscreve duas vezes e ninguém de fora lê a lista.
     //  Admins: e-mails em config-enem/admins (o 1º login no admin reivindica).
     // ============================================================
     function enemAdmin() {
@@ -62,14 +62,11 @@ service cloud.firestore {
         || get(/databases/$(database)/documents/config-enem/publico).data.get('aberta', true) != false;
     }
 
-    match /enem-inscricoes/{tel} {
-      allow create: if tel.matches('^[0-9]{10,11}$')
-        && request.resource.data.keys().hasOnly(['nome', 'whatsapp', 'congregacao', 'faixa', 'criadoEm'])
-        && request.resource.data.whatsapp == tel
+    match /enem-inscricoes/{id} {
+      allow create: if id.matches('^[a-z0-9]+(-[a-z0-9]+)+$') && id.size() <= 90
+        && request.resource.data.keys().hasOnly(['nome', 'criadoEm'])
         && request.resource.data.nome is string
         && request.resource.data.nome.size() >= 5 && request.resource.data.nome.size() <= 80
-        && request.resource.data.congregacao is string && request.resource.data.congregacao.size() <= 60
-        && request.resource.data.faixa in ['jovem', 'adulto']
         && request.resource.data.criadoEm == request.time
         && enemAberta();
       allow read, update, delete: if enemAdmin();

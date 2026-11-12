@@ -98,34 +98,16 @@ input.bad { border-color: var(--err); }
 
   <section class="card" id="formCard">
     <h2>Inscrição gratuita</h2>
-    <p class="sub">Leva menos de um minuto. Para jovens e adultos.</p>
+    <p class="sub">É só o seu nome. Para jovens e adultos.</p>
     <form id="form" novalidate>
       <div class="field">
         <label for="nome">Nome completo</label>
         <input type="text" id="nome" autocomplete="name" maxlength="80" required>
         <div class="msg-err" id="eNome"></div>
       </div>
-      <div class="field">
-        <label for="tel">WhatsApp</label>
-        <input type="tel" id="tel" inputmode="numeric" autocomplete="tel-national" placeholder="(84) 9 0000-0000" maxlength="16" required>
-        <div class="msg-err" id="eTel"></div>
-      </div>
-      <div class="field">
-        <label for="cong">Congregação</label>
-        <input type="text" id="cong" maxlength="60" placeholder="Ex.: Templo Sede" list="congs">
-        <datalist id="congs"><option value="Templo Sede"></option><option value="Visitante (outra igreja)"></option></datalist>
-      </div>
-      <div class="field">
-        <span class="lbl">Você é</span>
-        <div class="opts" id="faixa">
-          <button type="button" data-v="jovem">Jovem<small>até 35 anos</small></button>
-          <button type="button" data-v="adulto">Adulto<small>acima de 35</small></button>
-        </div>
-        <div class="msg-err" id="eFaixa"></div>
-      </div>
       <button class="go" id="go" type="submit">Quero participar</button>
       <div class="msg-err" id="eGeral" style="text-align:center"></div>
-      <p class="fine">Usamos seu nome e WhatsApp só para a organização da prova e o envio do resultado.</p>
+      <p class="fine">Usamos seu nome só para a organização da prova.</p>
     </form>
   </section>
 
@@ -163,8 +145,8 @@ const $ = s => document.querySelector(s);
 const SEMANA = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 const MES = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 const pd = s => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); return m ? new Date(+m[1], m[2] - 1, +m[3]) : null; };
-const digits = s => String(s || '').replace(/\D/g, '');
-let faixa = '';
+// "José da Silva" -> "jose-da-silva" (vira o ID, para o mesmo nome não se inscrever duas vezes)
+const slug = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
 // Data, local e prazo vêm do admin (config-enem/publico)
 db.collection('config-enem').doc('publico').get().then(snap => {
@@ -188,43 +170,22 @@ db.collection('config-enem').doc('publico').get().then(snap => {
   }
 }).catch(() => { });
 
-// Máscara do WhatsApp: (84) 9 0000-0000
-$('#tel').addEventListener('input', e => {
-  const d = digits(e.target.value).slice(0, 11);
-  let v = d;
-  if (d.length > 2) v = `(${d.slice(0, 2)}) ${d.slice(2)}`;
-  if (d.length > 3 && d.length === 11) v = `(${d.slice(0, 2)}) ${d[2]} ${d.slice(3, 7)}-${d.slice(7)}`;
-  else if (d.length > 6) v = `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
-  e.target.value = v;
-});
-
-document.querySelectorAll('#faixa button').forEach(b => b.onclick = () => {
-  faixa = b.dataset.v;
-  document.querySelectorAll('#faixa button').forEach(x => x.classList.toggle('on', x === b));
-  $('#eFaixa').textContent = '';
-});
-
 function err(id, inp, msg) { $(id).textContent = msg; if (inp) inp.classList.toggle('bad', !!msg); return !msg; }
 
 $('#form').addEventListener('submit', async e => {
   e.preventDefault();
   const nome = $('#nome').value.trim().replace(/\s+/g, ' ');
-  const tel = digits($('#tel').value);
-  const cong = $('#cong').value.trim().slice(0, 60);
-  let ok = true;
-  ok = err('#eNome', $('#nome'), nome.split(' ').length < 2 || nome.length < 5 ? 'Escreva nome e sobrenome.' : '') && ok;
-  ok = err('#eTel', $('#tel'), tel.length < 10 || tel.length > 11 ? 'WhatsApp com DDD, ex.: (84) 9 9999-9999.' : '') && ok;
-  ok = err('#eFaixa', null, faixa ? '' : 'Escolha uma opção.') && ok;
+  let ok = err('#eNome', $('#nome'), nome.split(' ').length < 2 || nome.length < 5 ? 'Escreva nome e sobrenome.' : '');
+  const id = slug(nome);
   $('#eGeral').textContent = '';
   if (!ok) return;
 
   const btn = $('#go');
   btn.disabled = true; btn.textContent = 'Enviando…';
   try {
-    // O WhatsApp é o ID: a regra do Firestore só deixa criar, então o mesmo número não se inscreve duas vezes
-    await db.collection('enem-inscricoes').doc(tel).set({
-      nome, whatsapp: tel, congregacao: cong, faixa,
-      criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+    // O nome normalizado é o ID: a regra do Firestore só deixa criar, então o mesmo nome não se inscreve duas vezes
+    await db.collection('enem-inscricoes').doc(id).set({
+      nome, criadoEm: firebase.firestore.FieldValue.serverTimestamp()
     });
     $('#doneTitle').textContent = `Inscrição feita, ${nome.split(' ')[0]}!`;
     $('#formCard').hidden = true;
@@ -233,7 +194,7 @@ $('#form').addEventListener('submit', async e => {
   } catch (ex) {
     console.error(ex);
     $('#eGeral').textContent = ex.code === 'permission-denied'
-      ? 'Esse WhatsApp já está inscrito (ou as inscrições foram encerradas).'
+      ? 'Esse nome já está inscrito (ou as inscrições foram encerradas).'
       : 'Não consegui enviar. Confira a internet e tente de novo.';
   } finally {
     btn.disabled = false; btn.textContent = 'Quero participar';
@@ -242,8 +203,7 @@ $('#form').addEventListener('submit', async e => {
 
 $('#again').onclick = e => {
   e.preventDefault();
-  $('#form').reset(); faixa = '';
-  document.querySelectorAll('#faixa button').forEach(x => x.classList.remove('on'));
+  $('#form').reset();
   $('#doneCard').hidden = true; $('#formCard').hidden = false;
 };
 </script>

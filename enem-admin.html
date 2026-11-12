@@ -90,23 +90,20 @@ td a { color: var(--gold); text-decoration: none; }
       <h2>Resumo</h2>
       <div class="kpis">
         <div class="kpi hl"><b id="kTotal">0</b><span>inscritos</span></div>
-        <div class="kpi"><b id="kJovem">0</b><span>jovens</span></div>
-        <div class="kpi"><b id="kAdulto">0</b><span>adultos</span></div>
         <div class="kpi"><b id="kImp">0</b><span>provas para imprimir (+15% de sobra)</span></div>
         <div class="kpi"><b id="kCad">0</b><span>de cada caderno (4 cores)</span></div>
       </div>
-      <p class="muted" id="kCong" style="margin:12px 0 0"></p>
     </section>
 
     <section class="card">
       <h2>Inscritos</h2>
       <div class="toolbar">
-        <input type="search" id="busca" placeholder="Buscar por nome, WhatsApp ou congregação">
+        <input type="search" id="busca" placeholder="Buscar por nome">
         <button class="btn" id="btnCsv">Baixar planilha (CSV)</button>
       </div>
       <div class="tbl-wrap">
         <table>
-          <thead><tr><th data-s="i">#</th><th data-s="nome">Nome</th><th data-s="whatsapp">WhatsApp</th><th data-s="congregacao">Congregação</th><th data-s="faixa">Faixa</th><th data-s="criadoEm">Inscrição</th><th></th></tr></thead>
+          <thead><tr><th data-s="i">#</th><th data-s="nome">Nome</th><th data-s="criadoEm">Inscrição</th><th></th></tr></thead>
           <tbody id="lista"></tbody>
         </table>
       </div>
@@ -161,7 +158,6 @@ let ROWS = [], SORT = { k: 'criadoEm', dir: 1 }, ADMINS = [], unsub = null;
 
 function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 2600); }
 function show(id) { ['#vLogin', '#vClaim', '#vNo', '#vAdmin'].forEach(v => $(v).hidden = v !== id); }
-const fmtTel = t => t.length === 11 ? `(${t.slice(0, 2)}) ${t[2]} ${t.slice(3, 7)}-${t.slice(7)}` : t.length === 10 ? `(${t.slice(0, 2)}) ${t.slice(2, 6)}-${t.slice(6)}` : t;
 const fmtDt = ts => { const d = ts?.toDate?.(); return d ? d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : ''; };
 
 $('#btnLogin').onclick = () => {
@@ -204,20 +200,15 @@ function listen() {
 }
 
 function render() {
-  const total = ROWS.length, jov = ROWS.filter(r => r.faixa === 'jovem').length;
+  const total = ROWS.length;
   const imp = Math.ceil(total * 1.15);
   $('#kTotal').textContent = total;
-  $('#kJovem').textContent = jov;
-  $('#kAdulto').textContent = total - jov;
   $('#kImp').textContent = imp;
   $('#kCad').textContent = Math.ceil(imp / 4);
-  const cong = {};
-  ROWS.forEach(r => { const k = (r.congregacao || 'Não informada').trim(); cong[k] = (cong[k] || 0) + 1; });
-  $('#kCong').textContent = total ? 'Por congregação: ' + Object.entries(cong).sort((a, b) => b[1] - a[1]).map(([k, n]) => `${k} (${n})`).join(' · ') : '';
 
   const q = $('#busca').value.trim().toLowerCase();
-  const qd = q.replace(/\D/g, '');
-  let rows = ROWS.filter(r => !q || (r.nome || '').toLowerCase().includes(q) || (r.congregacao || '').toLowerCase().includes(q) || (qd && r.whatsapp.includes(qd)));
+  const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  let rows = ROWS.filter(r => !q || norm(r.nome).includes(norm(q)));
   const k = SORT.k, dir = SORT.dir;
   rows = rows.slice().sort((a, b) => {
     const va = k === 'criadoEm' ? (a.criadoEm?.toMillis?.() || 0) : a[k], vb = k === 'criadoEm' ? (b.criadoEm?.toMillis?.() || 0) : b[k];
@@ -229,9 +220,6 @@ function render() {
     return `<tr>
       <td><span class="cad" title="Sugestão: caderno ${c[0]}" style="background:${c[1]}"></span>${r.i}</td>
       <td>${esc(r.nome)}</td>
-      <td><a href="https://wa.me/55${esc(r.whatsapp)}" target="_blank" rel="noopener">${fmtTel(r.whatsapp)}</a></td>
-      <td>${esc(r.congregacao || '—')}</td>
-      <td><span class="tag ${esc(r.faixa)}">${r.faixa === 'jovem' ? 'Jovem' : 'Adulto'}</span></td>
       <td>${fmtDt(r.criadoEm)}</td>
       <td><button class="btn small danger" data-del="${esc(r.id)}" title="Apagar">✕</button></td>
     </tr>`;
@@ -253,9 +241,9 @@ $('#lista').onclick = async e => {
 };
 
 $('#btnCsv').onclick = () => {
-  const head = ['#', 'Nome', 'WhatsApp', 'Congregação', 'Faixa', 'Caderno sugerido', 'Inscrição'];
+  const head = ['#', 'Nome', 'Caderno sugerido', 'Inscrição'];
   const cell = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const lines = ROWS.map(r => [r.i, r.nome, fmtTel(r.whatsapp), r.congregacao, r.faixa, CORES[(r.i - 1) % 4][0], fmtDt(r.criadoEm)].map(cell).join(';'));
+  const lines = ROWS.map(r => [r.i, r.nome, CORES[(r.i - 1) % 4][0], fmtDt(r.criadoEm)].map(cell).join(';'));
   const blob = new Blob(['﻿' + [head.map(cell).join(';'), ...lines].join('\r\n')], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'inscritos-enem-biblico.csv';
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
