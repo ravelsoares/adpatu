@@ -212,6 +212,10 @@
         "destination": "/enem-biblico.html"
       },
       {
+        "source": "/djad/enem-cartaz",
+        "destination": "/cartaz-enem.html"
+      },
+      {
         "source": "/djad/fabrica-artes",
         "destination": "/fabrica-artes.html"
       },
