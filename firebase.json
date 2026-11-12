@@ -208,6 +208,14 @@
         "destination": "/batalha.html"
       },
       {
+        "source": "/djad/enem-biblico",
+        "destination": "/enem-biblico.html"
+      },
+      {
+        "source": "/djad/fabrica-artes",
+        "destination": "/fabrica-artes.html"
+      },
+      {
         "source": "/ebd",
         "destination": "/ebd.html"
       },

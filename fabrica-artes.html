@@ -1,0 +1,2113 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <script>if(location.protocol!=="file:")document.write('<base href="/">')</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Fábrica de Artes</title>
+    <link rel="icon" href="images/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&family=Montserrat:wght@700;800;900&family=Playfair+Display:ital,wght@0,500;0,700;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="scripts/fabrica-logos.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <style>
+        /* ================= APP (painel) ================= */
+        :root {
+            --bg: #050505;
+            --panel: #0f0f0f;
+            --panel-2: #161616;
+            --line: rgba(255, 255, 255, .09);
+            --text: #f5efe8;
+            --muted: rgba(245, 239, 232, .55);
+            --orange: #FF6600;
+            --orange-2: #ff8a3d;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body { margin: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 15px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .top {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--line);
+            background: linear-gradient(90deg, rgba(255, 102, 0, .12), transparent 60%);
+        }
+
+        .top img { height: 40px; }
+
+        .top h1 {
+            margin: 0;
+            font-family: 'Anton', sans-serif;
+            font-weight: 400;
+            font-size: 24px;
+            letter-spacing: .02em;
+            text-transform: uppercase;
+        }
+
+        .top h1 span { color: var(--orange); }
+
+        .top p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+
+        .layout {
+            display: grid;
+            gap: 20px;
+            padding: 16px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 900px) {
+            .layout { grid-template-columns: minmax(0, 1.05fr) minmax(360px, .95fr); align-items: start; }
+            .preview-col { position: sticky; top: 16px; }
+        }
+
+        .seg {
+            display: flex;
+            gap: 6px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            padding: 5px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .seg button {
+            flex: 1;
+            border: 0;
+            background: transparent;
+            color: var(--muted);
+            font: 600 13px 'Inter', sans-serif;
+            padding: 9px 6px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .seg button.on { background: var(--orange); color: #0a0a0a; }
+
+        .stage-wrap {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 6px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .6), 0 0 0 1px var(--line);
+        }
+
+        .stage { position: absolute; top: 0; transform-origin: 0 0; }
+
+        .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+        .btn {
+            flex: 1 1 auto;
+            border: 1px solid var(--line);
+            background: var(--panel-2);
+            color: var(--text);
+            font: 700 14px 'Inter', sans-serif;
+            padding: 13px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn.primary { background: var(--orange); border-color: var(--orange); color: #0a0a0a; }
+        .btn:disabled { opacity: .5; cursor: wait; }
+        .btn.small { flex: none; padding: 8px 12px; font-size: 13px; }
+
+        .caption {
+            margin-top: 14px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .caption-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .caption-head b { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+        .caption textarea { min-height: 120px; font-size: 13px; line-height: 1.5; }
+
+        .brand-seg { margin-bottom: 12px; }
+        .brand-seg button { font-size: 15px; font-weight: 800; letter-spacing: .06em; padding: 12px 6px; }
+        .layout-seg button { padding: 10px 2px; font-size: 12.5px; }
+        details.sub-details { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
+        details.sub-details summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--muted); }
+        details.sub-details[open] summary { margin-bottom: 12px; }
+        .logo-checks { display: flex; flex-wrap: wrap; gap: 14px; padding: 6px 0; }
+
+        .tabs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-bottom: 12px; }
+
+        .tabs button {
+            border: 1px solid var(--line);
+            background: var(--panel);
+            color: var(--muted);
+            border-radius: 12px;
+            padding: 10px 4px 8px;
+            font: 600 12px 'Inter', sans-serif;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tabs button i { font-style: normal; font-size: 20px; }
+        .tabs button.on { border-color: var(--orange); color: var(--text); background: rgba(255, 102, 0, .12); }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .card[hidden] { display: none; }
+
+        .card h2 {
+            margin: 0 0 12px;
+            font-family: 'Anton', sans-serif;
+            font-weight: 400;
+            font-size: 20px;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+        }
+
+        details.card summary {
+            cursor: pointer;
+            font-family: 'Anton', sans-serif;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            list-style: none;
+        }
+
+        details.card summary::after { content: ' +'; color: var(--orange); }
+        details.card[open] summary::after { content: ' –'; }
+        details.card[open] summary { margin-bottom: 12px; }
+
+        .field { margin-bottom: 12px; }
+        .field:last-child { margin-bottom: 0; }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 5px;
+        }
+
+        .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        input[type=text], input[type=date], input[type=month], select, textarea {
+            width: 100%;
+            background: var(--panel-2);
+            border: 1px solid var(--line);
+            color: var(--text);
+            border-radius: 9px;
+            padding: 11px 12px;
+            font: 500 15px 'Inter', sans-serif;
+            outline: none;
+            color-scheme: dark;
+        }
+
+        textarea { resize: vertical; min-height: 84px; }
+
+        input:focus, select:focus, textarea:focus { border-color: var(--orange); }
+
+        input[type=file] { width: 100%; color: var(--muted); font-size: 13px; }
+        input[type=file]::file-selector-button {
+            background: var(--panel-2);
+            color: var(--text);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-right: 10px;
+            font: 600 13px 'Inter', sans-serif;
+            cursor: pointer;
+        }
+
+        input[type=range] { width: 100%; accent-color: var(--orange); }
+        input[type=color] { width: 100%; height: 42px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel-2); padding: 4px; }
+
+        .hint { font-size: 12px; color: var(--muted); margin-top: 5px; line-height: 1.4; }
+        .hint code { color: var(--orange-2); }
+
+        .check { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+        .check input { accent-color: var(--orange); width: 18px; height: 18px; }
+
+        .namelist {
+            max-height: 260px;
+            overflow: auto;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            padding: 6px 10px;
+            background: var(--panel-2);
+        }
+
+        .namelist .check { padding: 6px 0; border-bottom: 1px solid var(--line); }
+        .namelist .check:last-child { border-bottom: 0; }
+        .namelist .check em { margin-left: auto; font-style: normal; color: var(--orange-2); font-weight: 700; font-size: 13px; }
+
+        .status { font-size: 13px; color: var(--muted); margin-top: 6px; }
+        .status.err { color: #ff7b7b; }
+
+        .photo-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .photo-row input[type=file] { flex: 1 1 200px; min-width: 0; }
+        .photo-row input { flex: 1; }
+
+        #capture { position: absolute; left: 0; top: 0; z-index: -1; pointer-events: none; }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            transform: translateX(-50%) translateY(30px);
+            background: var(--orange);
+            color: #0a0a0a;
+            font-weight: 700;
+            padding: 12px 18px;
+            border-radius: 10px;
+            opacity: 0;
+            transition: .25s;
+            z-index: 10;
+            max-width: calc(100% - 32px);
+        }
+
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ================= ARTE (renderizada em tamanho real) ================= */
+        .art {
+            --accent: #FF6600;
+            --accent-rgb: 255, 102, 0;
+            --fg-rgb: 245, 239, 232;
+            --bg-rgb: 5, 5, 5;
+            position: relative;
+            width: 1080px;
+            height: 1350px;
+            overflow: hidden;
+            background: rgb(var(--bg-rgb));
+            color: rgb(var(--fg-rgb));
+            font-family: 'Inter', sans-serif;
+        }
+
+        .art.fmt-story { height: 1920px; }
+        .art.fmt-square { height: 1080px; }
+
+        .art .layer { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }
+        .art .photo { background-size: cover; background-position: center; }
+        .art .shade { background: linear-gradient(180deg, rgba(var(--bg-rgb), .78) 0%, rgba(var(--bg-rgb), .3) 32%, rgba(var(--bg-rgb), .62) 62%, rgba(var(--bg-rgb), .97) 100%); }
+
+        .art .glow {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(var(--accent-rgb), .5) 0%, rgba(var(--accent-rgb), 0) 68%);
+        }
+
+        .art .glow.g1 { width: 1500px; height: 1500px; right: -760px; top: -820px; }
+        .art .glow.g2 { width: 1400px; height: 1400px; left: -820px; bottom: -860px; background: radial-gradient(circle, rgba(120, 8, 8, .75) 0%, rgba(74, 4, 4, 0) 68%); }
+
+        .art .grain { background-size: 240px 240px; opacity: .1; }
+
+        .art .frame { position: absolute; left: 36px; top: 36px; right: 36px; bottom: 36px; border: 2px solid rgba(var(--fg-rgb), .07); }
+
+        .art .inner {
+            position: absolute;
+            left: 0; top: 0; right: 0; bottom: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 84px 92px 74px;
+        }
+
+        .art.fmt-story .inner { padding: 230px 92px 300px; }
+        .art.fmt-square .inner { padding: 70px 84px 60px; }
+
+        .art .hdr { flex: none; display: flex; align-items: center; gap: 30px; height: 124px; }
+        .art.fmt-square .hdr { height: 104px; }
+        .art .hdr img { display: block; height: 100%; width: auto; }
+        .art .hdr .sep { width: 2px; height: 70%; background: rgba(var(--fg-rgb), .22); }
+
+        .art .main {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-size: 100px;
+            padding: 30px 0;
+        }
+
+        .art .main-in { display: flex; flex-direction: column; gap: .3em; }
+        .art .center .main-in, .art .main-in.center { align-items: center; text-align: center; }
+
+        .art .ftr {
+            flex: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            border-top: 2px solid rgba(var(--fg-rgb), .14);
+            padding-top: 26px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 26px;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: rgba(var(--fg-rgb), .72);
+        }
+
+        .art .ftr .bar { display: inline-block; width: 14px; height: 14px; background: var(--accent); margin-right: 14px; vertical-align: 1px; }
+
+        .art .kicker {
+            display: flex;
+            align-items: center;
+            gap: .55em;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: .3em;
+            letter-spacing: .3em;
+            text-transform: uppercase;
+            color: var(--accent);
+            line-height: 1.2;
+        }
+
+        .art .kicker .ln { flex: none; width: 2.4em; height: .3em; background: var(--accent); }
+
+        .art .title {
+            margin: 0;
+            font-family: 'Anton', sans-serif;
+            font-weight: 400;
+            font-size: 2.05em;
+            line-height: 1.02;
+            text-transform: uppercase;
+            letter-spacing: .005em;
+            overflow-wrap: normal;
+            word-break: normal;
+        }
+
+        .art .hl { color: var(--accent); }
+
+        .art .sub {
+            font-size: .42em;
+            font-weight: 600;
+            line-height: 1.32;
+            color: rgba(var(--fg-rgb), .84);
+            max-width: 17em;
+        }
+
+        .art .when { display: flex; align-items: stretch; gap: .34em; margin-top: .2em; }
+
+        .art .datebox {
+            flex: none;
+            background: var(--accent);
+            color: #0a0a0a;
+            padding: .14em .28em .12em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 2.1em;
+            border-radius: .06em;
+        }
+
+        .art .datebox b { font-family: 'Anton', sans-serif; font-weight: 400; font-size: 1.2em; line-height: 1.02; white-space: nowrap; }
+        .art .datebox b.range { font-size: .86em; }
+        .art .datebox span { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .27em; letter-spacing: .2em; margin-top: .2em; white-space: nowrap; }
+
+        .art .info { display: flex; flex-direction: column; justify-content: center; gap: .14em; min-width: 0; }
+        .art .info .l1 { font-family: 'Anton', sans-serif; font-size: .58em; text-transform: uppercase; letter-spacing: .02em; line-height: 1.05; }
+        .art .info .l2 { font-size: .34em; font-weight: 600; line-height: 1.3; color: rgba(var(--fg-rgb), .8); }
+
+        .art .speaker { display: flex; align-items: center; gap: .3em; }
+        .art .speaker .ph { flex: none; width: 1.8em; height: 1.8em; border-radius: 50%; background-size: cover; background-position: center; border: .05em solid var(--accent); }
+        .art .speaker small { display: block; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .23em; letter-spacing: .3em; color: var(--accent); text-transform: uppercase; }
+        .art .speaker strong { display: block; font-family: 'Anton', sans-serif; font-weight: 400; font-size: .6em; text-transform: uppercase; line-height: 1.08; }
+
+        /* agenda */
+        .art .ag-head { display: flex; align-items: flex-end; gap: .25em; }
+        .art .ag-head .year { font-family: 'Anton', sans-serif; font-size: .62em; color: rgba(var(--fg-rgb), .35); line-height: 1.3; }
+        .art .list { display: flex; flex-direction: column; gap: .17em; margin-top: .12em; }
+        .art .ev { display: flex; align-items: center; gap: .3em; padding-bottom: .17em; border-bottom: 2px solid rgba(var(--fg-rgb), .1); }
+        .art .ev:last-child { border-bottom: 0; padding-bottom: 0; }
+        .art .ev .datebox { font-size: .52em; width: 2.6em; }
+        .art .ev .t { font-family: 'Anton', sans-serif; font-size: .5em; text-transform: uppercase; line-height: 1.16; }
+        .art .ev .p { font-size: .28em; font-weight: 600; color: rgba(var(--fg-rgb), .7); margin-top: .18em; }
+        .art .empty { font-size: .4em; color: rgba(var(--fg-rgb), .6); }
+
+        /* contagem */
+        .art .cd { display: flex; align-items: center; gap: .2em; }
+        .art .cd-num { font-family: 'Anton', sans-serif; font-size: 4.6em; line-height: .92; color: var(--accent); white-space: nowrap; }
+        .art .cd-side { display: flex; flex-direction: column; font-family: 'Anton', sans-serif; text-transform: uppercase; line-height: 1; }
+        .art .cd-side span:first-child { font-size: .62em; color: rgba(var(--fg-rgb), .6); }
+        .art .cd-side span:last-child { font-size: 1.25em; }
+        .art .cd-today { font-family: 'Anton', sans-serif; font-size: 3em; line-height: .95; color: var(--accent); text-transform: uppercase; white-space: nowrap; }
+
+        /* aniversários */
+        .art .period { font-family: 'Anton', sans-serif; font-size: .5em; text-transform: uppercase; color: rgba(var(--fg-rgb), .55); letter-spacing: .02em; }
+        .art .names { display: grid; grid-template-columns: 1fr; column-gap: .5em; row-gap: .16em; margin-top: .1em; }
+        .art .names.two { grid-template-columns: 1fr 1fr; }
+        .art .nm { display: flex; align-items: baseline; gap: .28em; min-width: 0; }
+        .art .nm b { flex: none; width: 2.05em; font-family: 'Anton', sans-serif; font-weight: 400; font-size: .42em; color: var(--accent); }
+        .art .nm span { font-size: .38em; font-weight: 700; line-height: 1.2; }
+        .art .bless { font-size: .3em; font-weight: 600; font-style: italic; color: rgba(var(--fg-rgb), .68); line-height: 1.4; max-width: 34em; margin-top: .2em; }
+        .art .bless b { font-style: normal; color: var(--accent); }
+        .art .bigphoto { width: 5em; height: 5em; border-radius: 50%; background-size: cover; background-position: center; border: .07em solid var(--accent); box-shadow: 0 0 0 .14em rgba(var(--accent-rgb), .18); }
+        .art .bigphoto.none { background: rgba(var(--fg-rgb), .08); display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-size: 5em; }
+        .art .bigphoto.none span { font-size: .45em; color: var(--accent); }
+
+        /* programação do dia */
+        .art .dia-head { display: flex; align-items: center; gap: .3em; }
+        .art .dia-head .title { white-space: nowrap; }
+        .art .dia-head .datebox { font-size: .62em; }
+        .art .dia-local { font-size: .32em; font-weight: 600; color: rgba(var(--fg-rgb), .75); line-height: 1.3; }
+        .art .pgs { display: flex; flex-direction: column; gap: .1em; margin-top: .08em; }
+        .art .pg { display: flex; align-items: center; gap: .3em; padding: .13em 0; border-bottom: 2px solid rgba(var(--fg-rgb), .12); }
+        .art .pg:last-child { border-bottom: 0; }
+        .art .pg .h { flex: none; min-width: 2.7em; font-family: 'Anton', sans-serif; font-size: .48em; line-height: 1; color: var(--accent); white-space: nowrap; }
+        .art .pg .t { font-family: 'Anton', sans-serif; font-size: .5em; text-transform: uppercase; line-height: 1.1; }
+        .art .pg .p { font-size: .27em; font-weight: 600; color: rgba(var(--fg-rgb), .72); margin-top: .18em; line-height: 1.25; }
+        .art .pg.star { background: var(--accent); color: #0a0a0a; padding: .22em .3em; border-radius: .06em; border-bottom: 0; margin: .08em 0; }
+        .art .pg.star .h { color: #0a0a0a; font-size: .64em; min-width: 2.5em; }
+        .art .pg.star .t { font-size: .7em; }
+        .art .pg.star .p { color: rgba(10, 10, 10, .78); font-weight: 700; font-size: .3em; }
+        .art .pgs.mini .pg .h, .art .pgs.mini .pg .t { font-size: .4em; }
+        .art .ds-time { display: flex; align-items: baseline; gap: .25em; font-family: 'Anton', sans-serif; font-size: .7em; line-height: 1; text-transform: uppercase; }
+        .art .ds-time b { font-weight: 400; color: var(--accent); }
+        .art .ds-time span { font-size: .55em; color: rgba(var(--fg-rgb), .7); }
+        .art .ds-sep { display: flex; align-items: center; gap: .6em; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .24em; letter-spacing: .3em; text-transform: uppercase; color: rgba(var(--fg-rgb), .6); margin-top: .5em; }
+        .art .ds-sep i { flex: 1; height: 2px; background: rgba(var(--fg-rgb), .2); }
+        .art.brand-djad .pg .h, .art.brand-djad .pg .t, .art.brand-djad .ds-time, .art.brand-djad .dia-head .title { font-family: 'Montserrat', sans-serif; font-weight: 900; }
+        .art.brand-djad .pg .t { font-size: .42em; }
+        .art.brand-djad .pg.star .t { font-size: .6em; }
+        .art.brand-djad .ds-sep { font-family: 'Montserrat', sans-serif; font-weight: 800; }
+        .art.brand-djad .pg.star { border-radius: .14em; }
+
+        /* versículo */
+        .art .qmark { font-family: 'Anton', sans-serif; font-size: 2.6em; line-height: 1; height: .5em; color: var(--accent); }
+        .art .verse { font-weight: 800; font-size: .74em; line-height: 1.2; letter-spacing: -.012em; }
+        .art .ref { font-family: 'Anton', sans-serif; font-size: .54em; color: var(--accent); text-transform: uppercase; letter-spacing: .03em; }
+
+        /* ================= MARCA DJAD (preto + dourado, Montserrat + Playfair) ================= */
+        .art.brand-djad { --bg-rgb: 12, 12, 11; }
+        .art.brand-djad .glow.g1 { width: 1500px; height: 1500px; left: -1000px; right: auto; top: -200px; background: radial-gradient(circle, rgba(var(--accent-rgb), .55) 0%, rgba(var(--accent-rgb), 0) 62%); }
+        .art.brand-djad .glow.g2 { width: 1500px; height: 1500px; right: -1000px; left: auto; bottom: -400px; background: radial-gradient(circle, rgba(var(--accent-rgb), .45) 0%, rgba(var(--accent-rgb), 0) 62%); }
+        .art.brand-djad .frame { display: none; }
+        .art .ring { position: absolute; border-radius: 50%; border: 2px solid rgba(var(--accent-rgb), .5); }
+        .art .stars { position: absolute; font-size: 54px; letter-spacing: 6px; color: var(--accent); line-height: 1; font-family: 'Segoe UI Symbol', 'Noto Sans Symbols 2', sans-serif; }
+        .art.brand-djad .hdr { justify-content: center; }
+        .art.brand-djad .kicker { font-family: 'Montserrat', sans-serif; font-weight: 800; color: rgb(var(--fg-rgb)); letter-spacing: .32em; }
+        .art.brand-djad .kicker .ln { background: var(--accent); height: .14em; }
+        .art.brand-djad .title { font-family: 'Montserrat', sans-serif; font-weight: 900; line-height: .98; letter-spacing: -.01em; color: var(--accent); }
+        .art.brand-djad .title .hl { color: rgb(var(--fg-rgb)); }
+        .art.brand-djad .sub { font-family: 'Playfair Display', serif; font-weight: 500; font-style: italic; font-size: .46em; }
+        .art.brand-djad .datebox { border-radius: .14em; }
+        .art.brand-djad .datebox b, .art.brand-djad .cd-num, .art.brand-djad .cd-today, .art.brand-djad .ev .t, .art.brand-djad .info .l1,
+        .art.brand-djad .speaker strong, .art.brand-djad .cd-side, .art.brand-djad .ag-head .year, .art.brand-djad .period, .art.brand-djad .nm b {
+            font-family: 'Montserrat', sans-serif; font-weight: 900;
+        }
+        .art.brand-djad .datebox span, .art.brand-djad .speaker small, .art.brand-djad .ftr { font-family: 'Montserrat', sans-serif; font-weight: 800; }
+        .art.brand-djad .info .l1 { color: var(--accent); }
+        .art.brand-djad .ev .t { font-size: .42em; }
+        .art.brand-djad .qmark { font-family: 'Playfair Display', serif; font-weight: 700; }
+        .art.brand-djad .verse { font-family: 'Playfair Display', serif; font-weight: 500; font-size: .7em; line-height: 1.32; letter-spacing: 0; }
+        .art.brand-djad .ref { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; text-transform: none; }
+        .art.brand-djad .bless { font-family: 'Playfair Display', serif; font-weight: 500; }
+        .art.brand-djad .ftr { border-top-color: rgba(var(--accent-rgb), .35); }
+
+        /* ================= FUNDO BRANCO ================= */
+        .art.tone-claro { --fg-rgb: 22, 20, 18; --bg-rgb: 247, 244, 238; }
+        .art.tone-claro.brand-djad { --bg-rgb: 249, 246, 239; }
+        .art.tone-claro .grain { opacity: .05; }
+        .art.tone-claro .glow.g1 { opacity: .45; }
+        .art.tone-claro .glow.g2 { opacity: .35; background: radial-gradient(circle, rgba(var(--accent-rgb), .35) 0%, rgba(var(--accent-rgb), 0) 68%); }
+        .art.tone-claro.brand-djad .glow.g1, .art.tone-claro.brand-djad .glow.g2 { opacity: .4; }
+        .art.tone-claro.brand-djad .title { color: rgb(var(--fg-rgb)); }
+        .art.tone-claro.brand-djad .title .hl { color: var(--accent); }
+        .art.tone-claro .ring { border-color: rgba(var(--accent-rgb), .7); }
+
+        /* ================= FOTO GRANDE DO PRELETOR ================= */
+        .art .bigsp { position: absolute; right: 0; bottom: 0; width: 64%; height: 74%; background-size: cover; background-position: center top; }
+        .art.fmt-story .bigsp { height: 60%; width: 78%; }
+        .art .bigsp-fade {
+            position: absolute; right: 0; bottom: 0; width: 64%; height: 74%;
+            background:
+                linear-gradient(90deg, rgba(var(--bg-rgb), 1) 0%, rgba(var(--bg-rgb), .6) 22%, rgba(var(--bg-rgb), 0) 50%),
+                linear-gradient(0deg, rgba(var(--bg-rgb), 1) 0%, rgba(var(--bg-rgb), .7) 18%, rgba(var(--bg-rgb), 0) 42%),
+                linear-gradient(180deg, rgba(var(--bg-rgb), 1) 0%, rgba(var(--bg-rgb), 0) 22%);
+        }
+        .art.fmt-story .bigsp-fade { height: 60%; width: 78%; }
+        /* PNG recortado (sem fundo): fica na frente do título, apoiado no rodapé */
+        .art .bigsp.cut { z-index: 2; width: 62%; height: 72%; background-size: contain; background-position: right bottom; background-repeat: no-repeat; }
+        .art.fmt-story .bigsp.cut { width: 74%; height: 56%; }
+        .art.sp-cut .main-in > *:not(.title), .art.sp-cut .hdr, .art.sp-cut .ftr { position: relative; z-index: 3; }
+        .art.sp-big .main-in > *:not(.title):not(.kicker) { max-width: 54%; }
+        .art.sp-big .title { max-width: 100%; }
+
+        /* ================= LAYOUTS EXTRAS DO EVENTO (Editorial, Faixa, Pôster) ================= */
+        .art .lay {
+            position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+            display: flex; flex-direction: column; overflow: hidden;
+            padding: 70px 92px 64px; font-size: 100px;
+        }
+        .art.fmt-story .lay { padding: 200px 92px 250px; }
+        .art.fmt-square .lay { padding: 54px 80px 48px; }
+        .art .lhdr { flex: none; display: flex; align-items: center; gap: 22px; height: 96px; }
+        .art.fmt-square .lhdr { height: 78px; }
+        .art .lhdr img { display: block; height: 100%; width: auto; }
+        .art .lhdr .sep { width: 2px; height: 70%; background: rgba(var(--fg-rgb), .22); }
+        .art .lhdr.right { justify-content: flex-end; }
+        .art .lhdr.center { justify-content: center; }
+
+        /* pessoas (1 a 3 fotos lado a lado) */
+        .art .prow { flex: 1 1 0; min-height: 22%; display: flex; gap: 14px; position: relative; }
+        .art .pcol { flex: 1; position: relative; min-width: 0; }
+        .art .pbox { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }
+        .art .pimg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; background-size: cover; background-position: center 18%; }
+        .art .pbox.cut .pimg { background-size: contain; background-position: center bottom; background-repeat: no-repeat; }
+        .art .pfade {
+            position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+            background:
+                linear-gradient(0deg, rgba(var(--bg-rgb), 1) 0%, rgba(var(--bg-rgb), 0) 40%),
+                linear-gradient(90deg, rgba(var(--bg-rgb), .85) 0%, rgba(var(--bg-rgb), 0) 16%, rgba(var(--bg-rgb), 0) 84%, rgba(var(--bg-rgb), .85) 100%),
+                linear-gradient(180deg, rgba(var(--bg-rgb), .7) 0%, rgba(var(--bg-rgb), 0) 14%);
+        }
+
+        /* EDITORIAL: palavra gigante + vertical, referência nas laterais */
+        .art .le-cap { position: absolute; left: 0; right: 0; bottom: .1em; z-index: 2; text-align: center; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: .25em; letter-spacing: .3em; text-transform: uppercase; }
+        .art .le-title { flex: none; display: flex; align-items: stretch; gap: .08em; margin-top: .06em; }
+        .art .le-vert { flex: none; position: relative; width: 1em; font-size: .62em; }
+        .art .le-vert span { display: block; font-family: 'Anton', sans-serif; text-transform: uppercase; color: var(--accent); text-align: center; white-space: nowrap; }
+        .art .le-big { flex: 1; min-width: 0; font-family: 'Anton', sans-serif; font-size: 3.6em; line-height: .88; text-transform: uppercase; white-space: nowrap; }
+        .art .le-when { display: flex; flex-direction: column; align-items: flex-end; font-family: 'Montserrat', sans-serif; font-weight: 900; color: var(--accent); font-size: .52em; line-height: 1; text-transform: uppercase; margin-top: .12em; }
+        .art .le-sub { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .23em; letter-spacing: .16em; line-height: 1.55; text-transform: uppercase; max-width: 72%; margin-top: .25em; }
+        .art .le-local { text-align: center; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: .25em; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-top: .45em; line-height: 1.3; }
+        .art .le-side {
+            position: absolute; z-index: 3; display: flex; align-items: center; justify-content: center; gap: 30px;
+            white-space: nowrap; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 26px; letter-spacing: .45em;
+            text-transform: uppercase; transform: rotate(-90deg); transform-origin: 50% 50%;
+        }
+        .art .le-side i { display: block; width: 180px; height: 2px; background: var(--accent); }
+
+        /* FAIXA: colagem com faixa colorida e etiquetas */
+        .art .wm { position: absolute; left: -60px; white-space: nowrap; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 900; font-size: 330px; line-height: 1; color: rgba(var(--fg-rgb), .05); text-transform: lowercase; }
+        .art .lf-people { flex: 1 1 0; min-height: 26%; position: relative; margin: .1em 0 0; }
+        .art .lf-paper { position: absolute; left: 7%; right: 7%; top: 5%; bottom: -3%; background: rgba(var(--fg-rgb), .9); transform: rotate(-2deg); }
+        .art .lf-people .prow { position: absolute; left: 9%; right: 9%; top: 0; bottom: 0; min-height: 0; }
+        .art .lf-tag { position: absolute; z-index: 3; bottom: 22%; display: flex; flex-direction: column; align-items: flex-start; font-family: 'Montserrat', sans-serif; font-weight: 900; text-transform: uppercase; line-height: 1.05; }
+        .art .lf-tag.r { align-items: flex-end; }
+        .art .lf-tag small { font-size: .2em; padding: .14em .35em; background: rgb(var(--bg-rgb)); color: rgb(var(--fg-rgb)); letter-spacing: .06em; }
+        .art .lf-tag b { font-size: .3em; padding: .1em .3em; background: var(--accent); color: #0a0a0a; white-space: nowrap; }
+        .art .lf-band { flex: none; position: relative; z-index: 4; display: flex; flex-direction: column; align-items: center; margin-top: -.45em; }
+        .art .lf-pill { position: relative; z-index: 2; font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: .64em; line-height: 1.1; text-transform: uppercase; background: rgb(var(--fg-rgb)); color: var(--accent); padding: .06em .42em; transform: rotate(-3deg); margin-bottom: -.14em; }
+        .art .lf-bar { align-self: stretch; background: var(--accent); padding: .04em .2em .14em; text-align: center; transform: rotate(-1deg); }
+        .art .lf-bar span { display: block; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 900; font-size: 2.3em; line-height: 1.05; color: rgb(var(--bg-rgb)); white-space: nowrap; text-transform: lowercase; }
+        .art .lf-date { display: flex; justify-content: center; gap: .2em; margin-top: .4em; font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: .5em; text-transform: uppercase; line-height: 1.15; }
+        .art .lf-date span { padding: .06em .38em; }
+        .art .lf-date .a { background: var(--accent); color: #0a0a0a; }
+        .art .lf-date .b { background: rgb(var(--fg-rgb)); color: rgb(var(--bg-rgb)); }
+        .art .lf-local { text-align: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .21em; letter-spacing: .3em; text-transform: uppercase; margin-top: .55em; color: rgba(var(--fg-rgb), .8); }
+
+        /* PÔSTER: título enorme, vários palestrantes, data grande e programação */
+        .art .lp-head { flex: none; position: relative; text-align: center; margin-top: .08em; }
+        .art .lp-big { font-family: 'Anton', sans-serif; font-size: 3em; line-height: .95; text-transform: uppercase; white-space: nowrap; }
+        .art .lp-over { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; }
+        .art .lp-over span { display: inline-block; background: rgba(var(--bg-rgb), .82); padding: .06em .55em; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .5em; letter-spacing: .2em; text-transform: uppercase; }
+        .art .lp-local { text-align: center; font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: .34em; letter-spacing: .2em; text-transform: uppercase; margin-top: .14em; }
+        .art .lay-poster .prow { margin-top: .22em; }
+        .art .lp-cap { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; text-align: center; text-transform: uppercase; font-family: 'Montserrat', sans-serif; line-height: 1.15; }
+        .art .lp-cap small { display: block; font-weight: 700; font-size: .19em; letter-spacing: .12em; color: rgba(var(--fg-rgb), .75); }
+        .art .lp-cap b { display: block; font-weight: 900; font-size: .23em; }
+        .art .lp-date { text-align: center; font-family: 'Anton', sans-serif; font-size: 1.5em; line-height: 1; text-transform: uppercase; white-space: nowrap; margin-top: .12em; }
+        .art .lp-wd { text-align: center; font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: .3em; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+        .art .lp-temas { display: flex; flex-direction: column; gap: .12em; margin: .3em auto 0; max-width: 92%; }
+        .art .lp-t { display: flex; align-items: center; gap: .22em; }
+        .art .lp-t b { flex: none; font-family: 'Anton', sans-serif; font-weight: 400; font-size: .7em; line-height: 1; color: var(--accent); }
+        .art .lp-t span { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .25em; line-height: 1.25; text-transform: uppercase; }
+        .art .lp-prog { display: flex; justify-content: center; align-items: stretch; gap: .3em; margin-top: .3em; }
+        .art .lp-prog .it { display: flex; flex-direction: column; }
+        .art .lp-prog .it b { font-family: 'Anton', sans-serif; font-weight: 400; font-size: .55em; line-height: 1; text-transform: uppercase; }
+        .art .lp-prog .it span { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: .3em; color: var(--accent); text-transform: uppercase; }
+        .art .lp-prog .bar { width: 3px; background: rgba(var(--fg-rgb), .4); }
+    </style>
+</head>
+
+<body>
+    <header class="top">
+        <img src="images/umadcamp/umadcamp-branco.png" alt="">
+        <div>
+            <h1>Fábrica de <span>Artes</span></h1>
+            <p>UMADCAMP · DJAD — preencha, confira e baixe o post</p>
+        </div>
+    </header>
+
+    <div class="layout">
+        <!-- ============ PRÉVIA ============ -->
+        <section class="preview-col">
+            <div class="seg" id="fmtSeg">
+                <button data-fmt="feed">Feed 4:5</button>
+                <button data-fmt="story">Story</button>
+                <button data-fmt="square">Quadrado</button>
+            </div>
+            <div class="seg" data-seg="look.tema">
+                <button data-v="escuro">⚫ Fundo preto</button>
+                <button data-v="claro">⚪ Fundo branco</button>
+            </div>
+            <div class="stage-wrap" id="stageWrap">
+                <div class="stage" id="stage"></div>
+            </div>
+            <div class="actions">
+                <button class="btn primary" id="btnDownload">Baixar PNG</button>
+                <button class="btn" id="btnShare" hidden>Compartilhar</button>
+                <button class="btn" id="btnAll">Baixar os 3 formatos</button>
+            </div>
+            <div class="caption">
+                <div class="caption-head">
+                    <b>Legenda sugerida</b>
+                    <button class="btn small" id="btnCopy">Copiar</button>
+                </div>
+                <textarea id="caption" spellcheck="false"></textarea>
+            </div>
+        </section>
+
+        <!-- ============ CONTROLES ============ -->
+        <section>
+            <div class="seg brand-seg" id="brandSeg">
+                <button data-brand="umadcamp">UMADCAMP</button>
+                <button data-brand="djad">DJAD</button>
+            </div>
+            <nav class="tabs" id="tabs">
+                <button data-tpl="evento"><i>📣</i>Evento</button>
+                <button data-tpl="agenda"><i>🗓️</i>Agenda</button>
+                <button data-tpl="contagem"><i>⏳</i>Contagem</button>
+                <button data-tpl="aniver"><i>🎂</i>Aniversário</button>
+                <button data-tpl="versiculo"><i>📖</i>Versículo</button>
+                <button data-tpl="dia"><i>📋</i>Dia</button>
+            </nav>
+
+            <!-- EVENTO -->
+            <div class="card" data-panel="evento">
+                <h2>Evento / Culto</h2>
+                <div class="field">
+                    <label>Layout</label>
+                    <div class="seg layout-seg" data-seg="evento.layout" style="margin:0">
+                        <button data-v="classico">Clássico</button>
+                        <button data-v="editorial">Editorial</button>
+                        <button data-v="faixa">Faixa</button>
+                        <button data-v="poster">Pôster</button>
+                    </div>
+                    <div class="hint" id="layoutHint"></div>
+                </div>
+                <div class="field">
+                    <label>Puxar da agenda</label>
+                    <select id="eventoFromAgenda"><option value="">— preencher manualmente —</option></select>
+                    <div class="status" data-agenda-status></div>
+                </div>
+                <div class="field">
+                    <label>Chamada (acima do título)</label>
+                    <input type="text" data-k="evento.kicker">
+                </div>
+                <div class="field">
+                    <label>Título</label>
+                    <textarea data-k="evento.titulo" rows="2"></textarea>
+                    <div class="hint">Use <code>*palavra*</code> para deixar na cor de destaque. Enter quebra a linha.</div>
+                </div>
+                <div class="field">
+                    <label>Tema / subtítulo (opcional)</label>
+                    <textarea data-k="evento.sub" rows="2"></textarea>
+                </div>
+                <div class="row2">
+                    <div class="field"><label>Data</label><input type="date" data-k="evento.data"></div>
+                    <div class="field"><label>Até (opcional)</label><input type="date" data-k="evento.dataFim"></div>
+                </div>
+                <div class="row2">
+                    <div class="field"><label>Horário</label><input type="text" data-k="evento.hora" placeholder="19h30"></div>
+                    <div class="field"><label>Local</label><input type="text" data-k="evento.local"></div>
+                </div>
+                <div class="row2">
+                    <div class="field"><label>Rótulo</label><input type="text" data-k="evento.preletorLabel" placeholder="Preletor"></div>
+                    <div class="field"><label>Nome (opcional)</label><input type="text" data-k="evento.preletor"></div>
+                </div>
+                <div class="field">
+                    <label>Foto do preletor (opcional)</label>
+                    <div class="photo-row">
+                        <input type="file" accept="image/*" data-file="evento.preletorFoto">
+                        <button class="btn small" data-cutout="evento.preletorFoto">✂️ Tirar fundo</button>
+                        <button class="btn small" data-clear="evento.preletorFoto">Tirar</button>
+                    </div>
+                </div>
+                <div class="field" id="fotoTamField">
+                    <label>Tamanho da foto</label>
+                    <div class="seg" data-seg="evento.fotoTam" style="margin:0">
+                        <button data-v="pequena">Pequena (círculo)</button>
+                        <button data-v="grande">Grande (destaque)</button>
+                    </div>
+                    <div class="hint">Dica: na foto grande, um PNG <b>sem fundo</b> (recortado no remove.bg ou no Canva) fica na frente do título, como nos posts da DJAD. Foto comum ganha um degradê nas bordas.</div>
+                </div>
+                <details class="sub-details">
+                    <summary>Mais pessoas (até 3)</summary>
+                    <div class="row2">
+                        <div class="field"><label>Rótulo 2</label><input type="text" data-k="evento.p2.label" placeholder="Palestrante"></div>
+                        <div class="field"><label>Nome 2</label><input type="text" data-k="evento.p2.nome"></div>
+                    </div>
+                    <div class="field">
+                        <div class="photo-row">
+                            <input type="file" accept="image/*" data-file="evento.p2.foto">
+                            <button class="btn small" data-cutout="evento.p2.foto">✂️ Tirar fundo</button>
+                        <button class="btn small" data-clear="evento.p2.foto">Tirar</button>
+                        </div>
+                    </div>
+                    <div class="row2">
+                        <div class="field"><label>Rótulo 3</label><input type="text" data-k="evento.p3.label" placeholder="Palestrante"></div>
+                        <div class="field"><label>Nome 3</label><input type="text" data-k="evento.p3.nome"></div>
+                    </div>
+                    <div class="field">
+                        <div class="photo-row">
+                            <input type="file" accept="image/*" data-file="evento.p3.foto">
+                            <button class="btn small" data-cutout="evento.p3.foto">✂️ Tirar fundo</button>
+                        <button class="btn small" data-clear="evento.p3.foto">Tirar</button>
+                        </div>
+                    </div>
+                </details>
+                <details class="sub-details">
+                    <summary>Extras dos layouts Editorial e Pôster</summary>
+                    <div class="field">
+                        <label>Referência nas laterais (Editorial)</label>
+                        <input type="text" data-k="evento.refLat" placeholder="Ex.: João 14:21">
+                    </div>
+                    <div class="field">
+                        <label>Temas / pontos (Pôster, um por linha)</label>
+                        <textarea data-k="evento.temas" rows="2" placeholder="Jovem cristão e a sua identidade&#10;É possível ser santo no século XXI?"></textarea>
+                    </div>
+                    <div class="field">
+                        <label>Programação (Pôster, um por linha)</label>
+                        <textarea data-k="evento.prog" rows="2" placeholder="Palestras | 14h30&#10;Culto | 18h"></textarea>
+                    </div>
+                </details>
+            </div>
+
+            <!-- AGENDA -->
+            <div class="card" data-panel="agenda" hidden>
+                <h2>Agenda do mês</h2>
+                <div class="field">
+                    <label>Mês</label>
+                    <input type="month" data-k="agenda.mes">
+                    <div class="status" data-agenda-status></div>
+                </div>
+                <div class="field">
+                    <label>Título</label>
+                    <input type="text" data-k="agenda.kicker" placeholder="Automático: Agenda + nome da marca">
+                </div>
+                <div class="field">
+                    <label>Eventos que entram na arte</label>
+                    <div class="namelist" id="agendaList"></div>
+                    <div class="hint">Os eventos vêm da agenda cadastrada no admin. Desmarque o que não quiser mostrar.</div>
+                </div>
+            </div>
+
+            <!-- CONTAGEM -->
+            <div class="card" data-panel="contagem" hidden>
+                <h2>Contagem regressiva</h2>
+                <div class="field">
+                    <label>Evento</label>
+                    <select id="cdEvent"><option value="">— preencher manualmente —</option></select>
+                    <div class="status" data-agenda-status></div>
+                </div>
+                <div class="field">
+                    <label>Nome do evento</label>
+                    <textarea data-k="contagem.titulo" rows="2"></textarea>
+                </div>
+                <div class="row2">
+                    <div class="field"><label>Data</label><input type="date" data-k="contagem.data"></div>
+                    <div class="field"><label>Local</label><input type="text" data-k="contagem.local"></div>
+                </div>
+                <div class="field">
+                    <label>Frase final (opcional)</label>
+                    <input type="text" data-k="contagem.sub">
+                </div>
+                <div class="hint" id="cdHint"></div>
+            </div>
+
+            <!-- ANIVERSÁRIO -->
+            <div class="card" data-panel="aniver" hidden>
+                <h2>Aniversariantes</h2>
+                <div class="seg" id="aniverMode" style="margin-bottom:14px">
+                    <button data-mode="lista">Lista (do cadastro)</button>
+                    <button data-mode="destaque">Destaque com foto</button>
+                </div>
+                <div id="aniverLista">
+                    <div class="row2">
+                        <div class="field">
+                            <label>Período</label>
+                            <select data-k="aniver.periodo">
+                                <option value="dia">Do dia</option>
+                                <option value="semana">Da semana</option>
+                                <option value="mes">Do mês</option>
+                            </select>
+                        </div>
+                        <div class="field"><label>Data de referência</label><input type="date" data-k="aniver.ref"></div>
+                    </div>
+                    <div class="field">
+                        <label class="check"><input type="checkbox" data-k="aniver.nomeCompleto"> Mostrar nome completo</label>
+                    </div>
+                    <div class="field">
+                        <label>Quem entra na arte</label>
+                        <div class="namelist" id="aniverNames"></div>
+                        <div class="status" id="membrosStatus"></div>
+                    </div>
+                </div>
+                <div id="aniverDestaque" hidden>
+                    <div class="field"><label>Nome</label><input type="text" data-k="aniver.nome"></div>
+                    <div class="field"><label>Data do aniversário</label><input type="date" data-k="aniver.data"></div>
+                    <div class="field">
+                        <label>Foto</label>
+                        <div class="photo-row">
+                            <input type="file" accept="image/*" data-file="aniver.foto">
+                            <button class="btn small" data-cutout="aniver.foto">✂️ Tirar fundo</button>
+                        <button class="btn small" data-clear="aniver.foto">Tirar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="field" style="margin-top:12px">
+                    <label>Mensagem / versículo</label>
+                    <textarea data-k="aniver.msg" rows="2"></textarea>
+                </div>
+            </div>
+
+            <!-- VERSÍCULO -->
+            <div class="card" data-panel="versiculo" hidden>
+                <h2>Versículo</h2>
+                <div class="field">
+                    <label>Escolher da lista</label>
+                    <div class="photo-row">
+                        <select id="versePick"><option value="">— escolha um versículo —</option></select>
+                        <button class="btn small" id="verseRandom">Sortear</button>
+                    </div>
+                </div>
+                <div class="field"><label>Chamada</label><input type="text" data-k="versiculo.kicker"></div>
+                <div class="field">
+                    <label>Texto</label>
+                    <textarea data-k="versiculo.texto" rows="4"></textarea>
+                    <div class="hint">Use <code>*palavra*</code> para destacar na cor de destaque. Confira o texto na versão da Bíblia que a igreja usa.</div>
+                </div>
+                <div class="field"><label>Referência</label><input type="text" data-k="versiculo.ref"></div>
+            </div>
+
+            <!-- PROGRAMAÇÃO DO DIA -->
+            <div class="card" data-panel="dia" hidden>
+                <h2>Programação do dia</h2>
+                <div class="field">
+                    <label>Layout</label>
+                    <div class="seg layout-seg" data-seg="dia.layout" style="margin:0">
+                        <button data-v="lista">Lista</button>
+                        <button data-v="destaque">Destaque</button>
+                    </div>
+                    <div class="hint" id="diaHint"></div>
+                </div>
+                <div class="field">
+                    <label>Puxar da agenda</label>
+                    <select id="diaFromAgenda"><option value="">— preencher manualmente —</option></select>
+                    <div class="status" data-agenda-status></div>
+                </div>
+                <div class="field"><label>Chamada</label><input type="text" data-k="dia.kicker"></div>
+                <div class="row2">
+                    <div class="field"><label>Data</label><input type="date" data-k="dia.data"></div>
+                    <div class="field"><label>Local</label><input type="text" data-k="dia.local"></div>
+                </div>
+                <div class="field">
+                    <label>Programação (uma por linha)</label>
+                    <textarea data-k="dia.itens" rows="5" spellcheck="false"></textarea>
+                    <div class="hint">Formato: <code>horário | atividade | detalhe</code>. Comece a linha com <code>*</code> para destacar (ex.: o culto de jovens). O detalhe é opcional; <code>Preletor: Nome</code> vira o nome em destaque.</div>
+                </div>
+                <div class="field">
+                    <label>Foto de quem ministra (layout Destaque, opcional)</label>
+                    <div class="photo-row">
+                        <input type="file" accept="image/*" data-file="dia.foto">
+                        <button class="btn small" data-clear="dia.foto">Tirar</button>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Frase final (opcional)</label>
+                    <textarea data-k="dia.sub" rows="2"></textarea>
+                </div>
+            </div>
+
+            <!-- APARÊNCIA -->
+            <details class="card" open>
+                <summary>Aparência</summary>
+                <div class="hint" style="margin:0 0 12px">Cada marca guarda a própria aparência.</div>
+                <div class="field">
+                    <label>Logos</label>
+                    <div class="logo-checks">
+                        <label class="check"><input type="checkbox" data-logo="umad"> UMADCAMP</label>
+                        <label class="check"><input type="checkbox" data-logo="djad"> DJAD</label>
+                        <label class="check"><input type="checkbox" data-logo="80"> 80 anos</label>
+                    </div>
+                </div>
+                <div class="seg" data-seg="look.logoCor" style="margin:0 0 14px">
+                    <button data-v="cor">Logo colorido</button>
+                    <button data-v="mono">Logo de uma cor só</button>
+                </div>
+                <div class="row2">
+                    <div class="field"><label>Cor de destaque</label><input type="color" data-k="look.accent"></div>
+                    <div class="field">
+                        <label>Agenda usada</label>
+                        <select data-k="look.agenda">
+                            <option value="agenda">UMADCAMP</option>
+                            <option value="agenda-adpatu">AD Patu</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Foto de fundo (opcional)</label>
+                    <div class="photo-row">
+                        <input type="file" accept="image/*" data-file="look.foto">
+                        <button class="btn small" data-clear="look.foto">Tirar</button>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Escurecer a foto de fundo</label>
+                    <input type="range" min="0.2" max="1" step="0.05" data-k="look.shade">
+                </div>
+                <div class="row2">
+                    <div class="field"><label>Rodapé (esquerda)</label><input type="text" data-k="look.ftrL"></div>
+                    <div class="field"><label>Rodapé (direita)</label><input type="text" data-k="look.ftrR"></div>
+                </div>
+                <div class="field">
+                    <button class="btn small" id="btnReset">Restaurar textos padrão</button>
+                </div>
+            </details>
+        </section>
+    </div>
+
+    <div id="capture"></div>
+    <div class="toast" id="toast"></div>
+
+    <script>
+        /* ================= DADOS FIXOS ================= */
+        const FMT = {
+            feed: { w: 1080, h: 1350, base: 100 },
+            story: { w: 1080, h: 1920, base: 112 },
+            square: { w: 1080, h: 1080, base: 88 }
+        };
+        const MESES = ['JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO', 'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'];
+        const MES_C = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+        const SEMANA = ['DOMINGO', 'SEGUNDA', 'TERÇA', 'QUARTA', 'QUINTA', 'SEXTA', 'SÁBADO'];
+        const SEMANA_C = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
+        // logos embutidos (scripts/fabrica-logos.js) evitam o erro de canvas "contaminado" ao abrir pelo file://
+        const LOGOS = Object.assign({
+            umad_escuro: 'images/umadcamp/umadcamp-branco.png', umad_claro: 'images/umadcamp/umadcamp-preto.png',
+            djad_escuro: 'images/djad/djad-fundo-escuro.png', djad_claro: 'images/djad/djad-fundo-claro.png',
+            djad_escuro_mono: 'images/djad/djad-branco.png', djad_claro_mono: 'images/djad/djad-preto.png',
+            '80_escuro': 'images/80anos/logo-80-branca.png', '80_claro': 'images/80anos/logo-80.png'
+        }, window.FABRICA_LOGOS || {});
+        const logoSrc = (k, tone, mono) => (mono && LOGOS[`${k}_${tone}_mono`]) || LOGOS[`${k}_${tone}`];
+
+        // Cada marca tem a sua aparência padrão (o usuário pode mudar e fica salvo por marca)
+        const BRANDS = {
+            umadcamp: {
+                tags: '#umadcamp #adpatu #juventude',
+                look: { logos: ['umad'], accent: '#FF6600', foto: null, shade: 0.75, ftrL: '@umadcamp_', ftrR: '#UMADCAMP', agenda: 'agenda', tema: 'escuro', logoCor: 'cor' }
+            },
+            djad: {
+                tags: '#djadpatu #adpatu #juventude',
+                look: { logos: ['djad'], accent: '#CAAB5B', foto: null, shade: 0.75, ftrL: '@djadpatu', ftrR: 'AD Patu · Templo Sede', agenda: 'agenda-adpatu', tema: 'escuro', logoCor: 'cor' }
+            }
+        };
+
+        // Almeida Revista e Corrigida (ARC)
+        const VERSICULOS = [
+            { t: 'Ainda assim, agora mesmo diz o Senhor: Convertei-vos a mim *de todo o vosso coração*; e isso com jejuns, e com choro, e com pranto.', r: 'Joel 2:12' },
+            { t: 'Ninguém despreze a tua mocidade; mas sê o *exemplo dos fiéis*, na palavra, no trato, na caridade, no espírito, na fé, na pureza.', r: '1 Timóteo 4:12' },
+            { t: 'Como purificará o jovem o seu caminho? *Observando-o conforme a tua palavra.*', r: 'Salmos 119:9' },
+            { t: 'Lâmpada para os meus pés é tua palavra e *luz para o meu caminho*.', r: 'Salmos 119:105' },
+            { t: 'Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas *tenha a vida eterna*.', r: 'João 3:16' },
+            { t: 'Posso todas as coisas *naquele que me fortalece*.', r: 'Filipenses 4:13' },
+            { t: 'O Senhor é o meu pastor; *nada me faltará*.', r: 'Salmos 23:1' },
+            { t: 'Não to mandei eu? *Esforça-te e tem bom ânimo*; não pasmes, nem te espantes, porque o Senhor, teu Deus, é contigo, por onde quer que andares.', r: 'Josué 1:9' },
+            { t: 'Mas os que esperam no Senhor *renovarão as suas forças* e subirão com asas como águias; correrão e não se cansarão; caminharão e não se fatigarão.', r: 'Isaías 40:31' },
+            { t: 'Não temas, porque *eu sou contigo*; não te assombres, porque eu sou teu Deus; eu te esforço, e te ajudo, e te sustento com a destra da minha justiça.', r: 'Isaías 41:10' },
+            { t: 'E sabemos que *todas as coisas contribuem juntamente para o bem* daqueles que amam a Deus, daqueles que são chamados por seu decreto.', r: 'Romanos 8:28' },
+            { t: 'E não vos conformeis com este mundo, mas *transformai-vos pela renovação do vosso entendimento*, para que experimenteis qual seja a boa, agradável e perfeita vontade de Deus.', r: 'Romanos 12:2' },
+            { t: 'Confia no Senhor *de todo o teu coração* e não te estribes no teu próprio entendimento.', r: 'Provérbios 3:5' },
+            { t: 'Deus é o nosso *refúgio e fortaleza*, socorro bem presente na angústia.', r: 'Salmos 46:1' },
+            { t: 'Entrega o teu caminho ao Senhor; confia nele, e *ele tudo fará*.', r: 'Salmos 37:5' },
+            { t: 'Mas buscai *primeiro o Reino de Deus*, e a sua justiça, e todas essas coisas vos serão acrescentadas.', r: 'Mateus 6:33' },
+            { t: 'Vinde a mim, todos os que estais cansados e oprimidos, e *eu vos aliviarei*.', r: 'Mateus 11:28' },
+            { t: 'Disse-lhe Jesus: *Eu sou o caminho, e a verdade, e a vida.* Ninguém vem ao Pai senão por mim.', r: 'João 14:6' },
+            { t: 'Porque Deus não nos deu o espírito de temor, mas *de fortaleza, e de amor, e de moderação*.', r: '2 Timóteo 1:7' },
+            { t: 'Ora, a fé é o *firme fundamento* das coisas que se esperam e a prova das coisas que se não veem.', r: 'Hebreus 11:1' },
+            { t: 'Portanto, meus amados irmãos, *sede firmes e constantes*, sempre abundantes na obra do Senhor, sabendo que o vosso trabalho não é vão no Senhor.', r: '1 Coríntios 15:58' },
+            { t: 'Vigiai, *estai firmes na fé*, portai-vos varonilmente e fortalecei-vos.', r: '1 Coríntios 16:13' },
+            { t: 'Agora, pois, permanecem a fé, a esperança e o amor, estes três; mas *o maior destes é o amor*.', r: '1 Coríntios 13:13' },
+            { t: 'No demais, irmãos meus, *fortalecei-vos no Senhor* e na força do seu poder.', r: 'Efésios 6:10' },
+            { t: 'Porque *pela graça sois salvos*, por meio da fé; e isso não vem de vós; é dom de Deus.', r: 'Efésios 2:8' },
+            { t: 'As misericórdias do Senhor são a causa de não sermos consumidos, porque as suas misericórdias não têm fim; *novas são cada manhã*; grande é a tua fidelidade.', r: 'Lamentações 3:22-23' },
+            { t: 'Oh! Quão bom e quão suave é que *os irmãos vivam em união*!', r: 'Salmos 133:1' },
+            { t: 'Mas recebereis *a virtude do Espírito Santo*, que há de vir sobre vós; e ser-me-eis testemunhas tanto em Jerusalém como em toda a Judeia e Samaria e até aos confins da terra.', r: 'Atos 1:8' }
+        ];
+
+        /* ================= UTIL ================= */
+        const $ = s => document.querySelector(s);
+        const $$ = s => [...document.querySelectorAll(s)];
+
+        function pd(s) {
+            if (!s) return null;
+            if (typeof s === 'object' && s.toDate) s = s.toDate();
+            if (s instanceof Date) return new Date(s.getFullYear(), s.getMonth(), s.getDate());
+            let m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+            if (m) return new Date(+m[1], m[2] - 1, +m[3]);
+            m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(s);
+            if (m) return new Date(+m[3], m[2] - 1, +m[1]);
+            return null;
+        }
+        const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        const dm = d => String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0');
+        function today() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+        function addDays(d, n) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+
+        const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        // *texto* vira destaque; Enter vira quebra de linha
+        const hl = s => esc(s).replace(/\*([^*]+)\*/g, '<span class="hl">$1</span>').replace(/\n/g, '<br>');
+        const plain = s => String(s ?? '').replace(/\*/g, '').replace(/\s*\n\s*/g, ' ').trim();
+
+        const CONECT = ['de', 'da', 'do', 'das', 'dos', 'e'];
+        function titleCase(n) {
+            return String(n || '').toLowerCase().split(/\s+/).filter(Boolean)
+                .map((w, i) => (i > 0 && CONECT.includes(w)) ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        }
+        function shortName(n) {
+            const p = titleCase(n).split(' ');
+            return p.length <= 2 ? p.join(' ') : p[0] + ' ' + p[p.length - 1];
+        }
+
+        function hexToRgb(h) {
+            const m = /^#?([0-9a-f]{6})$/i.exec(h || '');
+            if (!m) return '255, 102, 0';
+            const n = parseInt(m[1], 16);
+            return `${n >> 16 & 255}, ${n >> 8 & 255}, ${n & 255}`;
+        }
+
+        function nextWeekday(dow) { const d = today(); d.setDate(d.getDate() + ((dow - d.getDay() + 7) % 7 || 7)); return iso(d); }
+
+        function toast(msg) {
+            const t = $('#toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(toast._t);
+            toast._t = setTimeout(() => t.classList.remove('show'), 2600);
+        }
+
+        // textura de grão gerada uma vez (PNG, para o html2canvas renderizar)
+        const GRAIN = (() => {
+            const c = document.createElement('canvas');
+            c.width = c.height = 240;
+            const x = c.getContext('2d');
+            const img = x.createImageData(240, 240);
+            for (let i = 0; i < img.data.length; i += 4) {
+                const v = Math.random() * 255;
+                img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+                img.data[i + 3] = 255;
+            }
+            x.putImageData(img, 0, 0);
+            return c.toDataURL('image/png');
+        })();
+
+        /* ================= ESTADO ================= */
+        function defaults() {
+            return {
+                brand: 'umadcamp',
+                tpl: 'evento',
+                fmt: 'feed',
+                looks: Object.fromEntries(Object.entries(BRANDS).map(([k, b]) => [k, JSON.parse(JSON.stringify(b.look))])),
+                evento: {
+                    kicker: 'Culto de Jovens',
+                    titulo: 'Noite de\n*Clamor*',
+                    sub: '“Convertei-vos a mim de todo o vosso coração.” Joel 2:12',
+                    data: nextWeekday(6), dataFim: '', hora: '19h30', local: 'Templo Sede · AD Patu/RN',
+                    preletorLabel: 'Preletor', preletor: '', preletorFoto: null, fotoTam: 'pequena',
+                    layout: 'classico',
+                    p2: { label: 'Palestrante', nome: '', foto: null }, p3: { label: 'Palestrante', nome: '', foto: null },
+                    refLat: '', temas: '', prog: ''
+                },
+                agenda: { mes: iso(today()).slice(0, 7), kicker: '', excluded: [] },
+                contagem: { eventId: '', titulo: 'Congresso de Jovens', data: iso(addDays(today(), 10)), local: 'Patu/RN', sub: 'Prepare o coração. Traga um amigo!' },
+                aniver: {
+                    mode: 'lista', periodo: 'semana', ref: '', nomeCompleto: false, excluded: [],
+                    nome: '', data: iso(today()), foto: null,
+                    msg: '“O Senhor te abençoe e te guarde.” Números 6:24'
+                },
+                versiculo: { kicker: 'Palavra do dia', texto: VERSICULOS[0].t, ref: VERSICULOS[0].r },
+                dia: {
+                    layout: 'lista', kicker: 'Programação do dia', data: nextWeekday(6), local: 'Templo Sede · AD Patu/RN',
+                    itens: '15h | Ensaio do louvor | Templo Sede\n17h | Círculo de oração | Sala de oração\n*19h30 | Culto de Jovens | Preletor: a confirmar',
+                    foto: null, sub: 'Venha e traga um amigo! 🙌'
+                }
+            };
+        }
+
+        const STORE_KEY = 'fabrica-artes-v2';
+        const PHOTO_KEYS = [...Object.keys(BRANDS).map(b => `looks.${b}.foto`), 'evento.preletorFoto', 'evento.p2.foto', 'evento.p3.foto', 'aniver.foto', 'dia.foto'];
+        let state = defaults();
+        try {
+            const saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+            if (saved) for (const k of Object.keys(state)) {
+                if (k === 'looks') { for (const b of Object.keys(BRANDS)) if (saved.looks?.[b]) Object.assign(state.looks[b], saved.looks[b]); }
+                else if (typeof state[k] === 'object' && saved[k] && typeof saved[k] === 'object') Object.assign(state[k], saved[k]);
+                else if (saved[k] !== undefined && typeof state[k] !== 'object') state[k] = saved[k];
+            }
+            if (!BRANDS[state.brand]) state.brand = 'umadcamp';
+        } catch (e) { }
+
+        const L = () => state.looks[state.brand];
+        // "look.x" nos campos aponta para a aparência da marca ativa
+        const rp = p => p.startsWith('look.') ? `looks.${state.brand}.${p.slice(5)}` : p;
+
+        function persist() {
+            try {
+                const copy = JSON.parse(JSON.stringify(state));
+                PHOTO_KEYS.forEach(p => setPath(copy, p, null)); // fotos não vão para o localStorage
+                localStorage.setItem(STORE_KEY, JSON.stringify(copy));
+            } catch (e) { }
+        }
+
+        const getPath = (o, p) => p.split('.').reduce((a, k) => a?.[k], o);
+        function setPath(o, p, v) { const ks = p.split('.'); const last = ks.pop(); ks.reduce((a, k) => a[k], o)[last] = v; }
+
+        /* ================= FIREBASE ================= */
+        firebase.initializeApp({
+            apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+            authDomain: "umadcamp-patu.firebaseapp.com",
+            projectId: "umadcamp-patu",
+            storageBucket: "umadcamp-patu.firebasestorage.app",
+            messagingSenderId: "1043102355965",
+            appId: "1:1043102355965:web:734bcffb30d37a7d2b8994"
+        });
+        const db = firebase.firestore();
+
+        let AGENDA = null;   // [{id, titulo, dataInicio, dataFim, local}] da coleção em uso
+        let MEMBROS = null;  // [{id, nome, nasc: Date}]
+        const AGENDA_CACHE = {};
+
+        async function loadAgenda() {
+            const col = L().agenda || 'agenda';
+            const nome = col === 'agenda' ? 'UMADCAMP' : 'AD Patu';
+            const st = $$('[data-agenda-status]');
+            AGENDA = AGENDA_CACHE[col] || null;
+            if (!AGENDA) {
+                st.forEach(s => { s.textContent = 'Carregando agenda…'; s.classList.remove('err'); });
+                renderAgendaList();
+                try {
+                    const snap = await db.collection(col).orderBy('dataInicio', 'asc').get();
+                    AGENDA = AGENDA_CACHE[col] = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(e => pd(e.dataInicio));
+                } catch (e) {
+                    console.error(e);
+                    AGENDA = [];
+                    st.forEach(s => { s.textContent = 'Não consegui carregar a agenda. Preencha manualmente.'; s.classList.add('err'); });
+                    fillAgendaSelects(); renderAgendaList(); render();
+                    return;
+                }
+                if (col !== (L().agenda || 'agenda')) return; // trocou de marca no meio do carregamento
+            }
+            st.forEach(s => { s.classList.remove('err'); s.textContent = `${AGENDA.length} eventos na agenda ${nome}.`; });
+            fillAgendaSelects();
+            renderAgendaList();
+            render();
+        }
+
+        async function loadMembros() {
+            if (MEMBROS) return;
+            MEMBROS = [];
+            $('#membrosStatus').textContent = 'Carregando cadastro…';
+            try {
+                const snap = await db.collection('membros').get();
+                MEMBROS = snap.docs.map(d => ({ id: d.id, nome: d.data().nome, nasc: pd(d.data().dataNascimento) }))
+                    .filter(m => m.nome && m.nasc);
+                $('#membrosStatus').textContent = `${MEMBROS.length} pessoas com data de nascimento no cadastro.`;
+            } catch (e) {
+                console.error(e);
+                $('#membrosStatus').textContent = 'Não consegui carregar o cadastro.';
+                $('#membrosStatus').classList.add('err');
+            }
+            renderAniverNames();
+            render();
+        }
+
+        function fillAgendaSelects() {
+            const t0 = today();
+            const fut = AGENDA.filter(e => (pd(e.dataFim) || pd(e.dataInicio)) >= t0);
+            const opt = e => `<option value="${esc(e.id)}">${dm(pd(e.dataInicio))} · ${esc(e.titulo)}</option>`;
+            $('#eventoFromAgenda').innerHTML = '<option value="">— preencher manualmente —</option>' + fut.map(opt).join('');
+            $('#cdEvent').innerHTML = '<option value="">— preencher manualmente —</option>' + fut.map(opt).join('');
+            const dias = [...new Set(fut.map(e => iso(pd(e.dataInicio))))].filter(d => pd(d) >= t0);
+            $('#diaFromAgenda').innerHTML = '<option value="">— preencher manualmente —</option>' + dias.map(d => {
+                const x = pd(d), n = fut.filter(e => iso(pd(e.dataInicio)) === d).length;
+                return `<option value="${d}">${SEMANA_C[x.getDay()]} ${dm(x)} · ${n} evento${n > 1 ? 's' : ''}</option>`;
+            }).join('');
+            $('#cdEvent').value = fut.some(e => e.id === state.contagem.eventId) ? state.contagem.eventId : '';
+        }
+
+        function agendaDoMes() {
+            if (!AGENDA) return [];
+            const [y, m] = (state.agenda.mes || '').split('-').map(Number);
+            return AGENDA.filter(e => {
+                const a = pd(e.dataInicio), b = pd(e.dataFim) || a;
+                const ini = new Date(y, m - 1, 1), fim = new Date(y, m, 0);
+                return a <= fim && b >= ini;
+            });
+        }
+
+        function renderAgendaList() {
+            const box = $('#agendaList');
+            if (!AGENDA) { box.innerHTML = '<div class="status">Carregando…</div>'; return; }
+            const evs = agendaDoMes();
+            if (!evs.length) { box.innerHTML = '<div class="status">Nenhum evento cadastrado neste mês.</div>'; return; }
+            box.innerHTML = evs.map(e => `
+                <label class="check"><input type="checkbox" data-ex-agenda="${esc(e.id)}" ${state.agenda.excluded.includes(e.id) ? '' : 'checked'}>
+                ${esc(e.titulo)} <em>${dm(pd(e.dataInicio))}</em></label>`).join('');
+        }
+
+        function aniverPeriodo() {
+            const a = state.aniver;
+            const ref = pd(a.ref) || today();
+            let from, to, label, range;
+            if (a.periodo === 'dia') {
+                from = to = ref;
+                label = iso(ref) === iso(today()) ? 'Aniversariantes de hoje' : 'Aniversariantes do dia';
+                range = `${ref.getDate()} de ${MESES[ref.getMonth()]}`;
+            } else if (a.periodo === 'mes') {
+                from = new Date(ref.getFullYear(), ref.getMonth(), 1);
+                to = new Date(ref.getFullYear(), ref.getMonth() + 1, 0);
+                label = 'Aniversariantes do mês';
+                range = `${MESES[ref.getMonth()]} ${ref.getFullYear()}`;
+            } else {
+                from = addDays(ref, -ref.getDay());
+                to = addDays(from, 6);
+                label = 'Aniversariantes da semana';
+                range = from.getMonth() === to.getMonth()
+                    ? `${from.getDate()} a ${to.getDate()} de ${MESES[to.getMonth()]}`
+                    : `${dm(from)} a ${dm(to)}`;
+            }
+            return { from, to, label, range };
+        }
+
+        function aniverAll() {
+            if (!MEMBROS) return [];
+            const { from, to } = aniverPeriodo();
+            const anos = [...new Set([from.getFullYear(), to.getFullYear()])];
+            const out = [];
+            for (const m of MEMBROS) {
+                for (const y of anos) {
+                    const d = new Date(y, m.nasc.getMonth(), m.nasc.getDate());
+                    if (d >= from && d <= to) { out.push({ ...m, dia: d }); break; }
+                }
+            }
+            return out.sort((a, b) => a.dia - b.dia || a.nome.localeCompare(b.nome));
+        }
+
+        function renderAniverNames() {
+            const box = $('#aniverNames');
+            if (!MEMBROS) { box.innerHTML = '<div class="status">Carregando…</div>'; return; }
+            const list = aniverAll();
+            if (!list.length) { box.innerHTML = '<div class="status">Ninguém faz aniversário neste período.</div>'; return; }
+            box.innerHTML = list.map(m => `
+                <label class="check"><input type="checkbox" data-ex-aniver="${esc(m.id)}" ${state.aniver.excluded.includes(m.id) ? '' : 'checked'}>
+                ${esc(titleCase(m.nome))} <em>${dm(m.dia)}</em></label>`).join('');
+        }
+
+        /* ================= MOLDES (TEMPLATES) ================= */
+        const kicker = t => t ? `<div class="kicker"><span class="ln"></span><span>${esc(t)}</span></div>` : '';
+
+        // até 3 pessoas (preletor + p2 + p3), só as que têm nome ou foto
+        function pessoas(e) {
+            return [{ label: e.preletorLabel || 'Preletor', nome: e.preletor, foto: e.preletorFoto }, e.p2, e.p3]
+                .filter(p => p && (p.nome || p.foto)).map(p => ({ ...p, label: p.label || 'Palestrante' }));
+        }
+        const isCut = foto => !!foto && foto.startsWith('data:image/png');
+
+        // "Culto de\nJovens" -> { small: 'Culto de', big: 'Jovens' }  (sem quebra: última palavra vira a grande)
+        function splitTitle(t) {
+            const lines = plain(String(t || '').replace(/\n/g, '\u0001')).split('\u0001').map(x => x.trim()).filter(Boolean);
+            if (lines.length > 1) return { small: lines.slice(0, -1).join(' '), big: lines[lines.length - 1] };
+            const w = (lines[0] || '').split(/\s+/);
+            return w.length > 1 ? { small: w.slice(0, -1).join(' '), big: w[w.length - 1] } : { small: '', big: w[0] || '' };
+        }
+
+        function photoBox(p) {
+            const cut = isCut(p.foto);
+            return `<div class="pbox${cut ? ' cut' : ''}"><div class="pimg" style="background-image:url('${p.foto}')"></div>${cut ? '' : '<div class="pfade"></div>'}</div>`;
+        }
+
+        function dataInfo(e) {
+            const a = pd(e.data), b = pd(e.dataFim);
+            const multi = a && b && iso(b) !== iso(a);
+            return {
+                a, b, multi,
+                wd: a ? (multi ? `${SEMANA_C[a.getDay()]} a ${SEMANA_C[b.getDay()]}` : SEMANA[a.getDay()]) : '',
+                dia: a ? (multi ? `${a.getDate()} a ${b.getDate()} de ${MESES[b.getMonth()]}` : `${a.getDate()} de ${MESES[a.getMonth()]}`) : '',
+                curto: a ? (multi ? `${a.getDate()}–${b.getDate()} • ${MES_C[b.getMonth()]}` : `${String(a.getDate()).padStart(2, '0')} • ${MES_C[a.getMonth()]}`) : ''
+            };
+        }
+
+        // Layouts que ocupam a arte inteira (recebem o HTML dos logos já pronto)
+        const LAYOUTS = {
+            editorial(s, logosHtml) {
+                const e = s.evento, ps = pessoas(e), d = dataInfo(e), t = splitTitle(e.titulo);
+                const fotos = ps.filter(p => p.foto);
+                const cap = ps.filter(p => p.nome).map(p => `${esc(p.label)}: ${esc(p.nome)}`).join(' &nbsp;·&nbsp; ');
+                return `
+                    <div class="lhdr right">${logosHtml}</div>
+                    <div class="prow">${fotos.map(p => `<div class="pcol">${photoBox(p)}</div>`).join('')}
+                        ${cap ? `<div class="le-cap">${cap}</div>` : ''}</div>
+                    <div class="le-title">
+                        ${t.small ? `<div class="le-vert" data-vert><span>${esc(t.small)}</span></div>` : ''}
+                        <div class="le-big" data-fitw>${esc(t.big)}</div>
+                    </div>
+                    ${(d.wd || e.hora) ? `<div class="le-when">${d.wd ? `<span>${esc(d.wd)}</span>` : ''}${e.hora ? `<span>às ${esc(e.hora)}</span>` : ''}</div>` : ''}
+                    ${e.sub ? `<div class="le-sub">${hl(e.sub)}</div>` : ''}
+                    ${e.local ? `<div class="le-local">${esc(e.local)}</div>` : ''}`;
+            },
+
+            faixa(s, logosHtml) {
+                const e = s.evento, ps = pessoas(e), d = dataInfo(e), t = splitTitle(e.titulo);
+                const fotos = ps.filter(p => p.foto);
+                const cols = fotos.map((p, i) => `
+                    <div class="pcol">${photoBox(p)}
+                        ${p.nome ? `<div class="lf-tag${i % 2 ? ' r' : ''}" style="${i % 2 ? 'right:-6%' : 'left:-6%'}"><small>${esc(p.label)}</small><b>${esc(p.nome)}</b></div>` : ''}
+                    </div>`).join('');
+                const semFoto = ps.filter(p => !p.foto && p.nome);
+                return `
+                    <div class="lhdr center">${logosHtml}</div>
+                    <div class="lf-people">
+                        ${fotos.length ? `<div class="lf-paper"></div><div class="prow">${cols}</div>` : ''}
+                    </div>
+                    <div class="lf-band">
+                        ${t.small ? `<div class="lf-pill">${esc(t.small)}</div>` : ''}
+                        <div class="lf-bar"><span data-fitw>${esc(t.big)}</span></div>
+                    </div>
+                    ${semFoto.length ? `<div class="lf-local" style="margin-top:.45em">${semFoto.map(p => `${esc(p.label)}: ${esc(p.nome)}`).join(' · ')}</div>` : ''}
+                    ${(d.curto || e.hora) ? `<div class="lf-date">${d.curto ? `<span class="a">${esc(d.curto)}</span>` : ''}${e.hora ? `<span class="b">${esc(e.hora)}</span>` : ''}</div>` : ''}
+                    ${e.local ? `<div class="lf-local">${esc(e.local)}</div>` : ''}`;
+            },
+
+            poster(s, logosHtml) {
+                const e = s.evento, ps = pessoas(e), d = dataInfo(e);
+                const lines = String(e.titulo || '').split('\n').map(x => plain(x)).filter(Boolean);
+                const big = lines[0] || '', over = lines.slice(1).join(' ') || e.kicker || '';
+                const temas = String(e.temas || '').split('\n').map(x => x.trim()).filter(Boolean);
+                const prog = String(e.prog || '').split('\n').map(x => x.trim()).filter(Boolean).map(l => {
+                    if (l.includes('|')) { const [n, h] = l.split('|'); return { n: n.trim(), h: (h || '').trim() }; }
+                    const m = l.match(/(\d{1,2}\s*h\s*\d{0,2}|\d{1,2}:\d{2})/i);
+                    return m ? { n: l.replace(m[0], '').replace(/^[\s\-–—:]+|[\s\-–—:]+$/g, ''), h: m[0] } : { n: l, h: '' };
+                });
+                return `
+                    <div class="lhdr center">${logosHtml}</div>
+                    <div class="lp-head">
+                        <div class="lp-big" data-fitw>${esc(big)}</div>
+                        ${over ? `<div class="lp-over"><span>${esc(over)}</span></div>` : ''}
+                    </div>
+                    ${e.local ? `<div class="lp-local">${esc(e.local)}</div>` : ''}
+                    <div class="prow">${ps.map(p => `
+                        <div class="pcol">${p.foto ? photoBox(p) : ''}
+                            ${p.nome ? `<div class="lp-cap"><small>${esc(p.label)}</small><b>${esc(p.nome)}</b></div>` : ''}
+                        </div>`).join('')}</div>
+                    ${d.dia ? `<div class="lp-date" data-fitw>${esc(d.dia)}</div>` : ''}
+                    ${d.wd ? `<div class="lp-wd">${esc(d.wd)}${!prog.length && e.hora ? ' · ' + esc(e.hora) : ''}</div>` : ''}
+                    ${temas.length ? `<div class="lp-temas">${temas.map((x, i) => `<div class="lp-t"><b>${i + 1}º</b><span>${esc(x)}</span></div>`).join('')}</div>` : ''}
+                    ${prog.length ? `<div class="lp-prog">${prog.map(p => `<div class="it"><b>${esc(p.n)}</b>${p.h ? `<span>${esc(p.h)}</span>` : ''}</div>`).join('<div class="bar"></div>')}</div>` : ''}`;
+            }
+        };
+
+        // Referência bíblica nas laterais (layout Editorial)
+        function sideRefs(fmt, ref) {
+            if (!ref) return '';
+            const H = FMT[fmt].h, W = Math.round(H * 0.62), h = 34;
+            const txt = `<span>${esc(ref)}</span><i></i><span>${esc(ref)}</span>`;
+            const at = (cx, cy) => `<div class="le-side" style="width:${W}px;height:${h}px;left:${cx - W / 2}px;top:${cy - h / 2}px">${txt}</div>`;
+            return at(46, H * 0.36) + at(1080 - 46, H * 0.7);
+        }
+
+        function dateBox(a, b) {
+            if (!a) return '';
+            const multi = b && iso(b) !== iso(a);
+            const day = multi ? `${a.getDate()}–${b.getDate()}` : a.getDate();
+            const mon = multi && a.getMonth() !== b.getMonth() ? `${MES_C[a.getMonth()]}/${MES_C[b.getMonth()]}` : MES_C[a.getMonth()];
+            return `<div class="datebox"><b class="${multi ? 'range' : ''}">${day}</b><span>${mon}</span></div>`;
+        }
+
+        // "*19h30 | Culto de Jovens | Preletor: Fulano" -> { star, h, n, d }
+        function diaItens(g) {
+            return String(g.itens || '').split('\n').map(x => x.trim()).filter(Boolean).map(l => {
+                const star = l.startsWith('*');
+                l = l.replace(/^\*\s*/, '');
+                let h = '', n = l, d = '';
+                if (l.includes('|')) [h, n, d] = l.split('|').map(x => (x || '').trim());
+                else {
+                    const m = l.match(/(\d{1,2}\s*h\s*\d{0,2}|\d{1,2}:\d{2})/i);
+                    if (m) { h = m[0]; n = l.replace(m[0], '').replace(/^[\s\-–—:]+|[\s\-–—:]+$/g, ''); }
+                }
+                return { star, h: h || '', n: n || '', d: d || '' };
+            }).filter(i => i.n || i.h);
+        }
+        // "Preletor: Fulano" -> { label, nome }
+        function pessoaDe(d) {
+            if (!d) return null;
+            const m = d.match(/^([^:]{2,20}):\s*(.+)$/);
+            return m ? { label: m[1].trim(), nome: m[2].trim() } : { label: '', nome: d };
+        }
+
+        const T = {
+            evento(s) {
+                const e = s.evento, a = pd(e.data), b = pd(e.dataFim);
+                const multi = a && b && iso(b) !== iso(a);
+                let l1 = '';
+                if (a) l1 = multi ? `${SEMANA_C[a.getDay()]} a ${SEMANA_C[b.getDay()]}` : SEMANA[a.getDay()];
+                if (e.hora) l1 += (l1 ? ' · ' : '') + e.hora;
+                // na foto grande, a pessoa 1 vai para o fundo; as demais seguem em círculo
+                const speaker = pessoas(e).filter(p => p.nome).map((p, i) => `
+                    <div class="speaker">
+                        ${p.foto && !(i === 0 && p.foto === e.preletorFoto && e.fotoTam === 'grande') ? `<div class="ph" style="background-image:url('${p.foto}')"></div>` : ''}
+                        <div><small>${esc(p.label)}</small><strong>${esc(p.nome)}</strong></div>
+                    </div>`).join('');
+                return `
+                    ${kicker(e.kicker)}
+                    <h1 class="title" data-fitw>${hl(e.titulo)}</h1>
+                    ${e.sub ? `<div class="sub">${hl(e.sub)}</div>` : ''}
+                    ${speaker}
+                    ${(a || e.hora || e.local) ? `
+                    <div class="when">
+                        ${dateBox(a, b)}
+                        <div class="info">
+                            ${l1 ? `<div class="l1">${esc(l1)}</div>` : ''}
+                            ${e.local ? `<div class="l2">${esc(e.local)}</div>` : ''}
+                        </div>
+                    </div>` : ''}`;
+            },
+
+            agenda(s) {
+                const [y, m] = (s.agenda.mes || '').split('-').map(Number);
+                const evs = agendaDoMes().filter(e => !s.agenda.excluded.includes(e.id));
+                const rows = evs.map(e => {
+                    const a = pd(e.dataInicio), b = pd(e.dataFim);
+                    return `<div class="ev">${dateBox(a, b)}<div><div class="t">${esc(e.titulo)}</div>${e.local ? `<div class="p">${esc(e.local)}</div>` : ''}</div></div>`;
+                }).join('');
+                return `
+                    ${kicker(s.agenda.kicker || `Agenda ${s.brand === 'djad' ? 'DJAD' : 'UMADCAMP'}`)}
+                    <div class="ag-head" data-fitw><h1 class="title">${MESES[(m || 1) - 1]}</h1><span class="year">${y || ''}</span></div>
+                    ${rows ? `<div class="list">${rows}</div>` : `<div class="empty">${AGENDA ? 'Nenhum evento neste mês.' : 'Carregando agenda…'}</div>`}`;
+            },
+
+            contagem(s) {
+                const c = s.contagem, d = pd(c.data);
+                const diff = d ? Math.round((d - today()) / 864e5) : null;
+                let big;
+                if (diff === null) big = '';
+                else if (diff <= 0) big = `<div class="cd-today" data-fitw>${diff === 0 ? 'É hoje!' : 'Já foi!'}</div>`;
+                else big = `<div class="cd" data-fitw><div class="cd-num">${diff}</div><div class="cd-side"><span>${diff === 1 ? 'Falta' : 'Faltam'}</span><span>${diff === 1 ? 'Dia' : 'Dias'}</span></div></div>`;
+                return `
+                    ${kicker('Contagem regressiva')}
+                    ${big}
+                    <h1 class="title" data-fitw style="font-size:1.2em">${hl(c.titulo)}</h1>
+                    ${(d || c.local) ? `<div class="when">${dateBox(d)}<div class="info">
+                        ${d ? `<div class="l1">${SEMANA[d.getDay()]}</div>` : ''}${c.local ? `<div class="l2">${esc(c.local)}</div>` : ''}</div></div>` : ''}
+                    ${c.sub ? `<div class="sub">${hl(c.sub)}</div>` : ''}`;
+            },
+
+            aniver(s) {
+                const a = s.aniver;
+                if (a.mode === 'destaque') {
+                    const d = pd(a.data);
+                    const ini = (a.nome || '?').trim().charAt(0).toUpperCase();
+                    return `
+                        <div class="main-in center">
+                        ${a.foto ? `<div class="bigphoto" style="background-image:url('${a.foto}')"></div>` : `<div class="bigphoto none"><span>${esc(ini)}</span></div>`}
+                        ${kicker('Feliz aniversário')}
+                        <h1 class="title" data-fitw style="font-size:1.5em">${esc(a.nome || 'Nome')}</h1>
+                        ${d ? `<div class="period">${d.getDate()} de ${MESES[d.getMonth()]}</div>` : ''}
+                        ${a.msg ? `<div class="bless">${hl(a.msg)}</div>` : ''}
+                        </div>`;
+                }
+                const p = aniverPeriodo();
+                const list = aniverAll().filter(m => !a.excluded.includes(m.id));
+                const names = list.map(m => `<div class="nm"><b>${dm(m.dia)}</b><span>${esc(a.nomeCompleto ? titleCase(m.nome) : shortName(m.nome))}</span></div>`).join('');
+                return `
+                    ${kicker(p.label)}
+                    <h1 class="title" data-fitw>Parabéns<span class="hl">!</span></h1>
+                    <div class="period">${esc(p.range)}</div>
+                    ${names ? `<div class="names ${list.length > 8 ? 'two' : ''}">${names}</div>`
+                        : `<div class="empty">${MEMBROS ? 'Ninguém faz aniversário neste período.' : 'Carregando cadastro…'}</div>`}
+                    ${a.msg ? `<div class="bless">${hl(a.msg)}</div>` : ''}`;
+            },
+
+            dia(s) {
+                const g = s.dia, a = pd(g.data), its = diaItens(g);
+                const star = its.find(i => i.star) || null;
+                const row = (i, mini) => `
+                    <div class="pg${i.star && !mini ? ' star' : ''}">
+                        ${i.h ? `<div class="h">${esc(i.h)}</div>` : ''}
+                        <div><div class="t">${esc(i.n)}</div>${i.d ? `<div class="p">${esc(i.d)}</div>` : ''}</div>
+                    </div>`;
+                if (g.layout === 'destaque' && star) {
+                    const t = splitTitle(star.n), sp = pessoaDe(star.d);
+                    const outros = its.filter(i => i !== star);
+                    return `
+                        ${kicker(g.kicker)}
+                        <h1 class="title" data-fitw>${t.small ? esc(t.small) + '<br>' : ''}<span class="hl">${esc(t.big)}</span></h1>
+                        ${star.h ? `<div class="ds-time"><span>às</span><b>${esc(star.h)}</b></div>` : ''}
+                        ${sp ? `<div class="speaker">${g.foto ? `<div class="ph" style="background-image:url('${g.foto}')"></div>` : ''}
+                            <div>${sp.label ? `<small>${esc(sp.label)}</small>` : ''}<strong>${esc(sp.nome)}</strong></div></div>` : ''}
+                        ${outros.length ? `<div class="ds-sep"><span>Também neste dia</span><i></i></div>
+                            <div class="pgs mini">${outros.map(i => row(i, true)).join('')}</div>` : ''}
+                        ${(a || g.local) ? `<div class="when">${dateBox(a)}<div class="info">
+                            ${a ? `<div class="l1">${SEMANA[a.getDay()]}</div>` : ''}${g.local ? `<div class="l2">${esc(g.local)}</div>` : ''}</div></div>` : ''}
+                        ${g.sub ? `<div class="sub">${hl(g.sub)}</div>` : ''}`;
+                }
+                return `
+                    ${kicker(g.kicker)}
+                    ${a ? `<div class="dia-head" data-fitw><h1 class="title">${SEMANA[a.getDay()]}</h1>${dateBox(a)}</div>` : ''}
+                    ${g.local ? `<div class="dia-local">${esc(g.local)}</div>` : ''}
+                    ${its.length ? `<div class="pgs">${its.map(i => row(i)).join('')}</div>` : '<div class="empty">Escreva a programação ao lado.</div>'}
+                    ${g.sub ? `<div class="sub">${hl(g.sub)}</div>` : ''}`;
+            },
+
+            versiculo(s) {
+                const v = s.versiculo;
+                return `
+                    ${kicker(v.kicker)}
+                    <div class="qmark">“</div>
+                    <div class="verse">${hl(v.texto)}</div>
+                    <div class="ref">${esc(v.ref)}</div>`;
+            }
+        };
+
+        // Decoração da DJAD: anéis finos concêntricos e fileiras de estrelas (como nos posts da DJAD)
+        function djadDeco(fmt, nLogos) {
+            const H = FMT[fmt].h;
+            const rings = (cx, cy, n, r0, step) => Array.from({ length: n }, (_, i) => {
+                const r = r0 + i * step;
+                return `<div class="ring" style="width:${2 * r}px;height:${2 * r}px;left:${cx - r}px;top:${cy - r}px"></div>`;
+            }).join('');
+            return rings(-60, 120, 9, 120, 26) + rings(1180, H * 0.55, 11, 140, 26) +
+                (nLogos > 1 ? '' : `<div class="stars" style="right:100px;top:${fmt === 'story' ? 150 : 70}px">✦✦✦✦✦</div>`) +
+                (fmt === 'story' ? `<div class="stars" style="left:100px;bottom:170px;opacity:.85">✦✦✦✦✦</div>` : '');
+        }
+
+        function buildArt(fmt) {
+            const s = state, look = L();
+            const el = document.createElement('div');
+            const tone = look.tema === 'claro' ? 'claro' : 'escuro';
+            const layName = s.tpl === 'evento' && LAYOUTS[s.evento.layout] ? s.evento.layout : null;
+            const big = !layName && s.tpl === 'evento' && s.evento.fotoTam === 'grande' && s.evento.preletorFoto;
+            const cut = big && isCut(s.evento.preletorFoto);
+            el.className = `art fmt-${fmt} brand-${s.brand} tone-${tone}${big ? ' sp-big' : ''}${cut ? ' sp-cut' : ''}${layName ? ' lay-' + layName : ''}`;
+            el.style.setProperty('--accent', look.accent);
+            el.style.setProperty('--accent-rgb', hexToRgb(look.accent));
+
+            const logos = ['umad', 'djad', '80'].filter(k => (look.logos || []).includes(k)).map(k => logoSrc(k, tone, look.logoCor === 'mono'));
+            const hdr = logos.length ? `<div class="hdr">${logos.map((src, i) => (i ? '<span class="sep"></span>' : '') + `<img src="${src}" alt="">`).join('')}</div>` : '';
+            const ftr = (look.ftrL || look.ftrR) ? `<div class="ftr"><span><span class="bar"></span>${esc(look.ftrL)}</span><span>${esc(look.ftrR)}</span></div>` : '';
+
+            const bgLayers = `
+                ${look.foto ? `<div class="layer photo" style="background-image:url('${look.foto}')"></div><div class="layer shade" style="opacity:${look.shade}"></div>` : ''}
+                <div class="glow g1"></div><div class="glow g2"></div>`;
+
+            if (layName) {
+                const logosHtml = logos.map((src, i) => (i ? '<span class="sep"></span>' : '') + `<img src="${src}" alt="">`).join('');
+                const wmWord = splitTitle(s.evento.titulo).big;
+                const wm = layName === 'faixa' && wmWord
+                    ? Array.from({ length: Math.ceil(FMT[fmt].h / 300) }, (_, i) => `<div class="wm" style="top:${i * 300 - 40}px">${esc((wmWord + ' ').repeat(4))}</div>`).join('')
+                    : '';
+                el.innerHTML = `${bgLayers}${wm}
+                    <div class="layer grain" style="background-image:url('${GRAIN}')"></div>
+                    ${layName === 'editorial' ? sideRefs(fmt, s.evento.refLat) : ''}
+                    <div class="lay lay-${layName}">${LAYOUTS[layName](s, logosHtml)}</div>`;
+                return el;
+            }
+
+            let inner = T[s.tpl](s);
+            if (!inner.includes('class="main-in')) inner = `<div class="main-in">${inner}</div>`;
+
+            el.innerHTML = `${bgLayers}
+                ${s.brand === 'djad' ? djadDeco(fmt, logos.length) : ''}
+                ${big ? `<div class="bigsp${cut ? ' cut' : ''}" style="background-image:url('${s.evento.preletorFoto}')"></div>${cut ? '' : '<div class="bigsp-fade"></div>'}` : ''}
+                <div class="layer grain" style="background-image:url('${GRAIN}')"></div>
+                <div class="frame"></div>
+                <div class="inner">${hdr}<div class="main">${inner}</div>${ftr}</div>`;
+            return el;
+        }
+
+        // Ajusta o tamanho do texto para caber (altura do bloco e largura das palavras grandes)
+        function fit(el, fmt) {
+            const lay = el.querySelector('.lay');
+            if (lay) return fitLay(el, lay, fmt);
+            const main = el.querySelector('.main'), inn = el.querySelector('.main-in');
+            if (!main || !inn) return;
+            let size = FMT[fmt].base;
+            main.style.fontSize = size + 'px';
+            const avail = () => main.clientHeight - 60; // padding vertical do .main
+            while (inn.offsetHeight > avail() && size > 24) { size -= 2; main.style.fontSize = size + 'px'; }
+            el.querySelectorAll('[data-fitw]').forEach(t => {
+                let fs = parseFloat(getComputedStyle(t).fontSize);
+                while ((t.scrollWidth > inn.clientWidth + 1 || t.scrollWidth > t.clientWidth + 1) && fs > 16) { fs -= 2; t.style.fontSize = fs + 'px'; }
+            });
+        }
+
+        // Layouts de arte inteira: diminui a base até tudo caber (a área das fotos é a que cede espaço),
+        // depois ajusta as palavras grandes na largura e gira os textos verticais
+        function fitLay(el, lay, fmt) {
+            let size = FMT[fmt].base;
+            lay.style.fontSize = size + 'px';
+            while (lay.scrollHeight > lay.clientHeight + 1 && size > 30) { size -= 2; lay.style.fontSize = size + 'px'; }
+            el.querySelectorAll('[data-fitw]').forEach(t => {
+                let fs = parseFloat(getComputedStyle(t).fontSize);
+                while (t.scrollWidth > t.clientWidth + 1 && fs > 16) { fs -= 2; t.style.fontSize = fs + 'px'; }
+            });
+            el.querySelectorAll('[data-vert]').forEach(box => {
+                const sp = box.firstElementChild, H = box.clientHeight, W = box.clientWidth;
+                Object.assign(sp.style, {
+                    position: 'absolute', left: W + 'px', bottom: '0', width: H + 'px', height: W + 'px',
+                    lineHeight: W + 'px', fontSize: W * 0.92 + 'px', transformOrigin: '0 100%', transform: 'rotate(-90deg)'
+                });
+                let fs = W * 0.92;
+                while (sp.scrollWidth > H + 1 && fs > 10) { fs -= 2; sp.style.fontSize = fs + 'px'; }
+            });
+        }
+
+        /* ================= PRÉVIA ================= */
+        let raf = 0;
+        function render() {
+            cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(() => {
+                const stage = $('#stage');
+                const el = buildArt(state.fmt);
+                stage.replaceChildren(el);
+                fit(el, state.fmt);
+                layoutStage();
+                $('#caption').value = caption();
+                updateHints();
+                persist();
+            });
+        }
+
+        function layoutStage() {
+            const F = FMT[state.fmt], wrap = $('#stageWrap'), stage = $('#stage');
+            const maxW = wrap.clientWidth;
+            const maxH = window.innerWidth >= 900 ? window.innerHeight - 270 : window.innerHeight * 0.72;
+            const sc = Math.min(maxW / F.w, maxH / F.h);
+            stage.style.transform = `scale(${sc})`;
+            stage.style.left = ((maxW - F.w * sc) / 2) + 'px';
+            wrap.style.height = (F.h * sc) + 'px';
+        }
+
+        function updateHints() {
+            const d = pd(state.contagem.data);
+            const diff = d ? Math.round((d - today()) / 864e5) : null;
+            $('#cdHint').textContent = diff === null ? '' : diff < 0 ? 'Essa data já passou.' : `A arte mostra a contagem a partir de hoje (${dm(today())}). Gere de novo a cada dia.`;
+        }
+
+        /* ================= LEGENDA ================= */
+        function longDate(d) { return `${SEMANA[d.getDay()].charAt(0) + SEMANA[d.getDay()].slice(1).toLowerCase()}, ${d.getDate()} de ${MESES[d.getMonth()].toLowerCase()}`; }
+        function caption() {
+            const s = state;
+            const TAGS = '\n\n' + BRANDS[s.brand].tags;
+            if (s.tpl === 'evento') {
+                const e = s.evento, a = pd(e.data), b = pd(e.dataFim);
+                let t = `🔥 ${plain(e.titulo).toUpperCase()}\n`;
+                if (e.sub) t += `${plain(e.sub)}\n`;
+                t += '\n';
+                if (a) t += `📅 ${b && iso(b) !== iso(a) ? `${dm(a)} a ${dm(b)}` : longDate(a)}${e.hora ? ' · ' + e.hora : ''}\n`;
+                if (e.local) t += `📍 ${e.local}\n`;
+                pessoas(e).filter(p => p.nome).forEach(p => { t += `🎤 ${p.label}: ${p.nome}\n`; });
+                if (e.layout === 'poster') {
+                    const temas = String(e.temas || '').split('\n').map(x => x.trim()).filter(Boolean);
+                    const prog = String(e.prog || '').split('\n').map(x => x.trim()).filter(Boolean);
+                    if (temas.length) t += '\n' + temas.map((x, i) => `${i + 1}º ${x}`).join('\n') + '\n';
+                    if (prog.length) t += '\n' + prog.map(x => `🕒 ${x.replace('|', '·')}`).join('\n') + '\n';
+                }
+                return t + '\nVenha e traga um amigo! 🙌' + TAGS;
+            }
+            if (s.tpl === 'agenda') {
+                const [y, m] = s.agenda.mes.split('-').map(Number);
+                const evs = agendaDoMes().filter(e => !s.agenda.excluded.includes(e.id));
+                return `🗓️ AGENDA DE ${MESES[m - 1]} ${y}\n\n` +
+                    evs.map(e => `▪️ ${dm(pd(e.dataInicio))}${e.dataFim && e.dataFim !== e.dataInicio ? ' a ' + dm(pd(e.dataFim)) : ''} · ${e.titulo}${e.local ? ' (' + e.local + ')' : ''}`).join('\n') +
+                    '\n\nSalve este post e se programe!' + TAGS;
+            }
+            if (s.tpl === 'contagem') {
+                const c = s.contagem, d = pd(c.data);
+                const diff = d ? Math.round((d - today()) / 864e5) : 0;
+                const head = diff <= 0 ? `🔥 É HOJE! ${plain(c.titulo).toUpperCase()}` : `⏳ ${diff === 1 ? 'FALTA 1 DIA' : `FALTAM ${diff} DIAS`} PARA ${plain(c.titulo).toUpperCase()}!`;
+                return `${head}\n\n${d ? `📅 ${longDate(d)}\n` : ''}${c.local ? `📍 ${c.local}\n` : ''}${c.sub ? `\n${plain(c.sub)}` : ''}${TAGS}`;
+            }
+            if (s.tpl === 'aniver') {
+                const a = s.aniver;
+                if (a.mode === 'destaque') return `🎂 Feliz aniversário, ${a.nome || '...'}!\n\nQue Deus continue te abençoando e guardando a tua vida.\n\n${plain(a.msg)}${TAGS}`;
+                const p = aniverPeriodo();
+                const list = aniverAll().filter(m => !a.excluded.includes(m.id));
+                return `🎉 ${p.label.toUpperCase()} (${p.range.toLowerCase()})\n\n` +
+                    list.map(m => `🎂 ${dm(m.dia)} · ${a.nomeCompleto ? titleCase(m.nome) : shortName(m.nome)}`).join('\n') +
+                    `\n\n${plain(a.msg)}\n\nDeixe seus parabéns nos comentários! 👇${TAGS}`;
+            }
+            if (s.tpl === 'dia') {
+                const g = s.dia, a = pd(g.data);
+                let t = `📋 PROGRAMAÇÃO ${a ? `DE ${SEMANA[a.getDay()]} (${dm(a)})` : 'DO DIA'}\n\n`;
+                t += diaItens(g).map(i => `${i.star ? '🔥' : '🕒'} ${i.h ? i.h + ' · ' : ''}${i.star ? i.n.toUpperCase() : i.n}${i.d ? ' — ' + i.d : ''}`).join('\n') + '\n';
+                if (g.local) t += `\n📍 ${g.local}\n`;
+                return t + (g.sub ? `\n${plain(g.sub)}` : '') + TAGS;
+            }
+            const v = s.versiculo;
+            return `📖 “${plain(v.texto)}”\n${v.ref}\n\nCompartilhe com alguém que precisa ouvir isso hoje.${TAGS}`;
+        }
+
+        /* ================= EXPORTAÇÃO ================= */
+        let fontsReady = null;
+        function ensureFonts() {
+            if (!fontsReady) fontsReady = Promise.all([
+                '400 100px Anton', '600 40px Inter', '700 40px Inter', '800 40px Inter', '700 30px "Space Grotesk"',
+                '800 40px Montserrat', '900 40px Montserrat', '500 40px "Playfair Display"', '700 40px "Playfair Display"', 'italic 500 40px "Playfair Display"', 'italic 900 40px "Playfair Display"'
+            ].map(f => document.fonts.load(f))).then(() => document.fonts.ready);
+            return fontsReady;
+        }
+
+        async function waitImages(el) {
+            await Promise.all([...el.querySelectorAll('img')].map(img => img.complete ? null : new Promise(r => { img.onload = img.onerror = r; })));
+        }
+
+        async function capture(fmt) {
+            await ensureFonts();
+            const F = FMT[fmt], holder = $('#capture');
+            const el = buildArt(fmt);
+            holder.replaceChildren(el);
+            await waitImages(el);
+            fit(el, fmt);
+            const sx = window.scrollX, sy = window.scrollY;
+            window.scrollTo(0, 0);
+            try {
+                return await html2canvas(el, {
+                    width: F.w, height: F.h, scale: 1, backgroundColor: getComputedStyle(el).backgroundColor,
+                    useCORS: true, logging: false, scrollX: 0, scrollY: 0
+                });
+            } finally {
+                window.scrollTo(sx, sy);
+                holder.replaceChildren();
+            }
+        }
+
+        const toBlob = c => new Promise(r => c.toBlob(r, 'image/png'));
+        const fileName = fmt => `${state.brand}-${state.tpl}-${fmt}-${iso(today())}.png`;
+
+        function download(blob, name) {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = name;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        }
+
+        async function busy(btn, label, fn) {
+            const old = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = label;
+            try { await fn(); }
+            catch (e) {
+                console.error(e);
+                if (e.name === 'SecurityError') toast('O navegador bloqueou a imagem. Abra a página pelo site (ou por um servidor local).');
+                else if (e.name !== 'AbortError') toast('Erro ao gerar a imagem: ' + (e.message || e));
+            }
+            finally { btn.disabled = false; btn.textContent = old; }
+        }
+
+        $('#btnDownload').onclick = e => busy(e.currentTarget, 'Gerando…', async () => {
+            download(await toBlob(await capture(state.fmt)), fileName(state.fmt));
+            toast('Arte baixada!');
+        });
+
+        $('#btnAll').onclick = e => busy(e.currentTarget, 'Gerando…', async () => {
+            for (const f of Object.keys(FMT)) {
+                download(await toBlob(await capture(f)), fileName(f));
+                await new Promise(r => setTimeout(r, 400));
+            }
+            toast('3 artes baixadas!');
+        });
+
+        if (navigator.canShare && navigator.canShare({ files: [new File([''], 'x.png', { type: 'image/png' })] })) {
+            $('#btnShare').hidden = false;
+            $('#btnShare').onclick = e => busy(e.currentTarget, 'Gerando…', async () => {
+                const file = new File([await toBlob(await capture(state.fmt))], fileName(state.fmt), { type: 'image/png' });
+                try { await navigator.clipboard.writeText($('#caption').value); } catch (err) { }
+                await navigator.share({ files: [file] });
+            });
+        }
+
+        $('#btnCopy').onclick = async () => {
+            try { await navigator.clipboard.writeText($('#caption').value); toast('Legenda copiada!'); }
+            catch (e) { $('#caption').select(); document.execCommand('copy'); toast('Legenda copiada!'); }
+        };
+
+        /* ================= LIGAÇÃO DOS CONTROLES ================= */
+        function syncInputs() {
+            $$('[data-k]').forEach(inp => {
+                const v = getPath(state, rp(inp.dataset.k));
+                if (inp.type === 'checkbox') inp.checked = !!v;
+                else inp.value = v ?? '';
+            });
+            $$('[data-logo]').forEach(c => c.checked = (L().logos || []).includes(c.dataset.logo));
+            $$('#brandSeg button').forEach(b => b.classList.toggle('on', b.dataset.brand === state.brand));
+            document.documentElement.style.setProperty('--orange', L().accent);
+            document.querySelector('.top img').src = logoSrc(state.brand === 'djad' ? 'djad' : 'umad', 'escuro');
+            $$('[data-file]').forEach(inp => { if (!getPath(state, rp(inp.dataset.file))) inp.value = ''; });
+            $$('#fmtSeg button').forEach(b => b.classList.toggle('on', b.dataset.fmt === state.fmt));
+            $$('[data-seg]').forEach(seg => {
+                const v = getPath(state, rp(seg.dataset.seg));
+                seg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+            });
+            $$('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tpl === state.tpl));
+            $$('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== state.tpl);
+            $$('#aniverMode button').forEach(b => b.classList.toggle('on', b.dataset.mode === state.aniver.mode));
+            $('#fotoTamField').hidden = state.evento.layout !== 'classico';
+            $('#layoutHint').textContent = {
+                classico: 'Texto à esquerda, data em destaque. Foto pequena (círculo) ou grande.',
+                editorial: 'Palavra gigante com o começo do título na vertical, foto grande no alto e referência nas laterais. Fica ótimo com fundo branco.',
+                faixa: 'Colagem: fotos com etiquetas de nome e o título numa faixa colorida. Funciona com 1 a 3 pessoas.',
+                poster: 'Para eventos maiores: até 3 palestrantes, data grande, temas numerados e programação. A 2ª linha do título vira a faixa sobre o título.'
+            }[state.evento.layout] || '';
+            $('#diaHint').textContent = state.dia.layout === 'destaque'
+                ? 'A atividade marcada com * vira o título gigante (com horário e preletor); o resto aparece embaixo, menor.'
+                : 'Dia da semana em destaque e a programação em lista; a linha com * ganha uma faixa colorida.';
+            $('#aniverLista').hidden = state.aniver.mode !== 'lista';
+            $('#aniverDestaque').hidden = state.aniver.mode !== 'destaque';
+            if (!state.aniver.ref) $('[data-k="aniver.ref"]').value = iso(today());
+        }
+
+        document.addEventListener('input', e => {
+            const k = e.target.dataset?.k;
+            if (!k) return;
+            setPath(state, rp(k), e.target.type === 'checkbox' ? e.target.checked : e.target.value);
+            if (k === 'look.accent') document.documentElement.style.setProperty('--orange', e.target.value);
+            if (k === 'look.agenda') return loadAgenda();
+            if (k === 'agenda.mes') renderAgendaList();
+            if (k === 'aniver.periodo' || k === 'aniver.ref') renderAniverNames();
+            render();
+        });
+
+        document.addEventListener('change', e => {
+            const t = e.target;
+            if (t.dataset.exAgenda !== undefined) toggleIn(state.agenda.excluded, t.dataset.exAgenda, !t.checked);
+            else if (t.dataset.exAniver !== undefined) toggleIn(state.aniver.excluded, t.dataset.exAniver, !t.checked);
+            else if (t.dataset.logo) toggleIn(L().logos, t.dataset.logo, t.checked);
+            else if (t.dataset.file) return readPhoto(t);
+            else return;
+            render();
+        });
+
+        function toggleIn(arr, id, add) {
+            const i = arr.indexOf(id);
+            if (add && i < 0) arr.push(id);
+            if (!add && i >= 0) arr.splice(i, 1);
+        }
+
+        // reduz a foto para no máximo 1600px (mais leve e evita estourar a memória no celular)
+        function readPhoto(inp) {
+            const f = inp.files?.[0];
+            if (!f) return;
+            const img = new Image();
+            img.onload = () => {
+                const sc = Math.min(1, 1600 / Math.max(img.width, img.height));
+                const c = document.createElement('canvas');
+                c.width = Math.round(img.width * sc);
+                c.height = Math.round(img.height * sc);
+                const ctx = c.getContext('2d', { willReadFrequently: true });
+                ctx.drawImage(img, 0, 0, c.width, c.height);
+                const cut = trimTransparent(c);
+                // PNG sem fundo continua PNG (vira "recorte"); foto comum vira JPEG, mais leve
+                setPath(state, rp(inp.dataset.file), cut ? cut.toDataURL('image/png') : c.toDataURL('image/jpeg', 0.9));
+                URL.revokeObjectURL(img.src);
+                render();
+            };
+            img.onerror = () => toast('Não consegui abrir essa imagem.');
+            img.src = URL.createObjectURL(f);
+        }
+
+        // Se a imagem tem transparência relevante, devolve um canvas cortado no contorno da pessoa; senão, null
+        function trimTransparent(c) {
+            const { width: w, height: h } = c;
+            const d = c.getContext('2d').getImageData(0, 0, w, h).data;
+            let transp = 0, x0 = w, y0 = h, x1 = -1, y1 = -1;
+            for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+                const a = d[(y * w + x) * 4 + 3];
+                if (a < 200) transp++;
+                if (a > 16) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+            }
+            if (transp < w * h * 0.05 || x1 < 0) return null;
+            const out = document.createElement('canvas');
+            out.width = x1 - x0 + 1;
+            out.height = y1 - y0 + 1;
+            out.getContext('2d').drawImage(c, x0, y0, out.width, out.height, 0, 0, out.width, out.height);
+            return out;
+        }
+
+        /* ================= TIRAR FUNDO DA FOTO (IA no próprio navegador) =================
+           Modelo MODNet (Apache-2.0), feito para recortar pessoas. Baixa ~25 MB só na 1ª vez
+           (o navegador guarda em cache); a foto não sai do aparelho. */
+        let bgModel = null;
+        function loadBgModel(onProgress) {
+            if (!bgModel) bgModel = (async () => {
+                const TF = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1');
+                TF.env.allowLocalModels = false;
+                const files = {};
+                const progress_callback = p => {
+                    if (p.status === 'progress' && p.total) {
+                        files[p.file] = [p.loaded, p.total];
+                        const v = Object.values(files), done = v.reduce((a, x) => a + x[0], 0), tot = v.reduce((a, x) => a + x[1], 0);
+                        onProgress?.(Math.round(done / tot * 100));
+                    }
+                };
+                const model = await TF.AutoModel.from_pretrained('Xenova/modnet', { dtype: 'fp32', device: 'wasm', progress_callback });
+                const processor = await TF.AutoProcessor.from_pretrained('Xenova/modnet');
+                return { TF, model, processor };
+            })().catch(e => { bgModel = null; throw e; });
+            return bgModel;
+        }
+
+        async function removeBackground(dataUrl, onProgress) {
+            const { TF, model, processor } = await loadBgModel(onProgress);
+            const image = await TF.RawImage.fromURL(dataUrl);
+            const { pixel_values } = await processor(image);
+            const { output } = await model({ input: pixel_values });
+            const mask = await TF.RawImage.fromTensor(output[0].mul(255).to('uint8')).resize(image.width, image.height);
+            const img = new Image();
+            await new Promise((ok, err) => { img.onload = ok; img.onerror = err; img.src = dataUrl; });
+            const c = document.createElement('canvas');
+            c.width = image.width; c.height = image.height;
+            const ctx = c.getContext('2d', { willReadFrequently: true });
+            ctx.drawImage(img, 0, 0, c.width, c.height);
+            const px = ctx.getImageData(0, 0, c.width, c.height);
+            for (let i = 0; i < mask.data.length; i++) px.data[i * 4 + 3] = mask.data[i * mask.channels];
+            ctx.putImageData(px, 0, 0);
+            return (trimTransparent(c) || c).toDataURL('image/png');
+        }
+
+        $$('[data-cutout]').forEach(btn => btn.onclick = async () => {
+            const key = rp(btn.dataset.cutout), foto = getPath(state, key);
+            if (!foto) return toast('Envie a foto primeiro.');
+            if (isCut(foto)) return toast('Essa foto já está sem fundo.');
+            const old = btn.textContent;
+            $$('[data-cutout]').forEach(b => b.disabled = true);
+            btn.textContent = bgModel ? 'Recortando…' : 'Baixando IA…';
+            try {
+                const out = await removeBackground(foto, pct => { btn.textContent = `Baixando IA ${pct}%`; });
+                setPath(state, key, out);
+                if (key === 'evento.preletorFoto' && state.evento.layout === 'classico') state.evento.fotoTam = 'grande';
+                syncInputs();
+                render();
+                toast('Fundo removido! Para voltar, envie a foto de novo.');
+            } catch (e) {
+                console.error(e);
+                toast('Não consegui tirar o fundo (precisa de internet na 1ª vez). ' + (e.message || ''));
+            } finally {
+                btn.textContent = old;
+                $$('[data-cutout]').forEach(b => b.disabled = false);
+            }
+        });
+
+        // Botões de opção genéricos: <div class="seg" data-seg="caminho"><button data-v="valor">
+        $$('[data-seg]').forEach(seg => seg.querySelectorAll('button').forEach(b => b.onclick = () => {
+            setPath(state, rp(seg.dataset.seg), b.dataset.v);
+            syncInputs();
+            render();
+        }));
+
+        $$('[data-clear]').forEach(b => b.onclick = () => {
+            setPath(state, rp(b.dataset.clear), null);
+            const inp = document.querySelector(`[data-file="${b.dataset.clear}"]`);
+            if (inp) inp.value = '';
+            render();
+        });
+
+        $$('#fmtSeg button').forEach(b => b.onclick = () => { state.fmt = b.dataset.fmt; syncInputs(); render(); });
+        $$('#brandSeg button').forEach(b => b.onclick = () => {
+            if (state.brand === b.dataset.brand) return;
+            state.brand = b.dataset.brand;
+            syncInputs();
+            render();
+            loadAgenda();
+        });
+        $$('#tabs button').forEach(b => b.onclick = () => {
+            state.tpl = b.dataset.tpl;
+            syncInputs();
+            if (state.tpl === 'aniver') loadMembros();
+            render();
+        });
+        $$('#aniverMode button').forEach(b => b.onclick = () => { state.aniver.mode = b.dataset.mode; syncInputs(); render(); });
+
+        $('#eventoFromAgenda').onchange = e => {
+            const ev = AGENDA?.find(x => x.id === e.target.value);
+            if (!ev) return;
+            Object.assign(state.evento, { titulo: ev.titulo, data: ev.dataInicio, dataFim: ev.dataFim || '', local: ev.local || '' });
+            syncInputs();
+            render();
+        };
+
+        $('#diaFromAgenda').onchange = e => {
+            const d = e.target.value;
+            if (!d) return;
+            const evs = (AGENDA || []).filter(x => iso(pd(x.dataInicio)) === d);
+            state.dia.data = d;
+            state.dia.itens = evs.map(x => `${/jove/i.test(x.titulo) ? '*' : ''} | ${x.titulo}${x.local ? ' | ' + x.local : ''}`).join('\n');
+            syncInputs();
+            render();
+            toast('A agenda não guarda horário: complete os horários na programação.');
+        };
+
+        $('#cdEvent').onchange = e => {
+            state.contagem.eventId = e.target.value;
+            const ev = AGENDA?.find(x => x.id === e.target.value);
+            if (ev) Object.assign(state.contagem, { titulo: ev.titulo, data: ev.dataInicio, local: ev.local || '' });
+            syncInputs();
+            render();
+        };
+
+        $('#versePick').innerHTML += VERSICULOS.map((v, i) => `<option value="${i}">${esc(v.r)}</option>`).join('');
+        function setVerse(i) { Object.assign(state.versiculo, { texto: VERSICULOS[i].t, ref: VERSICULOS[i].r }); syncInputs(); render(); }
+        $('#versePick').onchange = e => { if (e.target.value !== '') setVerse(+e.target.value); };
+        $('#verseRandom').onclick = () => setVerse(Math.floor(Math.random() * VERSICULOS.length));
+
+        $('#btnReset').onclick = () => {
+            if (!confirm('Voltar todos os textos para o padrão?')) return;
+            const keep = { brand: state.brand, tpl: state.tpl, fmt: state.fmt };
+            state = Object.assign(defaults(), keep);
+            syncInputs();
+            loadAgenda();
+            renderAniverNames();
+            render();
+        };
+
+        window.addEventListener('resize', layoutStage);
+
+        /* ================= INÍCIO ================= */
+        syncInputs();
+        render();
+        ensureFonts().then(render);
+        loadAgenda();
+        if (state.tpl === 'aniver') loadMembros();
+    </script>
+</body>
+
+</html>
