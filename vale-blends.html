@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<script>if(location.protocol!=="file:")document.write('<base href="/">')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Vale-Hambúrguer Blend's</title>
+<link rel="icon" href="images/djad/djad-fundo-escuro.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@700;800;900&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root { --y: #FFEA8F; --ink: #0c0c0b; --line: #2f2c25; --muted: #a39d90; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: #151513; color: #eee; font-family: Inter, system-ui, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+/* ---------- tela ---------- */
+.wrap { max-width: 1100px; margin: 0 auto; padding: 16px; display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .wrap { grid-template-columns: minmax(0, 1.2fr) minmax(300px, .8fr); align-items: start; } }
+h1.top { font: 900 22px Montserrat, sans-serif; margin: 0 0 4px; }
+h1.top span { color: var(--y); }
+.muted { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+.prev { display: flex; flex-direction: column; align-items: center; gap: 14px; background: #0b0b0a; border-radius: 14px; padding: 20px 10px; }
+.prev small { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+.zoom { zoom: 1.6; }
+@media (max-width: 520px) { .zoom { zoom: 1.05; } }
+.card { background: #1c1b17; border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+.card h2 { margin: 0 0 12px; font: 900 15px Montserrat, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--y); }
+.field { margin-bottom: 12px; }
+.field:last-child { margin-bottom: 0; }
+label { display: block; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+input[type=text], input[type=number], select, textarea { width: 100%; background: #121110; border: 1px solid #38342b; color: #fff; border-radius: 9px; padding: 10px 11px; font: 500 15px Inter, sans-serif; outline: none; color-scheme: dark; }
+textarea { resize: vertical; min-height: 70px; }
+input:focus, select:focus, textarea:focus { border-color: var(--y); }
+.check { display: flex; gap: 8px; align-items: center; font-size: 14px; cursor: pointer; text-transform: none; letter-spacing: 0; color: #eee; font-weight: 600; }
+.check input { accent-color: var(--y); width: 18px; height: 18px; }
+.hint { font-size: 12px; color: var(--muted); margin-top: 5px; line-height: 1.4; }
+.btn { width: 100%; font: 900 15px Montserrat, sans-serif; letter-spacing: .08em; text-transform: uppercase; border: 0; border-radius: 12px; padding: 14px; cursor: pointer; background: var(--y); color: #000; }
+
+/* ---------- cartão (tamanho real: 90 × 55 mm) ---------- */
+.vc { position: relative; width: 90mm; height: 55mm; overflow: hidden; background: var(--ink); color: #fff; border-radius: 2.5mm; font-family: Inter, sans-serif; }
+.vc .stripes { position: absolute; right: -14mm; top: -10mm; width: 46mm; height: 80mm; transform: rotate(18deg);
+  background: repeating-linear-gradient(90deg, rgba(255, 234, 143, .09) 0 1.2mm, transparent 1.2mm 3.4mm); }
+.vc .bar { position: absolute; left: 0; right: 0; bottom: 0; height: 1.6mm; background: var(--y); }
+
+/* frente */
+.vc .logo { position: absolute; left: 6mm; top: 5.2mm; height: 8.6mm; width: auto; }
+.vc .num { position: absolute; right: 6mm; top: 5.6mm; text-align: right; font: 800 6pt Montserrat, sans-serif; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; }
+.vc .num b { display: block; font: 400 15pt/1 Anton, sans-serif; letter-spacing: .02em; color: var(--y); margin-top: .6mm; }
+.vc .main { position: absolute; left: 6mm; right: 6mm; top: 17.5mm; }
+.vc .vale { font: 900 7.4pt Montserrat, sans-serif; letter-spacing: .5em; color: var(--y); text-transform: uppercase; }
+.vc .hb { font: 400 30pt/0.92 Anton, sans-serif; text-transform: uppercase; letter-spacing: .01em; margin-top: .6mm; white-space: nowrap; }
+.vc .item { font: 600 7.4pt Inter, sans-serif; color: #e9e5da; margin-top: 1.4mm; }
+.vc .foot { position: absolute; left: 6mm; right: 6mm; bottom: 4.2mm; display: flex; align-items: flex-end; gap: 3mm; }
+.vc .foot img { height: 7.4mm; width: auto; flex: none; }
+.vc .foot .tx { flex: 1; min-width: 0; font: 800 5.6pt/1.35 Montserrat, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: #d9d4c8; }
+.vc .foot .tx b { color: var(--y); font-weight: 900; }
+.vc .foot .val { flex: none; text-align: right; font: 800 5.4pt/1.35 Montserrat, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.vc .foot .val b { display: block; color: #fff; font-size: 7pt; letter-spacing: .04em; }
+
+/* verso */
+.vc.back .logo { left: 50%; transform: translateX(-50%); top: 5.4mm; height: 7mm; }
+.vc.back .para { position: absolute; left: 7mm; right: 7mm; top: 16.5mm; display: flex; align-items: flex-end; gap: 2mm; font: 800 6.4pt Montserrat, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--y); }
+.vc.back .para span { flex: 1; border-bottom: .3mm solid rgba(255, 255, 255, .55); height: 4.6mm; font: 700 9pt Inter, sans-serif; letter-spacing: 0; text-transform: none; color: #fff; padding-left: 1mm; white-space: nowrap; overflow: hidden; }
+.vc.back ul { position: absolute; left: 7mm; right: 7mm; top: 24.5mm; margin: 0; padding: 0; list-style: none; font: 500 6.2pt/1.45 Inter, sans-serif; color: #d6d1c4; }
+.vc.back li { position: relative; padding-left: 3mm; }
+.vc.back li::before { content: ''; position: absolute; left: 0; top: 1.5mm; width: 1.2mm; height: 1.2mm; background: var(--y); border-radius: 50%; }
+.vc.back .sig { position: absolute; left: 7mm; right: 7mm; bottom: 4.6mm; display: flex; justify-content: space-between; font: 800 5.2pt Montserrat, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+
+/* ---------- impressão: folha A4, 2 × 5 cartões, verso espelhado ---------- */
+#sheets { display: none; }
+@page { size: A4; margin: 0; }
+@media print {
+  body { background: #fff; }
+  .wrap { display: none; }
+  #sheets { display: block; }
+  .sheet { width: 210mm; height: 297mm; padding: 11mm 15mm; display: grid; grid-template-columns: repeat(2, 90mm); grid-auto-rows: 55mm; gap: 0; justify-content: center; align-content: start; break-after: page; }
+  .sheet:last-child { break-after: auto; }
+  .slot { position: relative; width: 90mm; height: 55mm; }
+  .slot .vc { border-radius: 0; }
+  .slot.cut { outline: .2mm dashed #bbb; outline-offset: 0; }
+  .slot.empty { visibility: hidden; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="prev">
+    <small>Frente</small>
+    <div class="zoom" id="pFront"></div>
+    <small>Verso</small>
+    <div class="zoom" id="pBack"></div>
+  </section>
+
+  <section>
+    <h1 class="top">Vale-Hambúrguer <span>Blend's</span></h1>
+    <p class="muted">Prêmio do ENEM Bíblico · 9 × 5,5 cm (tamanho de cartão de visita)</p>
+    <div class="card">
+      <h2>Cartão</h2>
+      <div class="field"><label>O que vale</label><input type="text" data-k="item"></div>
+      <div class="row2">
+        <div class="field">
+          <label>Colocação</label>
+          <select data-k="col">
+            <option value="">— sem colocação —</option>
+            <option value="1º lugar">1º lugar</option>
+            <option value="2º lugar">2º lugar</option>
+            <option value="3º lugar">3º lugar</option>
+            <option value="Top 3">Top 3</option>
+          </select>
+        </div>
+        <div class="field"><label>Válido até</label><input type="text" data-k="validade" placeholder="31/12/2026"></div>
+      </div>
+      <div class="field">
+        <label>Nome do premiado (opcional)</label>
+        <input type="text" data-k="nome">
+        <div class="hint">Vazio, sai uma linha para escrever à mão no dia.</div>
+      </div>
+      <div class="field"><label>Evento</label><input type="text" data-k="evento"></div>
+    </div>
+    <div class="card">
+      <h2>Verso</h2>
+      <div class="field">
+        <label>Regras (uma por linha)</label>
+        <textarea data-k="regras" rows="4"></textarea>
+      </div>
+      <div class="field"><label class="check"><input type="checkbox" data-k="verso"> Imprimir o verso</label></div>
+    </div>
+    <div class="card">
+      <h2>Impressão</h2>
+      <div class="row2">
+        <div class="field"><label>Quantos cartões</label><input type="number" min="1" max="10" data-k="qtd"></div>
+        <div class="field"><label>Numerar a partir de</label><input type="number" min="1" max="999" data-k="ini"></div>
+      </div>
+      <div class="field"><label class="check"><input type="checkbox" data-k="corte"> Linhas de corte</label></div>
+      <button class="btn" id="btnPrint">🖨 Imprimir (A4)</button>
+      <p class="hint">Escolha papel A4, escala 100% e ative “Gráficos de plano de fundo”. Com verso, imprima frente e verso virando pela <b>borda longa</b> (o verso já sai espelhado para casar com a frente). Papel 180 g ou mais fica com cara de cartão.</p>
+    </div>
+  </section>
+</div>
+<div id="sheets"></div>
+
+<script>
+const LOGO = 'images/parceiros/blends.png';
+const DJAD = 'images/djad/djad-fundo-escuro.png';
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+function defaults() {
+  return {
+    item: '1 hambúrguer artesanal', col: 'Top 3', validade: '31/12/2026', nome: '',
+    evento: 'ENEM Bíblico 2026',
+    regras: 'Apresente este cartão na Blend\'s para retirar o seu hambúrguer.\nVálido para 1 (um) hambúrguer, uma única vez.\nNão é trocado por dinheiro.',
+    verso: true, qtd: 1, ini: 1, corte: true
+  };
+}
+let S = defaults();
+try { Object.assign(S, JSON.parse(localStorage.getItem('vale-blends') || '{}')); } catch (e) { }
+const save = () => { try { localStorage.setItem('vale-blends', JSON.stringify(S)); } catch (e) { } };
+
+function front(n) {
+  return `<div class="vc">
+    <div class="stripes"></div>
+    <img class="logo" src="${LOGO}" alt="Blend's">
+    <div class="num">Nº<b>${String(n).padStart(2, '0')}</b></div>
+    <div class="main">
+      <div class="vale">Vale</div>
+      <div class="hb">Hambúrguer</div>
+      ${S.item ? `<div class="item">${esc(S.item)}</div>` : ''}
+    </div>
+    <div class="foot">
+      <img src="${DJAD}" alt="DJAD">
+      <div class="tx">Prêmio${S.col ? ` · <b>${esc(S.col)}</b>` : ''}<br>${esc(S.evento)}</div>
+      ${S.validade ? `<div class="val">Válido até<b>${esc(S.validade)}</b></div>` : ''}
+    </div>
+    <div class="bar"></div>
+  </div>`;
+}
+
+function back() {
+  const regras = String(S.regras || '').split('\n').map(x => x.trim()).filter(Boolean);
+  return `<div class="vc back">
+    <img class="logo" src="${LOGO}" alt="Blend's">
+    <div class="para">Para<span>${esc(S.nome)}</span></div>
+    <ul>${regras.map(r => `<li>${esc(r)}</li>`).join('')}</ul>
+    <div class="sig"><span>Oferecimento Blend's</span><span>DJAD Patu</span></div>
+    <div class="bar"></div>
+  </div>`;
+}
+
+function render() {
+  $('#pFront').innerHTML = front(+S.ini || 1);
+  $('#pBack').innerHTML = back();
+  const q = Math.max(1, Math.min(10, +S.qtd || 1)), ini = +S.ini || 1;
+  const slot = (html, cls = '') => `<div class="slot${S.corte ? ' cut' : ''}${cls}">${html}</div>`;
+  const fr = Array.from({ length: 10 }, (_, i) => i < q ? slot(front(ini + i)) : slot('', ' empty'));
+  let html = `<div class="sheet">${fr.join('')}</div>`;
+  if (S.verso) {
+    // espelha as colunas: o verso do cartão da esquerda fica à direita na folha
+    const bk = Array.from({ length: 10 }, (_, i) => {
+      const src = i % 2 === 0 ? i + 1 : i - 1;
+      return src < q ? slot(back()) : slot('', ' empty');
+    });
+    html += `<div class="sheet">${bk.join('')}</div>`;
+  }
+  $('#sheets').innerHTML = html;
+  save();
+}
+
+function sync() { $$('[data-k]').forEach(i => { if (i.type === 'checkbox') i.checked = !!S[i.dataset.k]; else i.value = S[i.dataset.k] ?? ''; }); }
+document.addEventListener('input', e => {
+  const k = e.target.dataset?.k;
+  if (!k) return;
+  S[k] = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+  render();
+});
+$('#btnPrint').onclick = () => { render(); document.fonts.ready.then(() => window.print()); };
+sync(); render();
+</script>
+</body>
+</html>
