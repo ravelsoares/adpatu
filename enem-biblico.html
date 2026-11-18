@@ -74,12 +74,6 @@ body{background:#2a2a2a;color:var(--tinta);font-family:Inter,system-ui,sans-seri
 .alts .l{flex:0 0 5mm;height:5mm;border:1.2px solid #000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:7.5pt;margin-top:.2mm}
 .fim{break-inside:avoid;text-align:center;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:.1em;margin-top:4mm;padding-top:3mm;border-top:2px solid #000}
 
-/* rascunho */
-.rasc{break-before:page;border:1.5px dashed #000;padding:5mm;margin-top:6mm}
-.rasc h3{margin:0 0 1mm;font:800 10pt Inter;letter-spacing:.1em;text-transform:uppercase}
-.rasc p{margin:0 0 3mm;font-size:8.5pt;color:var(--cinza)}
-.rasc-grade{display:grid;grid-template-columns:repeat(10,1fr);gap:1.5mm}
-.rasc-grade div{border:1px solid #999;font-size:7.5pt;padding:1mm;height:9mm;color:#555}
 
 /* cartão-resposta */
 .cartao h2{font-family:Montserrat,sans-serif;font-weight:900;font-size:20pt;margin:0;letter-spacing:.02em}
@@ -164,7 +158,7 @@ body{background:#2a2a2a;color:var(--tinta);font-family:Inter,system-ui,sans-seri
     <label>Data e local <input id="cfgData" placeholder="ex.: 28/11/2026 · Templo Central"></label>
     <button class="acao" onclick="window.print()">🖨 Imprimir esta aba</button>
   </div>
-  <div class="dica">Na impressão, escolha papel A4 e ative “Gráficos de plano de fundo”. Cada caderno sai com a capa, as 30 questões e o rascunho do gabarito.</div>
+  <div class="dica">Na impressão, escolha papel A4 e ative “Gráficos de plano de fundo”. Cada caderno sai com a capa e as 30 questões.</div>
 </div>
 
 <div class="folhas" id="folhas"></div>
@@ -705,7 +699,7 @@ function htmlCaderno(ci){
           <li>O tempo de prova é de <b>2 horas</b>, incluindo o preenchimento do cartão-resposta. Você só pode sair depois de <b>30 minutos</b> de prova.</li>
           <li>Durante a prova, não é permitido consultar a Bíblia, o celular, anotações ou outras pessoas.</li>
           <li>Os textos bíblicos citados seguem a versão <b>Almeida Revista e Corrigida (ARC)</b>.</li>
-          <li>Ao terminar, entregue o <b>cartão-resposta</b> ao aplicador. Você pode levar este caderno. Use o rascunho da última página para anotar suas respostas.</li>
+          <li>Ao terminar, entregue o <b>cartão-resposta</b> ao aplicador. Você pode levar este caderno.</li>
         </ol>
       </div>
       <div>
@@ -729,12 +723,7 @@ function htmlCaderno(ci){
       <p class="en">${esc(it.q.e)}</p>
       <ol class="alts">${it.alts.map((a,l)=>`<li><span class="l">${LETRAS[l]}</span><span>${a}</span></li>`).join("")}</ol></div>`;
   });
-  h += `<div class="fim">FIM DA PROVA · CONFIRA SEU CARTÃO-RESPOSTA</div></div>
-    <div class="rasc">
-      <h3>Rascunho do gabarito · Caderno ${cad.n} ${cad.nome}</h3>
-      <p>Anote suas respostas aqui, recorte e leve para conferir com o gabarito oficial.</p>
-      <div class="rasc-grade">${itens.map(it=>`<div>${it.num}</div>`).join("")}</div>
-    </div></div>`;
+  h += `<div class="fim">FIM DA PROVA · CONFIRA SEU CARTÃO-RESPOSTA</div></div></div>`;
   return h;
 }
 
