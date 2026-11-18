@@ -24,8 +24,8 @@ h1.top span { color: var(--y); }
 .muted { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
 .prev { display: flex; flex-direction: column; align-items: center; gap: 14px; background: #0b0b0a; border-radius: 14px; padding: 20px 10px; }
 .prev small { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
-.zoom { zoom: 1.6; }
-@media (max-width: 520px) { .zoom { zoom: 1.05; } }
+.zoom { zoom: 1.4; }
+@media (max-width: 520px) { .zoom { zoom: .9; } }
 .card { background: #1c1b17; border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
 .card h2 { margin: 0 0 12px; font: 900 15px Montserrat, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--y); }
 .field { margin-bottom: 12px; }
@@ -40,46 +40,46 @@ input:focus, select:focus, textarea:focus { border-color: var(--y); }
 .hint { font-size: 12px; color: var(--muted); margin-top: 5px; line-height: 1.4; }
 .btn { width: 100%; font: 900 15px Montserrat, sans-serif; letter-spacing: .08em; text-transform: uppercase; border: 0; border-radius: 12px; padding: 14px; cursor: pointer; background: var(--y); color: #000; }
 
-/* ---------- cartão (tamanho real: 90 × 55 mm) ---------- */
-.vc { position: relative; width: 90mm; height: 55mm; overflow: hidden; background: var(--ink); color: #fff; border-radius: 2.5mm; font-family: Inter, sans-serif; }
-.vc .stripes { position: absolute; right: -14mm; top: -10mm; width: 46mm; height: 80mm; transform: rotate(18deg);
+/* ---------- cartão (tamanho real: 100 × 80 mm) ---------- */
+.vc { position: relative; width: 100mm; height: 80mm; overflow: hidden; background: var(--ink); color: #fff; border-radius: 2.5mm; font-family: Inter, sans-serif; }
+.vc .stripes { position: absolute; right: -16mm; top: -14mm; width: 52mm; height: 112mm; transform: rotate(18deg);
   background: repeating-linear-gradient(90deg, rgba(255, 234, 143, .09) 0 1.2mm, transparent 1.2mm 3.4mm); }
-.vc .bar { position: absolute; left: 0; right: 0; bottom: 0; height: 1.6mm; background: var(--y); }
+.vc .bar { position: absolute; left: 0; right: 0; bottom: 0; height: 2mm; background: var(--y); }
 
 /* frente */
-.vc .logo { position: absolute; left: 6mm; top: 5.2mm; height: 8.6mm; width: auto; }
-.vc .num { position: absolute; right: 6mm; top: 5.6mm; text-align: right; font: 800 6pt Montserrat, sans-serif; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; }
-.vc .num b { display: block; font: 400 15pt/1 Anton, sans-serif; letter-spacing: .02em; color: var(--y); margin-top: .6mm; }
-.vc .main { position: absolute; left: 6mm; right: 6mm; top: 17.5mm; }
-.vc .vale { font: 900 7.4pt Montserrat, sans-serif; letter-spacing: .5em; color: var(--y); text-transform: uppercase; }
-.vc .hb { font: 400 30pt/0.92 Anton, sans-serif; text-transform: uppercase; letter-spacing: .01em; margin-top: .6mm; white-space: nowrap; }
-.vc .item { font: 600 7.4pt Inter, sans-serif; color: #e9e5da; margin-top: 1.4mm; }
-.vc .foot { position: absolute; left: 6mm; right: 6mm; bottom: 4.2mm; display: flex; align-items: flex-end; gap: 3mm; }
-.vc .foot img { height: 7.4mm; width: auto; flex: none; }
-.vc .foot .tx { flex: 1; min-width: 0; font: 800 5.6pt/1.35 Montserrat, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: #d9d4c8; }
+.vc .logo { position: absolute; left: 7mm; top: 7mm; height: 12mm; width: auto; }
+.vc .num { position: absolute; right: 7mm; top: 7.4mm; text-align: right; font: 800 7pt Montserrat, sans-serif; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; }
+.vc .num b { display: block; font: 400 20pt/1 Anton, sans-serif; letter-spacing: .02em; color: var(--y); margin-top: .6mm; }
+.vc .main { position: absolute; left: 7mm; right: 7mm; top: 27mm; }
+.vc .vale { font: 900 9.5pt Montserrat, sans-serif; letter-spacing: .5em; color: var(--y); text-transform: uppercase; }
+.vc .hb { font: 400 42pt/0.92 Anton, sans-serif; text-transform: uppercase; letter-spacing: .01em; margin-top: .6mm; white-space: nowrap; }
+.vc .item { font: 600 10pt Inter, sans-serif; color: #e9e5da; margin-top: 2.2mm; }
+.vc .foot { position: absolute; left: 7mm; right: 7mm; bottom: 6.5mm; display: flex; align-items: flex-end; gap: 3mm; }
+.vc .foot img { height: 10mm; width: auto; flex: none; }
+.vc .foot .tx { flex: 1; min-width: 0; font: 800 7pt/1.4 Montserrat, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: #d9d4c8; }
 .vc .foot .tx b { color: var(--y); font-weight: 900; }
-.vc .foot .val { flex: none; text-align: right; font: 800 5.4pt/1.35 Montserrat, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.vc .foot .val b { display: block; color: #fff; font-size: 7pt; letter-spacing: .04em; }
+.vc .foot .val { flex: none; text-align: right; font: 800 6.6pt/1.4 Montserrat, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.vc .foot .val b { display: block; color: #fff; font-size: 9pt; letter-spacing: .04em; }
 
 /* verso */
-.vc.back .logo { left: 50%; transform: translateX(-50%); top: 5.4mm; height: 7mm; }
-.vc.back .para { position: absolute; left: 7mm; right: 7mm; top: 16.5mm; display: flex; align-items: flex-end; gap: 2mm; font: 800 6.4pt Montserrat, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--y); }
-.vc.back .para span { flex: 1; border-bottom: .3mm solid rgba(255, 255, 255, .55); height: 4.6mm; font: 700 9pt Inter, sans-serif; letter-spacing: 0; text-transform: none; color: #fff; padding-left: 1mm; white-space: nowrap; overflow: hidden; }
-.vc.back ul { position: absolute; left: 7mm; right: 7mm; top: 24.5mm; margin: 0; padding: 0; list-style: none; font: 500 6.2pt/1.45 Inter, sans-serif; color: #d6d1c4; }
-.vc.back li { position: relative; padding-left: 3mm; }
-.vc.back li::before { content: ''; position: absolute; left: 0; top: 1.5mm; width: 1.2mm; height: 1.2mm; background: var(--y); border-radius: 50%; }
-.vc.back .sig { position: absolute; left: 7mm; right: 7mm; bottom: 4.6mm; display: flex; justify-content: space-between; font: 800 5.2pt Montserrat, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.vc.back .logo { left: 50%; transform: translateX(-50%); top: 7mm; height: 10mm; }
+.vc.back .para { position: absolute; left: 8mm; right: 8mm; top: 24mm; display: flex; align-items: flex-end; gap: 2.5mm; font: 800 8pt Montserrat, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--y); }
+.vc.back .para span { flex: 1; border-bottom: .3mm solid rgba(255, 255, 255, .55); height: 6mm; font: 700 11pt Inter, sans-serif; letter-spacing: 0; text-transform: none; color: #fff; padding-left: 1mm; white-space: nowrap; overflow: hidden; }
+.vc.back ul { position: absolute; left: 8mm; right: 8mm; top: 37mm; margin: 0; padding: 0; list-style: none; font: 500 8pt/1.5 Inter, sans-serif; color: #d6d1c4; }
+.vc.back li { position: relative; padding-left: 3.6mm; margin-bottom: 1.2mm; }
+.vc.back li::before { content: ''; position: absolute; left: 0; top: 1.7mm; width: 1.5mm; height: 1.5mm; background: var(--y); border-radius: 50%; }
+.vc.back .sig { position: absolute; left: 8mm; right: 8mm; bottom: 6.5mm; display: flex; justify-content: space-between; font: 800 6.6pt Montserrat, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 
-/* ---------- impressão: folha A4, 2 × 5 cartões, verso espelhado ---------- */
+/* ---------- impressão: folha A4, 2 × 3 cartões, verso espelhado ---------- */
 #sheets { display: none; }
 @page { size: A4; margin: 0; }
 @media print {
   body { background: #fff; }
   .wrap { display: none; }
   #sheets { display: block; }
-  .sheet { width: 210mm; height: 297mm; padding: 11mm 15mm; display: grid; grid-template-columns: repeat(2, 90mm); grid-auto-rows: 55mm; gap: 0; justify-content: center; align-content: start; break-after: page; }
+  .sheet { width: 210mm; height: 297mm; padding: 28mm 5mm; display: grid; grid-template-columns: repeat(2, 100mm); grid-auto-rows: 80mm; gap: 0; justify-content: center; align-content: start; break-after: page; }
   .sheet:last-child { break-after: auto; }
-  .slot { position: relative; width: 90mm; height: 55mm; }
+  .slot { position: relative; width: 100mm; height: 80mm; }
   .slot .vc { border-radius: 0; }
   .slot.cut { outline: .2mm dashed #bbb; outline-offset: 0; }
   .slot.empty { visibility: hidden; }
@@ -97,7 +97,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--y); }
 
   <section>
     <h1 class="top">Vale-Hambúrguer <span>Blend's</span></h1>
-    <p class="muted">Prêmio do ENEM Bíblico · 9 × 5,5 cm (tamanho de cartão de visita)</p>
+    <p class="muted">Prêmio do ENEM Bíblico · 10 × 8 cm (6 por folha A4)</p>
     <div class="card">
       <h2>Cartão</h2>
       <div class="field"><label>O que vale</label><input type="text" data-k="item"></div>
@@ -132,7 +132,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--y); }
     <div class="card">
       <h2>Impressão</h2>
       <div class="row2">
-        <div class="field"><label>Quantos cartões</label><input type="number" min="1" max="10" data-k="qtd"></div>
+        <div class="field"><label>Quantos cartões</label><input type="number" min="1" max="6" data-k="qtd"></div>
         <div class="field"><label>Numerar a partir de</label><input type="number" min="1" max="999" data-k="ini"></div>
       </div>
       <div class="field"><label class="check"><input type="checkbox" data-k="corte"> Linhas de corte</label></div>
@@ -194,13 +194,13 @@ function back() {
 function render() {
   $('#pFront').innerHTML = front(+S.ini || 1);
   $('#pBack').innerHTML = back();
-  const q = Math.max(1, Math.min(10, +S.qtd || 1)), ini = +S.ini || 1;
+  const q = Math.max(1, Math.min(6, +S.qtd || 1)), ini = +S.ini || 1;
   const slot = (html, cls = '') => `<div class="slot${S.corte ? ' cut' : ''}${cls}">${html}</div>`;
-  const fr = Array.from({ length: 10 }, (_, i) => i < q ? slot(front(ini + i)) : slot('', ' empty'));
+  const fr = Array.from({ length: 6 }, (_, i) => i < q ? slot(front(ini + i)) : slot('', ' empty'));
   let html = `<div class="sheet">${fr.join('')}</div>`;
   if (S.verso) {
     // espelha as colunas: o verso do cartão da esquerda fica à direita na folha
-    const bk = Array.from({ length: 10 }, (_, i) => {
+    const bk = Array.from({ length: 6 }, (_, i) => {
       const src = i % 2 === 0 ? i + 1 : i - 1;
       return src < q ? slot(back()) : slot('', ' empty');
     });
