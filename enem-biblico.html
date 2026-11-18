@@ -615,14 +615,14 @@ const BANCO = [
  r:"A volta de Cristo é certa (At 1.11), mas a data pertence ao Pai. A resposta bíblica não é especular, e sim vigiar, trabalhar e manter a esperança (Mt 25; 1 Ts 5.1-6)."}
 ];
 
-/* Questões que entram na prova (índices do BANCO): 6 por área, 10 fáceis, 15 médias e 5 difíceis.
+/* Questões que entram na prova (índices do BANCO): 6 por área, 8 fáceis, 16 médias e 6 difíceis.
    As outras 15 ficam de reserva. Para trocar uma, troque o índice por outro da MESMA área. */
 const USAR = [
-  1, 2, 3, 4, 6, 8,        // Pentateuco e Históricos
+  2, 3, 4, 6, 7, 8,        // Pentateuco e Históricos
   9, 13, 14, 15, 16, 17,   // Poéticos e Proféticos
   18, 19, 20, 21, 22, 25,  // Evangelhos e Atos
   29, 30, 31, 32, 33, 35,  // Epístolas e Apocalipse
-  36, 37, 38, 41, 42, 44   // Doutrina e Vida Cristã
+  36, 38, 41, 42, 43, 44   // Doutrina e Vida Cristã
 ];
 const Q = BANCO.filter((_, i) => USAR.includes(i));
 const NQ = Q.length;
