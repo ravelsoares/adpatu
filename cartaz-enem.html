@@ -25,7 +25,7 @@ body { background: #111110; color: #eee; font-family: Inter, system-ui, sans-ser
 h1.top { font: 900 22px Montserrat, sans-serif; margin: 0 0 4px; letter-spacing: .02em; }
 h1.top span { color: var(--gold); }
 .sub-top { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
-.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+.seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
 .seg button, .btn { font: 700 13px Inter, sans-serif; border: 1px solid #3a3730; background: #1a1916; color: #ddd; border-radius: 10px; padding: 10px 8px; cursor: pointer; }
 .seg button.on { border-color: var(--gold); background: rgba(202, 171, 91, .16); color: #fff; }
 .btn.primary { background: var(--gold); color: #000; border-color: var(--gold); }
@@ -54,7 +54,7 @@ input:focus, textarea:focus { border-color: var(--gold); }
 /* ---------- arte (tamanho real, 1080 de largura) ---------- */
 .art { position: relative; width: 1080px; height: 1527px; overflow: hidden; background: var(--ink); color: #f4efe4; font-family: Inter, sans-serif; }
 .art.fmt-feed { height: 1350px; }
-.art.fmt-story { height: 1920px; }
+.art.fmt-story, .art.fmt-link { height: 1920px; }
 .art .glow { position: absolute; border-radius: 50%; }
 .art .g1 { width: 1400px; height: 1400px; left: -820px; top: -520px; background: radial-gradient(circle, rgba(202, 171, 91, .42) 0%, rgba(202, 171, 91, 0) 62%); }
 .art .g2 { width: 1500px; height: 1500px; right: -900px; bottom: -700px; background: radial-gradient(circle, rgba(202, 171, 91, .34) 0%, rgba(202, 171, 91, 0) 62%); }
@@ -141,6 +141,20 @@ input:focus, textarea:focus { border-color: var(--gold); }
 .art .ftr { width: 100%; display: flex; justify-content: space-between; margin-top: 24px; padding-top: 20px; border-top: 2px solid rgba(202, 171, 91, .3); font: 800 21px Montserrat, sans-serif; letter-spacing: .2em; text-transform: uppercase; color: #c9c3b6; }
 .art.fmt-feed .verse { display: none; }
 
+/* story com espaço para a figurinha de link do Instagram */
+.art.fmt-link .in { padding: 170px 86px 250px; }
+.art.fmt-link .logo { height: 120px; }
+.art.fmt-link .enem { font-size: 270px; }
+.art.fmt-link .lk { margin-top: 64px; }
+.art.fmt-link .info { margin-top: 44px; }
+.art .lk { width: 100%; display: flex; flex-direction: column; align-items: center; }
+.art .lk .t1 { font: 900 64px/1 Montserrat, sans-serif; text-transform: uppercase; color: var(--gold); letter-spacing: .02em; }
+.art .lk .t2 { display: flex; align-items: center; gap: 16px; margin-top: 18px; font: 800 30px Montserrat, sans-serif; letter-spacing: .18em; text-transform: uppercase; color: #f4efe4; }
+.art .lk .arw { width: 34px; height: 34px; border-right: 7px solid var(--gold); border-bottom: 7px solid var(--gold); transform: rotate(45deg); margin-top: -14px; }
+.art .lk .slot { position: relative; width: 820px; height: 220px; margin-top: 34px; border-radius: 34px; border: 4px dashed var(--gold); background: rgba(202, 171, 91, .10); box-shadow: 0 0 80px rgba(202, 171, 91, .28), inset 0 0 50px rgba(202, 171, 91, .12); }
+.art .lk .t3 { margin-top: 26px; font: 700 28px/1.3 Inter, sans-serif; color: #d8d2c4; }
+.art .lk .t3 b { color: var(--gold-2); }
+
 @page { size: A4; margin: 0; }
 @media print {
   body { background: #fff; }
@@ -157,6 +171,7 @@ input:focus, textarea:focus { border-color: var(--gold); }
       <button data-fmt="a4">Cartaz A4</button>
       <button data-fmt="feed">Feed 4:5</button>
       <button data-fmt="story">Story</button>
+      <button data-fmt="link">Story link</button>
     </div>
     <div class="stage-wrap" id="stageWrap"><div class="stage" id="stage"></div></div>
     <div class="actions">
@@ -206,6 +221,11 @@ input:focus, textarea:focus { border-color: var(--gold); }
         <div class="field"><label>Rodapé (esquerda)</label><input type="text" data-k="ftrL"></div>
         <div class="field"><label>Rodapé (direita)</label><input type="text" data-k="ftrR"></div>
       </div>
+      <div class="field">
+        <label>Story link (espaço da figurinha)</label>
+        <input type="text" data-k="lk1" style="margin-bottom:6px"><input type="text" data-k="lk2" style="margin-bottom:6px"><input type="text" data-k="lk3">
+        <div class="hint">Título, chamada com setas e frase abaixo do espaço. No Instagram, coloque a figurinha “Link” em cima do retângulo tracejado.</div>
+      </div>
       <div class="field"><button class="btn" id="btnReset">Restaurar textos padrão</button></div>
     </div>
   </section>
@@ -215,7 +235,7 @@ input:focus, textarea:focus { border-color: var(--gold); }
 <div class="toast" id="toast"></div>
 
 <script>
-const FMT = { a4: { w: 1080, h: 1527 }, feed: { w: 1080, h: 1350 }, story: { w: 1080, h: 1920 } };
+const FMT = { a4: { w: 1080, h: 1527 }, feed: { w: 1080, h: 1350 }, story: { w: 1080, h: 1920 }, link: { w: 1080, h: 1920 } };
 const SEMANA = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
 const MES_C = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 const AREAS = [
@@ -237,11 +257,13 @@ function defaults() {
     publico: 'Para jovens e adultos',
     frase: 'Você conhece a Palavra?\nChegou a hora de *provar*.',
     n1: '5', l1: 'Áreas', n2: '2h', l2: 'De prova', n3: '4', l3: 'Cadernos',
-    areas: true, versiculo: true, ftrL: '@djadpatu', ftrR: 'AD Patu · Templo Sede'
+    areas: true, versiculo: true, ftrL: '@djadpatu', ftrR: 'AD Patu · Templo Sede',
+    lk1: 'Inscrições abertas', lk2: 'Toque no link', lk3: 'É grátis · só precisa do *nome*'
   };
 }
 let S = defaults();
 try { Object.assign(S, JSON.parse(localStorage.getItem('cartaz-enem-v2') || '{}')); } catch (e) { }
+{ const h = location.hash.slice(1); if (FMT[h]) S.fmt = h; }
 const save = () => { try { localStorage.setItem('cartaz-enem-v2', JSON.stringify(S)); } catch (e) { } };
 
 const GRAIN = (() => {
@@ -272,6 +294,35 @@ function build(fmt) {
   const mes = d ? MES_C[d.getMonth()] : 'DATA';
   const wd = d ? SEMANA[d.getDay()] : 'Em breve';
   const stats = [[S.n1, S.l1], [S.n2, S.l2], [S.n3, S.l3]].filter(([n]) => String(n || '').trim());
+  if (fmt === 'link') {
+    el.innerHTML = `
+    <div class="glow g1"></div><div class="glow g2"></div>
+    ${rings(-40, F.h * 0.2, 10, 120, 26)}${rings(1120, F.h * 0.62, 11, 130, 26)}
+    <div class="grain" style="background-image:url('${GRAIN}')"></div>
+    <div class="in">
+      <img class="logo" src="${LOGO}" alt="DJAD">
+      <div class="apres">apresenta</div>
+      <div class="sp"></div>
+      <div class="head"><div class="enem">ENEM</div><div class="bib"><i></i><b>BÍBLICO</b><i></i></div></div>
+      ${S.frase ? `<div class="tag">${hl(S.frase)}</div>` : ''}
+      <div class="info">
+        <div class="d"><b>${dia}</b><small>${mes}</small></div>
+        <div class="r"><div class="wd">${esc(wd)}</div>
+          ${(S.abre || S.fecha) ? `<div class="gate">${S.abre ? `<span>Portão abre <b>${esc(S.abre)}</b></span>` : ''}${S.fecha ? `<span>Fecha <b>${esc(S.fecha)}</b></span>` : ''}</div>` : ''}
+          ${S.local ? `<div class="loc">${esc(S.local)}</div>` : ''}</div>
+      </div>
+      <div class="sp"></div>
+      <div class="lk">
+        ${S.lk1 ? `<div class="t1">${esc(S.lk1)}</div>` : ''}
+        ${S.lk2 ? `<div class="t2"><i class="arw"></i>${esc(S.lk2)}<i class="arw"></i></div>` : ''}
+        <div class="slot"></div>
+        ${S.lk3 ? `<div class="t3">${hl(S.lk3).replace(/<em>/g, '<b>').replace(/<\/em>/g, '</b>')}</div>` : ''}
+      </div>
+      <div class="sp"></div>
+      ${(S.ftrL || S.ftrR) ? `<div class="ftr"><span>${esc(S.ftrL)}</span><span>${esc(S.ftrR)}</span></div>` : ''}
+    </div>`;
+    return el;
+  }
   el.innerHTML = `
     <div class="glow g1"></div><div class="glow g2"></div>
     ${rings(-40, F.h * 0.2, 10, 120, 26)}${rings(1120, F.h * 0.62, 11, 130, 26)}
