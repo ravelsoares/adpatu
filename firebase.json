@@ -223,6 +223,8 @@
         "source": "/djad/enem-admin",
         "destination": "/enem-admin.html"
       },
+      { "source": "/djad/enem-adesivos", "destination": "/adesivos-fiscal.html" },
+      { "source": "/djad/enem-correcao", "destination": "/enem-correcao.html" },
       {
         "source": "/djad/fabrica-artes",
         "destination": "/fabrica-artes.html"

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<script>if(location.protocol!=="file:")document.write('<base href="/">')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Correção · ENEM Bíblico</title>
+<link rel="icon" href="images/djad/djad-fundo-escuro.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="scripts/enem-banco.js"></script>
+<script src="scripts/enem-omr.js"></script>
+<script src="scripts/enem-tri.js"></script>
+<style>
+:root { --gold: #CAAB5B; --bg: #0f0e0c; --panel: #191814; --line: #302d26; --muted: #a39d90; --err: #ff8a7a; --ok: #7bd88f; --warn: #ffb547; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: #f1ece1; font-family: Inter, system-ui, sans-serif; }
+[hidden] { display: none !important; }
+header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 2px solid var(--gold); background: #0a0a09; position: sticky; top: 0; z-index: 5; }
+header img { height: 36px; }
+header h1 { margin: 0; font: 900 17px Montserrat, sans-serif; letter-spacing: .03em; flex: 1; }
+header h1 span { color: var(--gold); }
+main { max-width: 1100px; margin: 0 auto; padding: 14px 14px 60px; }
+.btn { font: 700 14px Inter, sans-serif; border: 1px solid #3c382f; background: #22201b; color: #eee; border-radius: 10px; padding: 10px 14px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; }
+.btn.gold { background: var(--gold); color: #000; border-color: var(--gold); }
+.btn.big { padding: 16px; font-size: 16px; }
+.btn.small { padding: 6px 10px; font-size: 12px; }
+.btn.danger { color: var(--err); }
+.btn:disabled { opacity: .5; cursor: wait; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+.card h2 { margin: 0 0 10px; font: 900 14px Montserrat, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+.center { text-align: center; padding: 40px 16px; }
+.muted { color: var(--muted); font-size: 13px; }
+.tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+.tabs button { font: 800 14px Inter, sans-serif; padding: 11px; border-radius: 10px; border: 1px solid #3a362d; background: #161511; color: #ccc; cursor: pointer; }
+.tabs button.on { border-color: var(--gold); background: rgba(202, 171, 91, .15); color: #fff; }
+.start { display: grid; grid-template-columns: 1fr; gap: 8px; }
+@media (min-width: 640px) { .start { grid-template-columns: 2fr 1fr 1fr; } }
+.cvst { margin-top: 8px; font-size: 12px; color: var(--muted); }
+.cvst b { color: var(--ok); }
+input[type=text], input[type=search] { width: 100%; background: #121110; border: 1px solid #3a362d; color: #fff; border-radius: 9px; padding: 11px 12px; font: 500 15px Inter, sans-serif; outline: none; }
+input:focus { border-color: var(--gold); }
+label.lb { display: block; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+
+/* revisão */
+.rev { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 900px) { .rev { grid-template-columns: 1.1fr .9fr; align-items: start; } .rev .scanbox { position: sticky; top: 70px; } }
+.scanbox canvas { width: 100%; height: auto; display: block; border-radius: 8px; background: #fff; }
+.nomecrop { width: 100%; height: auto; display: block; border-radius: 6px; background: #fff; margin-bottom: 8px; border: 1px solid var(--line); }
+.sug { list-style: none; margin: 6px 0 0; padding: 0; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; max-height: 220px; overflow-y: auto; }
+.sug li { padding: 10px 12px; border-bottom: 1px solid var(--line); cursor: pointer; font-size: 14px; display: flex; justify-content: space-between; gap: 8px; }
+.sug li:last-child { border-bottom: 0; }
+.sug li:hover, .sug li.on { background: rgba(202, 171, 91, .14); }
+.sug li small { color: var(--muted); }
+.idst { font-size: 13px; margin-top: 6px; }
+.idst.ok { color: var(--ok); } .idst.novo { color: var(--warn); } .idst.dup { color: var(--err); }
+.cads { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.cads button { padding: 10px 4px; border-radius: 10px; border: 2px solid #3a362d; background: #161511; color: #eee; font: 800 13px Inter, sans-serif; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.cads button i { width: 20px; height: 20px; border-radius: 50%; border: 1px solid #888; }
+.cads button.on { border-color: var(--gold); background: rgba(202, 171, 91, .18); }
+.cads.falta button { border-color: var(--err); }
+.resumo { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+.resumo .big { font: 900 34px Montserrat, sans-serif; color: var(--gold); }
+.areas { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 8px; }
+.areas div { background: #121110; border: 1px solid var(--line); border-radius: 8px; padding: 6px 4px; text-align: center; font-size: 11px; color: var(--muted); }
+.areas b { display: block; font-size: 16px; color: #fff; }
+.grade { display: grid; grid-template-columns: 1fr; gap: 3px; }
+@media (min-width: 480px) { .grade { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(15, auto); grid-auto-flow: column; column-gap: 12px; } }
+.ln { display: flex; align-items: center; gap: 4px; padding: 3px 4px; border-radius: 8px; border: 1px solid transparent; }
+.ln.flag { border-color: var(--warn); background: rgba(255, 181, 71, .08); }
+.ln .n { width: 24px; font: 800 13px Inter, sans-serif; text-align: right; margin-right: 4px; }
+.ln button { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid #6d685c; background: transparent; color: #ddd; font: 800 13px Inter, sans-serif; cursor: pointer; padding: 0; }
+.ln button.on { background: #e9e3d6; color: #000; border-color: #e9e3d6; }
+.ln button.gab { box-shadow: 0 0 0 2px var(--ok) inset; }
+.ln .st { margin-left: auto; font-size: 15px; width: 20px; text-align: center; }
+.ln .st.c { color: var(--ok); } .ln .st.e { color: var(--err); }
+.ln .anul { font-size: 10px; color: var(--warn); font-weight: 800; margin-left: 2px; }
+.acts { display: flex; gap: 8px; flex-wrap: wrap; }
+.acts .btn { flex: 1 1 140px; }
+.legenda { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+
+/* resultados */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 12px; }
+.kpi { background: #121110; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.kpi b { display: block; font: 900 28px/1 Montserrat, sans-serif; }
+.kpi span { display: block; font-size: 12px; color: var(--muted); margin-top: 5px; }
+.kpi.hl { border-color: var(--gold); } .kpi.hl b { color: var(--gold); }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.toolbar input[type=search] { flex: 1 1 200px; }
+.check { display: flex; gap: 8px; align-items: center; font-size: 14px; cursor: pointer; }
+.check input { accent-color: var(--gold); width: 18px; height: 18px; }
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 8px 7px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+th { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+td.num, th.num { text-align: right; }
+tr.top td { background: rgba(202, 171, 91, .08); }
+.pos { font: 900 15px Montserrat, sans-serif; color: var(--gold); }
+.dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1px solid #777; vertical-align: -1px; }
+.tri-info { font-size: 13px; color: #cfc8b8; line-height: 1.55; }
+.tri-info b { color: var(--gold); }
+.spin { display: inline-block; width: 16px; height: 16px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: g .8s linear infinite; vertical-align: -3px; }
+@keyframes g { to { transform: rotate(360deg); } }
+.toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--gold); color: #000; font-weight: 700; padding: 11px 16px; border-radius: 10px; opacity: 0; transition: .25s; pointer-events: none; z-index: 50; max-width: calc(100% - 32px); }
+.toast.show { opacity: 1; }
+.toast.err { background: var(--err); }
+
+@media print {
+  body { background: #fff; color: #000; }
+  header, .tabs, #vCorrigir, .toolbar, .noprint, .card.tri { display: none !important; }
+  .card { border: 0; background: none; padding: 0; }
+  th, td { border-color: #ccc; color: #000; }
+  .pos { color: #000; }
+  .kpi { border-color: #ccc; background: none; }
+}
+</style>
+</head>
+<body>
+<header>
+  <img src="images/djad/djad-fundo-escuro.png" alt="DJAD">
+  <h1>ENEM Bíblico · <span>Correção</span></h1>
+  <button class="btn small" id="btnSair" hidden>Sair</button>
+</header>
+
+<main>
+  <div id="vLogin" class="card center" hidden>
+    <h2>Área da correção</h2>
+    <p class="muted">Entre com a conta Google de um administrador do ENEM.</p>
+    <button class="btn gold" id="btnLogin">Entrar com Google</button>
+  </div>
+  <div id="vNo" class="card center" hidden>
+    <h2>Sem acesso</h2>
+    <p class="muted">A conta <b id="meEmail"></b> não é administradora do ENEM. Peça para um administrador te adicionar na página de inscritos.</p>
+  </div>
+
+  <div id="vApp" hidden>
+    <div class="tabs"><button data-tab="corrigir" class="on">📷 Corrigir</button><button data-tab="resultados">🏆 Resultados <span id="nRes"></span></button></div>
+
+    <section id="vCorrigir">
+      <div class="card" id="startCard">
+        <div class="start">
+          <label class="btn gold big" for="fCam">📷 Fotografar cartão</label>
+          <label class="btn big" for="fGal">🖼 Escolher foto</label>
+          <button class="btn big" id="btnManual">✍️ Digitar</button>
+        </div>
+        <input type="file" id="fCam" accept="image/*" capture="environment" hidden>
+        <input type="file" id="fGal" accept="image/*" hidden>
+        <div class="cvst" id="cvst"><span class="spin"></span> Preparando o leitor de cartões…</div>
+        <div class="legenda">Dica: cartão em cima de uma mesa, foto de frente pegando o cartão inteiro, com boa luz e sem sombra do celular. A leitura é conferida por você antes de salvar.</div>
+      </div>
+
+      <div id="review" hidden>
+        <div class="rev">
+          <div class="scanbox card" id="scanCard">
+            <h2>Cartão lido</h2>
+            <canvas id="scan"></canvas>
+            <div class="legenda">Verde: marcação lida. Laranja: confira (marca fraca ou duas marcas).</div>
+          </div>
+          <div>
+            <div class="card">
+              <h2>Participante</h2>
+              <img class="nomecrop" id="nomeCrop" alt="Nome escrito no cartão" hidden>
+              <input type="search" id="nome" placeholder="Digite o nome para buscar nos inscritos" autocomplete="off">
+              <ul class="sug" id="sug" hidden></ul>
+              <div class="idst" id="idst"></div>
+            </div>
+            <div class="card">
+              <h2>Cor do caderno</h2>
+              <div class="cads" id="cads"></div>
+              <div class="idst" id="cadst"></div>
+            </div>
+            <div class="card">
+              <div class="resumo"><span class="big" id="acertos">–</span><span class="muted" id="acertosTx">marque a cor do caderno</span></div>
+              <div class="areas" id="areasRes"></div>
+            </div>
+            <div class="card">
+              <h2>Respostas</h2>
+              <div class="grade" id="grade"></div>
+              <div class="legenda">Toque numa letra para trocar a resposta; toque de novo para deixar em branco. Contorno verde = gabarito do caderno escolhido.</div>
+            </div>
+            <div class="acts">
+              <button class="btn" id="btnCancelar">Descartar</button>
+              <button class="btn gold big" id="btnSalvar">💾 Salvar e próximo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="vResultados" hidden>
+      <div class="kpis" id="kpis"></div>
+      <div class="card">
+        <div class="toolbar">
+          <input type="search" id="busca" placeholder="Buscar nome">
+          <label class="check noprint"><input type="checkbox" id="calib"> Calibrar TRI pelos resultados</label>
+          <button class="btn small noprint" id="btnCsv">⬇ CSV</button>
+          <button class="btn small noprint" onclick="print()">🖨 Imprimir</button>
+        </div>
+        <div class="tbl-wrap"><table id="tbl"></table></div>
+      </div>
+      <div class="card tri">
+        <h2>Como a nota TRI é calculada</h2>
+        <div class="tri-info">
+          A nota segue a lógica do ENEM (<b>Teoria de Resposta ao Item</b>): cada questão tem uma dificuldade, e o sistema estima o conhecimento de cada pessoa pelo <b>conjunto</b> das respostas. Quem acerta as difíceis mas erra as fáceis tem um padrão de chute e ganha menos do que quem tem os mesmos acertos de forma coerente. Por isso duas pessoas com o mesmo número de acertos podem ter notas diferentes.<br><br>
+          A escala tem média 500 (cerca de 300 a 700). As dificuldades partem da classificação do banco (fácil, média, difícil). Com <b>“Calibrar TRI pelos resultados”</b>, elas são ajustadas pela taxa real de acerto de quem fez a prova (recomendado a partir de umas 15 provas corrigidas). Empate na nota: desempata quem acertou mais questões.
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyCjQ4sgU_EmRi-RTrzchIS60bumYC-M9QQ",
+  authDomain: "umadcamp-patu.firebaseapp.com",
+  projectId: "umadcamp-patu",
+  storageBucket: "umadcamp-patu.firebasestorage.app",
+  messagingSenderId: "1043102355965",
+  appId: "1:1043102355965:web:734bcffb30d37a7d2b8994"
+});
+const auth = firebase.auth(), db = firebase.firestore();
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+const slug = s => norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const ADM = db.collection('config-enem').doc('admins');
+const COR = db.collection('enem-correcoes');
+const CV_URL = 'https://cdn.jsdelivr.net/npm/@techstark/opencv-js@4.10.0-release.1/dist/opencv.js';
+const AREA_CURTA = ['Pent./Hist.', 'Poét./Prof.', 'Evang./Atos', 'Epíst./Ap.', 'Doutrina'];
+
+let INSC = [], CORR = [], cvPromise = null;
+let R = null; // revisão aberta: {resp[30], status[30], caderno, nome, inscricao, docId, scan, centros, cadCentros, editando}
+
+function toast(m, err) { const t = $('#toast'); t.textContent = m; t.classList.toggle('err', !!err); t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 3200); }
+function show(id) { ['#vLogin', '#vNo', '#vApp'].forEach(v => $(v).hidden = v !== id); }
+
+/* ---------------- login ---------------- */
+$('#btnLogin').onclick = () => {
+  const p = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(p).catch(e => {
+    if (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment') auth.signInWithRedirect(p);
+    else if (e.code !== 'auth/popup-closed-by-user') toast('Não consegui entrar: ' + e.message, 1);
+  });
+};
+$('#btnSair').onclick = () => auth.signOut();
+auth.onAuthStateChanged(async u => {
+  $('#btnSair').hidden = !u;
+  if (!u) return show('#vLogin');
+  try {
+    const snap = await ADM.get();
+    const emails = snap.exists ? snap.data().emails || [] : [];
+    if (!emails.includes(u.email)) { $('#meEmail').textContent = u.email; return show('#vNo'); }
+    show('#vApp');
+    carregaCV();
+    db.collection('enem-inscricoes').onSnapshot(s => { INSC = s.docs.map(d => ({ id: d.id, ...d.data() })); if (R) idStatus(); }, e => console.error(e));
+    COR.onSnapshot(s => { CORR = s.docs.map(d => ({ id: d.id, ...d.data() })); $('#nRes').textContent = CORR.length ? `(${CORR.length})` : ''; renderRes(); if (R) idStatus(); }, e => { console.error(e); toast('Sem permissão para ler as correções (regras do Firestore).', 1); });
+  } catch (e) { console.error(e); toast('Erro ao verificar acesso: ' + e.message, 1); }
+});
+
+/* ---------------- abas ---------------- */
+$$('.tabs button').forEach(b => b.onclick = () => {
+  $$('.tabs button').forEach(x => x.classList.toggle('on', x === b));
+  $('#vCorrigir').hidden = b.dataset.tab !== 'corrigir';
+  $('#vResultados').hidden = b.dataset.tab !== 'resultados';
+  if (b.dataset.tab === 'resultados') renderRes();
+});
+
+/* ---------------- OpenCV ---------------- */
+function carregaCV() {
+  if (cvPromise) return cvPromise;
+  cvPromise = new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = CV_URL; s.async = true;
+    s.onload = () => {
+      // o módulo do OpenCV é "thenable": resolver a promise com ele entra em laço,
+      // por isso a promise entrega { cv } embrulhado
+      const c = window.cv;
+      if (!c) return rej(new Error('OpenCV não carregou'));
+      if (c.Mat) return res({ cv: c });
+      if (typeof c.then === 'function') c.then(m => { window.cv = m; res({ cv: m }); });
+      else c.onRuntimeInitialized = () => res({ cv: c });
+    };
+    s.onerror = () => rej(new Error('Sem internet para baixar o leitor'));
+    document.head.appendChild(s);
+  });
+  cvPromise.then(() => $('#cvst').innerHTML = '<b>✓ Leitor pronto.</b> Pode fotografar.',
+    e => { $('#cvst').textContent = '⚠ ' + e.message + '. Dá para corrigir digitando.'; cvPromise = null; });
+  return cvPromise;
+}
+
+/* ---------------- foto → leitura ---------------- */
+async function abreFoto(file) {
+  if (!file) return;
+  $('#cvst').innerHTML = '<span class="spin"></span> Lendo o cartão…';
+  try {
+    const { cv } = await carregaCV();
+    // <img> já aplica a rotação EXIF da câmera
+    const url = URL.createObjectURL(file), bmp = new Image();
+    await new Promise((ok, no) => { bmp.onload = ok; bmp.onerror = () => no(new Error('Não consegui abrir a imagem.')); bmp.src = url; });
+    URL.revokeObjectURL(url);
+    const sc = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas'); c.width = Math.round(bmp.width * sc); c.height = Math.round(bmp.height * sc);
+    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+    await new Promise(r => setTimeout(r, 30));
+    const r = EnemOMR.ler(cv, c);
+    abreRevisao({ resp: r.resp, status: r.status, caderno: r.caderno, cadStatus: r.cadStatus, scan: r.scan, nomeImg: r.nome, centros: r.centros, cadCentros: r.cadCentros });
+    $('#cvst').innerHTML = '<b>✓ Cartão lido.</b> Confira e salve.';
+  } catch (e) {
+    console.error(e);
+    $('#cvst').innerHTML = '<b style="color:var(--err)">⚠ ' + esc(e.message || e) + '</b>';
+    toast(e.message || 'Não consegui ler a foto.', 1);
+  }
+}
+$('#fCam').onchange = e => { abreFoto(e.target.files[0]); e.target.value = ''; };
+$('#fGal').onchange = e => { abreFoto(e.target.files[0]); e.target.value = ''; };
+$('#btnManual').onclick = () => abreRevisao({ resp: Array(NQ).fill(''), status: Array(NQ).fill('ok'), caderno: null });
+
+/* ---------------- revisão ---------------- */
+function abreRevisao(d) {
+  R = Object.assign({ nome: '', inscricao: null, docId: null, editando: null }, d);
+  $('#review').hidden = false;
+  $('#scanCard').hidden = !R.scan;
+  if (R.scan) { R.scanBase = R.scan; desenhaScan(); }
+  if (R.nomeImg) { $('#nomeCrop').src = R.nomeImg.toDataURL('image/jpeg', .85); $('#nomeCrop').hidden = false; } else $('#nomeCrop').hidden = true;
+  $('#nome').value = R.nome || '';
+  $('#sug').hidden = true;
+  renderCads(); renderGrade(); idStatus();
+  setTimeout(() => { $('#review').scrollIntoView({ behavior: 'smooth', block: 'start' }); if (!R.nome) $('#nome').focus({ preventScroll: true }); }, 50);
+}
+function fechaRevisao() { R = null; $('#review').hidden = true; window.scrollTo({ top: 0, behavior: 'smooth' }); }
+$('#btnCancelar').onclick = () => { if (confirm('Descartar esta correção?')) fechaRevisao(); };
+
+function gabarito(cad) { return cad ? MONTADOS[cad - 1] : null; }
+
+function desenhaScan() {
+  const base = R.scanBase, cv = $('#scan');
+  cv.width = base.width; cv.height = base.height;
+  const g = cv.getContext('2d'); g.drawImage(base, 0, 0);
+  const P = EnemOMR.P, rr = EnemOMR.G.bub.r * EnemOMR.S;
+  g.lineWidth = 4;
+  R.centros.forEach((row, q) => {
+    const flag = R.status[q] !== 'ok' || R.resp[q] === '*';
+    if (flag) { g.strokeStyle = 'rgba(255,150,0,.9)'; const [x1, y1] = P(row[0][0], row[0][1]), [x2] = P(row[4][0], row[4][1]); g.strokeRect(x1 - rr - 6, y1 - rr - 6, x2 - x1 + 2 * rr + 12, 2 * rr + 12); }
+    const l = 'ABCDE'.indexOf(R.resp[q]);
+    if (l >= 0) { const [x, y] = P(...row[l]); g.strokeStyle = '#13a538'; g.beginPath(); g.arc(x, y, rr + 4, 0, 7); g.stroke(); }
+  });
+  if (R.caderno && R.cadCentros) { const [x, y] = P(...R.cadCentros[R.caderno - 1]); g.strokeStyle = '#13a538'; g.beginPath(); g.arc(x, y, rr + 4, 0, 7); g.stroke(); }
+}
+
+function renderCads() {
+  $('#cads').innerHTML = CADERNOS.map(c => `<button data-c="${c.n}" class="${R.caderno === c.n ? 'on' : ''}"><i style="background:${c.cor}"></i>${c.n} · ${c.nome}</button>`).join('');
+  $('#cads').classList.toggle('falta', !R.caderno);
+  $('#cadst').className = 'idst ' + (R.caderno ? (R.cadStatus && R.cadStatus !== 'ok' ? 'novo' : 'ok') : 'dup');
+  $('#cadst').textContent = !R.caderno ? 'Não identifiquei a cor marcada. Escolha acima (veja a capa do caderno, se precisar).'
+    : R.cadStatus && R.cadStatus !== 'ok' ? 'Marcação da cor fraca: confira.' : '';
+  $$('#cads button').forEach(b => b.onclick = () => { R.caderno = +b.dataset.c; R.cadStatus = 'ok'; renderCads(); renderGrade(); if (R.scan) desenhaScan(); });
+}
+
+function corrige(resp, cad) {
+  const g = gabarito(cad); if (!g) return null;
+  const porArea = [0, 0, 0, 0, 0], x = Array(NQ).fill(0);
+  let ac = 0;
+  g.forEach((it, k) => { const ok = resp[k] === LETRAS[it.certa]; if (ok) { ac++; porArea[it.q.a]++; x[it.qi] = 1; } });
+  return { acertos: ac, porArea, x };
+}
+
+function renderGrade() {
+  const g = gabarito(R.caderno);
+  $('#grade').innerHTML = R.resp.map((v, q) => {
+    const certa = g ? LETRAS[g[q].certa] : null;
+    const flag = R.status[q] !== 'ok' || v === '*';
+    const st = !g ? '' : v === certa ? '<span class="st c">✓</span>' : '<span class="st e">✗</span>';
+    return `<div class="ln ${flag ? 'flag' : ''}"><span class="n">${String(q + 1).padStart(2, '0')}</span>${LETRAS.map(l => `<button data-q="${q}" data-l="${l}" class="${v === l ? 'on' : ''} ${certa === l ? 'gab' : ''}">${l}</button>`).join('')}${v === '*' ? '<span class="anul">2 MARCAS</span>' : ''}${st}</div>`;
+  }).join('');
+  $$('#grade button').forEach(b => b.onclick = () => {
+    const q = +b.dataset.q; R.resp[q] = R.resp[q] === b.dataset.l ? '' : b.dataset.l; R.status[q] = 'ok';
+    renderGrade(); if (R.scan) desenhaScan();
+  });
+  const c = corrige(R.resp, R.caderno);
+  if (c) {
+    $('#acertos').textContent = `${c.acertos}/${NQ}`;
+    const br = R.resp.filter(v => !v).length, an = R.resp.filter(v => v === '*').length;
+    $('#acertosTx').textContent = 'acertos' + (br ? ` · ${br} em branco` : '') + (an ? ` · ${an} anulada${an > 1 ? 's' : ''}` : '');
+    $('#areasRes').innerHTML = c.porArea.map((n, i) => `<div><b>${n}/${Q.filter(q => q.a === i).length}</b>${AREA_CURTA[i]}</div>`).join('');
+  } else { $('#acertos').textContent = '–'; $('#acertosTx').textContent = 'marque a cor do caderno'; $('#areasRes').innerHTML = ''; }
+}
+
+/* identificação */
+function busca(t) {
+  const n = norm(t); if (!n) return [];
+  const toks = n.split(' ');
+  return INSC.map(i => { const nn = norm(i.nome); let s = 0;
+      for (const k of toks) { if (nn.split(' ').some(w => w.startsWith(k))) s += 2; else if (nn.includes(k)) s += 1; else s -= 1; }
+      if (nn.startsWith(n)) s += 3; return { i, s }; })
+    .filter(x => x.s > 0).sort((a, b) => b.s - a.s || a.i.nome.localeCompare(b.i.nome)).slice(0, 8).map(x => x.i);
+}
+function corrDe(docId) { return CORR.find(c => c.id === docId); }
+function idStatus() {
+  if (!R) return;
+  const el = $('#idst');
+  if (!R.nome.trim()) { el.className = 'idst'; el.textContent = ''; return; }
+  R.docId = R.inscricao || slug(R.nome);
+  const ja = corrDe(R.docId);
+  if (ja && R.editando !== R.docId) { el.className = 'idst dup'; el.textContent = `⚠ ${ja.nome} já foi corrigido(a) (${ja.acertos} acertos, caderno ${ja.caderno}). Salvar vai substituir.`; return; }
+  el.className = 'idst ' + (R.inscricao ? 'ok' : 'novo');
+  el.textContent = R.inscricao ? '✓ Inscrito encontrado' : 'Sem inscrição com esse nome: vai salvar como participante novo.';
+}
+let sugSel = -1, sugList = [];
+function renderSug() {
+  sugList = busca($('#nome').value);
+  $('#sug').hidden = !sugList.length || !document.activeElement || document.activeElement.id !== 'nome';
+  $('#sug').innerHTML = sugList.map((i, k) => `<li data-k="${k}" class="${k === sugSel ? 'on' : ''}">${esc(i.nome)}${corrDe(i.id) ? '<small>já corrigido</small>' : ''}</li>`).join('');
+  $$('#sug li').forEach(li => li.onmousedown = e => { e.preventDefault(); escolhe(sugList[+li.dataset.k]); });
+}
+function escolhe(i) { R.nome = i.nome; R.inscricao = i.id; $('#nome').value = i.nome; $('#sug').hidden = true; idStatus(); }
+$('#nome').addEventListener('input', () => { R.nome = $('#nome').value; R.inscricao = null; sugSel = -1; renderSug(); idStatus();
+  // nome digitado igual a um inscrito: vincula sozinho
+  const ex = INSC.find(i => norm(i.nome) === norm(R.nome)); if (ex) { R.inscricao = ex.id; idStatus(); } });
+$('#nome').addEventListener('focus', renderSug);
+$('#nome').addEventListener('blur', () => setTimeout(() => $('#sug').hidden = true, 150));
+$('#nome').addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown') { sugSel = Math.min(sugSel + 1, sugList.length - 1); renderSug(); e.preventDefault(); }
+  else if (e.key === 'ArrowUp') { sugSel = Math.max(sugSel - 1, 0); renderSug(); e.preventDefault(); }
+  else if (e.key === 'Enter' && sugList.length) { escolhe(sugList[Math.max(sugSel, 0)]); e.preventDefault(); }
+});
+
+/* salvar */
+$('#btnSalvar').onclick = async () => {
+  if (!R.nome.trim() || R.nome.trim().length < 3) { toast('Informe o nome do participante.', 1); return $('#nome').focus(); }
+  if (!R.caderno) { toast('Escolha a cor do caderno.', 1); return $('#cads').scrollIntoView({ block: 'center' }); }
+  idStatus();
+  const ja = corrDe(R.docId);
+  if (ja && R.editando !== R.docId && !confirm(`${ja.nome} já tem correção salva. Substituir?`)) return;
+  const c = corrige(R.resp, R.caderno);
+  const btn = $('#btnSalvar'); btn.disabled = true;
+  try {
+    if (R.editando && R.editando !== R.docId) await COR.doc(R.editando).delete();
+    await COR.doc(R.docId).set({
+      nome: R.nome.trim().replace(/\s+/g, ' ').slice(0, 80), inscricao: R.inscricao || null, caderno: R.caderno,
+      resp: R.resp.map(v => v || '-').join(''), acertos: c.acertos,
+      corrigidoEm: firebase.firestore.FieldValue.serverTimestamp(), por: auth.currentUser.email
+    });
+    toast(`Salvo: ${R.nome.trim()} · ${c.acertos}/${NQ}`);
+    const veioDaFoto = !!R.scan;
+    fechaRevisao();
+    $('#cvst').innerHTML = '<b>✓ Salvo.</b> Pode fotografar o próximo.';
+    if (veioDaFoto) $('#fCam').click(); // já abre a câmera para o próximo cartão
+  } catch (e) { console.error(e); toast('Erro ao salvar: ' + e.message, 1); }
+  finally { btn.disabled = false; }
+};
+
+/* ---------------- resultados ---------------- */
+function calcula() {
+  const ok = CORR.filter(c => c.caderno >= 1 && c.caderno <= 4 && typeof c.resp === 'string');
+  const linhas = ok.map(c => ({ c, r: corrige([...c.resp].map(v => v === '-' ? '' : v), c.caderno) }));
+  const calib = $('#calib').checked;
+  const t = EnemTRI.notas(linhas.map(l => l.r.x), Q.map(q => q.d), calib);
+  linhas.forEach((l, i) => l.nota = t.notas[i]);
+  linhas.sort((a, b) => b.nota - a.nota || b.r.acertos - a.r.acertos || a.c.nome.localeCompare(b.c.nome));
+  let pos = 0; linhas.forEach((l, i) => { if (i === 0 || l.nota !== linhas[i - 1].nota || l.r.acertos !== linhas[i - 1].r.acertos) pos = i + 1; l.pos = pos; });
+  return linhas;
+}
+let calibAuto = true;
+$('#calib').onchange = () => { calibAuto = false; renderRes(); };
+function renderRes() {
+  if ($('#vResultados').hidden) return;
+  if (calibAuto) $('#calib').checked = CORR.length >= 15;
+  const L = calcula();
+  const media = L.length ? L.reduce((s, l) => s + l.r.acertos, 0) / L.length : 0;
+  $('#kpis').innerHTML = `
+    <div class="kpi hl"><b>${L.length}</b><span>provas corrigidas</span></div>
+    <div class="kpi"><b>${INSC.length}</b><span>inscritos</span></div>
+    <div class="kpi"><b>${media.toFixed(1).replace('.', ',')}</b><span>média de acertos</span></div>
+    <div class="kpi"><b>${L.length ? L[0].nota.toFixed(1).replace('.', ',') : '–'}</b><span>maior nota TRI</span></div>`;
+  const f = norm($('#busca').value);
+  const vis = L.filter(l => !f || norm(l.c.nome).includes(f));
+  $('#tbl').innerHTML = `<thead><tr><th>#</th><th>Nome</th><th>Cad.</th><th class="num">Nota TRI</th><th class="num">Acertos</th>${AREA_CURTA.map(a => `<th class="num">${a}</th>`).join('')}<th class="noprint"></th></tr></thead><tbody>` +
+    (vis.length ? vis.map(l => `<tr class="${l.pos <= 3 ? 'top' : ''}"><td class="pos">${l.pos}º</td><td>${esc(l.c.nome)}${l.c.inscricao ? '' : ' <span class="muted">(sem inscrição)</span>'}</td>
+      <td><span class="dot" style="background:${CADERNOS[l.c.caderno - 1].cor}" title="${CADERNOS[l.c.caderno - 1].nome}"></span></td>
+      <td class="num"><b>${l.nota.toFixed(1).replace('.', ',')}</b></td><td class="num">${l.r.acertos}</td>${l.r.porArea.map(n => `<td class="num">${n}</td>`).join('')}
+      <td class="noprint"><button class="btn small" data-ed="${esc(l.c.id)}">Editar</button> <button class="btn small danger" data-rm="${esc(l.c.id)}">✕</button></td></tr>`).join('')
+      : `<tr><td colspan="12" class="muted" style="text-align:center;padding:24px">Nenhuma prova corrigida ainda.</td></tr>`) + '</tbody>';
+}
+$('#busca').oninput = renderRes;
+$('#tbl').onclick = async e => {
+  const ed = e.target.dataset.ed, rm = e.target.dataset.rm;
+  if (rm) { const c = corrDe(rm); if (c && confirm(`Apagar a correção de ${c.nome}?`)) { try { await COR.doc(rm).delete(); toast('Correção apagada.'); } catch (er) { toast('Erro: ' + er.message, 1); } } }
+  if (ed) {
+    const c = corrDe(ed); if (!c) return;
+    $$('.tabs button')[0].click();
+    abreRevisao({ resp: [...c.resp].map(v => v === '-' ? '' : v), status: Array(NQ).fill('ok'), caderno: c.caderno, nome: c.nome, inscricao: c.inscricao, editando: c.id });
+  }
+};
+$('#btnCsv').onclick = () => {
+  const L = calcula();
+  const rows = [['Posição', 'Nome', 'Caderno', 'Nota TRI', 'Acertos', ...AREAS.map(a => a.nome), 'Respostas', 'Inscrição', 'Corrigido por']]
+    .concat(L.map(l => [l.pos, l.c.nome, CADERNOS[l.c.caderno - 1].nome, l.nota.toFixed(1).replace('.', ','), l.r.acertos, ...l.r.porArea, l.c.resp, l.c.inscricao || '', l.c.por || '']));
+  const csv = '﻿' + rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';')).join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'enem-biblico-resultados.csv'; a.click();
+};
+</script>
+</body>
+</html>

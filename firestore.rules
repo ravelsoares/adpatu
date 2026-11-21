@@ -72,6 +72,17 @@ service cloud.firestore {
       allow read, update, delete: if enemAdmin();
     }
 
+    // correção das provas (foto do cartão-resposta) — só administradores
+    match /enem-correcoes/{id} {
+      allow read, delete: if enemAdmin();
+      allow create, update: if enemAdmin()
+        && request.resource.data.keys().hasOnly(['nome', 'inscricao', 'caderno', 'resp', 'acertos', 'corrigidoEm', 'por'])
+        && request.resource.data.nome is string && request.resource.data.nome.size() >= 3 && request.resource.data.nome.size() <= 80
+        && request.resource.data.caderno in [1, 2, 3, 4]
+        && request.resource.data.resp is string && request.resource.data.resp.size() == 30
+        && request.resource.data.acertos is int && request.resource.data.acertos >= 0 && request.resource.data.acertos <= 30
+        && request.resource.data.corrigidoEm == request.time;
+    }
     match /config-enem/publico {
       allow read: if true;
       allow write: if enemAdmin();

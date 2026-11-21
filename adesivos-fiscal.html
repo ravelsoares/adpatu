@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<script>if(location.protocol!=="file:")document.write('<base href="/">')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Adesivos de Fiscal</title>
+<link rel="icon" href="images/djad/djad-fundo-escuro.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root { --gold: #CAAB5B; --gold-d: #A88A3E; --ink: #0c0c0b; --muted: #9a958a; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: #111110; color: #eee; font-family: Inter, system-ui, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+/* ---------- tela ---------- */
+.wrap { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 16px; max-width: 1200px; margin: 0 auto; }
+@media (min-width: 900px) { .wrap { grid-template-columns: minmax(0, 1.1fr) minmax(320px, .9fr); align-items: start; } .preview { position: sticky; top: 16px; } }
+h1.top { font: 900 22px Montserrat, sans-serif; margin: 0 0 4px; }
+h1.top span { color: var(--gold); }
+.sub-top { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+.card { background: #1a1916; border: 1px solid #2c2a25; border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+.card h2 { margin: 0 0 12px; font: 900 16px Montserrat, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--gold); }
+.field { margin-bottom: 12px; }
+.field:last-child { margin-bottom: 0; }
+.field > label { display: block; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+input[type=text], textarea { width: 100%; background: #121110; border: 1px solid #34312a; color: #fff; border-radius: 9px; padding: 11px 12px; font: 500 15px Inter, sans-serif; outline: none; }
+textarea { resize: vertical; min-height: 90px; }
+input:focus, textarea:focus { border-color: var(--gold); }
+.hint { font-size: 12px; color: var(--muted); margin-top: 5px; line-height: 1.4; }
+.seg { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+.seg button, .btn { font: 700 13px Inter, sans-serif; border: 1px solid #3a3730; background: #1a1916; color: #ddd; border-radius: 10px; padding: 10px 8px; cursor: pointer; }
+.seg button.on { border-color: var(--gold); background: rgba(202, 171, 91, .16); color: #fff; }
+.btn.primary { background: var(--gold); color: #000; border-color: var(--gold); }
+.check { display: flex; gap: 8px; align-items: center; font-size: 14px; cursor: pointer; }
+.check input { accent-color: var(--gold); width: 18px; height: 18px; }
+.actions { display: flex; gap: 8px; margin-top: 12px; }
+.actions .btn { flex: 1; }
+.stage-wrap { position: relative; overflow: hidden auto; border-radius: 6px; background: #444; }
+.stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; display: grid; gap: 24px; }
+
+/* ---------- folha A4 ---------- */
+.sheet { width: 210mm; height: 297mm; background: #fff; display: grid; align-content: center; justify-content: center; overflow: hidden; }
+.sheet.f-rect { grid-template-columns: repeat(2, 90mm); grid-auto-rows: 55mm; gap: 2mm 6mm; }
+.sheet.f-round { grid-template-columns: repeat(3, 60mm); grid-auto-rows: 60mm; gap: 8mm 8mm; }
+
+.stk { position: relative; overflow: hidden; display: flex; align-items: center; background: var(--bg); color: var(--fg);
+  --bg: var(--ink); --fg: #f4efe4; --acc: var(--gold); --sub: #c9c3b6; }
+.sheet.light .stk { --bg: #fff; --fg: var(--ink); --acc: var(--gold-d); --sub: #555; border: .5mm solid var(--gold); }
+.sheet.guias .stk { outline: .2mm dashed #bbb; outline-offset: 1mm; }
+
+/* retangular */
+.f-rect .stk { border-radius: 4mm; padding: 0 6mm 0 5mm; gap: 4.5mm; }
+.f-rect .stk::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2.2mm; background: var(--acc); }
+.f-rect .logo { flex: none; width: 21mm; height: auto; margin-left: 2mm; }
+.f-rect .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; border-left: .35mm solid var(--acc); padding-left: 4.5mm; height: 34mm; }
+.f-rect .ev { font: 800 2.9mm Montserrat, sans-serif; letter-spacing: .28em; text-transform: uppercase; color: var(--acc); white-space: nowrap; }
+.f-rect .fn { font: 900 13mm/1 Montserrat, sans-serif; text-transform: uppercase; letter-spacing: .01em; white-space: nowrap; margin: 1.8mm 0 2mm; }
+.f-rect .ft { font: 700 2.7mm Inter, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--sub); white-space: nowrap; }
+
+/* redondo */
+.f-round .stk { border-radius: 50%; flex-direction: column; justify-content: center; text-align: center; padding: 0 5mm; }
+.f-round .stk::after { content: ''; position: absolute; inset: 2mm; border-radius: 50%; border: .45mm solid var(--acc); }
+.f-round .logo { width: 15mm; height: auto; margin-bottom: 1.5mm; }
+.f-round .tx { width: 100%; display: flex; flex-direction: column; align-items: center; }
+.f-round .ev { font: 800 2.5mm Montserrat, sans-serif; letter-spacing: .24em; text-transform: uppercase; color: var(--acc); white-space: nowrap; order: 2; }
+.f-round .fn { font: 900 9.5mm/1 Montserrat, sans-serif; text-transform: uppercase; white-space: nowrap; margin: 0 0 1.6mm; order: 1; }
+.f-round .ft { font: 700 2.3mm Inter, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--sub); white-space: nowrap; order: 4; margin-top: 1.6mm; }
+
+/* com espaço para o nome (estilo crachá do ENEM): faixa no topo + caixa branca grande */
+.stk.cn { flex-direction: column; align-items: stretch; justify-content: flex-start; }
+.stk.cn .hd { display: flex; align-items: center; gap: 3mm; }
+.stk.cn .ht { flex: 1; min-width: 0; text-align: left; }
+.stk.cn .box { position: relative; flex: 1; background: #fff; color: #0c0c0b; border: .4mm solid var(--acc); border-radius: 2.5mm; display: flex; align-items: center; justify-content: center; padding: 3.2mm 3mm 0; overflow: hidden; }
+.stk.cn .box span { position: absolute; left: 2.4mm; top: 1.4mm; font: 800 2.4mm Montserrat, sans-serif; letter-spacing: .2em; text-transform: uppercase; color: var(--gold-d); }
+.stk.cn .box b { display: block; width: 100%; text-align: center; font: 900 7mm/1.1 Montserrat, sans-serif; white-space: nowrap; overflow: hidden; }
+.stk.cn .ft { text-align: center; }
+.f-rect .stk.cn { padding: 3.5mm 5mm 3mm 7mm; gap: 2.2mm; }
+.f-rect .stk.cn .logo { width: 13mm; margin: 0; }
+.f-rect .stk.cn .fn { font-size: 9mm; margin: 1mm 0 0; }
+.f-rect .stk.cn .ev { font-size: 2.5mm; }
+.f-rect .stk.cn .ft { font-size: 2.3mm; }
+.f-round .stk.cn { padding: 6mm 6.5mm 6.5mm; gap: 1.4mm; align-items: center; }
+.f-round .stk.cn .hd { flex-direction: column; gap: .6mm; }
+.f-round .stk.cn .ht { text-align: center; display: flex; flex-direction: column; align-items: center; }
+.f-round .stk.cn .logo { width: 9mm; margin: 0; }
+.f-round .stk.cn .fn { font-size: 7mm; margin: 0 0 .8mm; }
+.f-round .stk.cn .ev { font-size: 2mm; }
+.f-round .stk.cn .box { width: 44mm; flex: none; height: 17mm; }
+.f-round .stk.cn .box b { font-size: 5mm; }
+.f-round .stk.cn .ft { font-size: 2mm; margin: 0; }
+
+#printArea { display: none; }
+@page { size: A4; margin: 0; }
+@media print {
+  body { background: #fff; }
+  .wrap { display: none !important; }
+  #printArea { display: block; }
+  .sheet { break-after: page; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="preview">
+    <div class="stage-wrap" id="stageWrap"><div class="stage" id="stage"></div></div>
+    <div class="actions">
+      <button class="btn primary" id="btnPrint">🖨 Imprimir</button>
+    </div>
+    <p class="hint">Imprima em papel adesivo A4, em tamanho real (escala 100%, margens “nenhuma”). Para várias folhas iguais, aumente o número de cópias na janela de impressão.</p>
+  </section>
+
+  <section>
+    <h1 class="top">Adesivos de <span>Fiscal</span></h1>
+    <p class="sub-top">ENEM Bíblico · DJAD Patu · folha A4 para papel adesivo</p>
+    <div class="card">
+      <h2>Formato</h2>
+      <div class="field">
+        <label>Tamanho</label>
+        <div class="seg" data-seg="fmt">
+          <button data-v="rect">Retangular 9 × 5,5 cm<br><small>10 por folha</small></button>
+          <button data-v="round">Redondo 6 cm<br><small>12 por folha</small></button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Cor</label>
+        <div class="seg" data-seg="tema">
+          <button data-v="dark">Preto e dourado</button>
+          <button data-v="light">Branco (gasta menos tinta)</button>
+        </div>
+      </div>
+      <div class="field"><label class="check"><input type="checkbox" data-k="guias"> Linhas de corte (papel adesivo sem meio-corte)</label></div>
+    </div>
+    <div class="card">
+      <h2>Textos</h2>
+      <div class="field">
+        <label>Funções</label>
+        <textarea data-k="funcoes"></textarea>
+        <div class="hint">Uma por linha. Para fixar a quantidade, escreva no fim: <code>Fiscal x8</code>, <code>Coordenação x2</code>. Linhas sem quantidade se repetem até completar a folha.</div>
+      </div>
+      <div class="field"><label class="check"><input type="checkbox" data-k="nomeLinha"> Espaço para o nome (estilo ENEM)</label></div>
+      <div class="field">
+        <label>Nomes impressos (opcional)</label>
+        <textarea data-k="nomes" placeholder="Maria Souza&#10;João Lima | Coordenação"></textarea>
+        <div class="hint">Um nome por linha, já sai impresso no adesivo. Para mudar a função, use <code>Nome | Função</code> (sem isso, usa a primeira função da lista). O resto da folha é completado com adesivos em branco para escrever à mão.</div>
+      </div>
+      <div class="field"><label>Evento</label><input type="text" data-k="ev"></div>
+      <div class="field"><label>Rodapé</label><input type="text" data-k="ft"></div>
+    </div>
+  </section>
+</div>
+<div id="printArea"></div>
+
+<script>
+const LOGOS = { dark: 'images/djad/djad-fundo-escuro.png', light: 'images/djad/djad-fundo-claro.png' };
+const POR_FOLHA = { rect: 10, round: 12 };
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+const defaults = () => ({ fmt: 'rect', tema: 'dark', guias: false, nomeLinha: true, nomes: '', funcoes: 'Fiscal', ev: 'ENEM Bíblico 2026', ft: 'DJAD Patu · 22 nov' });
+let S = defaults();
+try { Object.assign(S, JSON.parse(localStorage.getItem('adesivos-fiscal') || '{}')); } catch (e) { }
+new URLSearchParams(location.hash.slice(1)).forEach((v, k) => { if (k in S) S[k] = v === '1' ? true : v; });
+const save = () => { try { localStorage.setItem('adesivos-fiscal', JSON.stringify(S)); } catch (e) { } };
+
+// "Fiscal x8" → 8 adesivos; linhas sem quantidade se repetem até fechar a folha
+function lista() {
+  const n = POR_FOLHA[S.fmt];
+  const linhas = S.funcoes.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+    const m = /^(.*?)\s*[x×]\s*(\d+)$/i.exec(l);
+    return m ? { t: m[1], q: +m[2] } : { t: l, q: 0 };
+  });
+  if (!linhas.length) linhas.push({ t: 'Fiscal', q: 0 });
+  // com nomes: um adesivo por nome, e o resto da folha em branco
+  const nomes = S.nomes.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+    const [nome, fn] = l.split('|').map(x => x.trim());
+    return { t: fn || linhas[0].t, nome };
+  });
+  if (nomes.length) {
+    const out = nomes.slice(0, 500);
+    while (out.length % n) out.push({ t: linhas[0].t, nome: '' });
+    return out;
+  }
+  const out = linhas.flatMap(l => Array(Math.min(l.q, 500)).fill(l.t));
+  const livres = linhas.filter(l => !l.q).map(l => l.t);
+  if (livres.length) { let i = 0; while (!out.length || out.length % n) out.push(livres[i++ % livres.length]); }
+  return out.map(t => ({ t, nome: '' }));
+}
+
+function folhas() {
+  const n = POR_FOLHA[S.fmt], itens = lista(), res = [];
+  for (let i = 0; i < itens.length; i += n) {
+    const s = document.createElement('div');
+    const comNome = S.nomeLinha || itens.some(x => x.nome);
+    s.className = `sheet f-${S.fmt}${S.tema === 'light' ? ' light' : ''}${S.guias ? ' guias' : ''}${comNome ? ' com-nome' : ''}`;
+    s.innerHTML = itens.slice(i, i + n).map(({ t, nome }) => comNome
+      ? `<div class="stk cn"><div class="hd"><img class="logo" src="${LOGOS[S.tema]}" alt="DJAD">
+          <div class="ht"><div class="ev">${esc(S.ev)}</div><div class="fn">${esc(t)}</div></div></div>
+        <div class="box"><span>Nome</span>${nome ? `<b>${esc(nome)}</b>` : ''}</div>
+        ${S.ft ? `<div class="ft">${esc(S.ft)}</div>` : ''}</div>`
+      : `<div class="stk"><img class="logo" src="${LOGOS[S.tema]}" alt="DJAD">
+        <div class="tx"><div class="ev">${esc(S.ev)}</div><div class="fn">${esc(t)}</div>
+        ${S.ft ? `<div class="ft">${esc(S.ft)}</div>` : ''}</div></div>`).join('');
+    res.push(s);
+  }
+  return res;
+}
+
+// palavra grande encolhe até caber na largura
+function ajusta(root) {
+  root.querySelectorAll('.fn, .box b').forEach(el => {
+    el.style.fontSize = '';
+    const box = el.classList.contains('fn') ? el.parentElement : el;
+    let fs = parseFloat(getComputedStyle(el).fontSize);
+    while (el.scrollWidth > box.clientWidth && fs > 8) { fs -= 1; el.style.fontSize = fs + 'px'; }
+  });
+}
+
+function render() {
+  $('#stage').replaceChildren(...folhas());
+  ajusta($('#stage'));
+  // cópia para impressão (mede visível e depois volta a esconder)
+  const pa = $('#printArea');
+  pa.replaceChildren(...folhas()); pa.style.display = 'block'; ajusta(pa); pa.style.display = '';
+  layout();
+  save();
+}
+function layout() {
+  const sh = $('#stage .sheet'); if (!sh) return;
+  const wrap = $('#stageWrap'), sc = wrap.clientWidth / sh.offsetWidth, h = $('#stage').scrollHeight * sc;
+  $('#stage').style.transform = `scale(${sc})`;
+  wrap.style.height = (innerWidth >= 900 ? Math.min(h, innerHeight - 150) : h) + 'px';
+}
+function sync() {
+  $$('[data-k]').forEach(i => { if (i.type === 'checkbox') i.checked = !!S[i.dataset.k]; else i.value = S[i.dataset.k] ?? ''; });
+  $$('[data-seg]').forEach(g => g.querySelectorAll('button').forEach(b => b.classList.toggle('on', S[g.dataset.seg] === b.dataset.v)));
+}
+document.addEventListener('input', e => { const k = e.target.dataset?.k; if (!k) return; S[k] = e.target.type === 'checkbox' ? e.target.checked : e.target.value; render(); });
+$$('[data-seg] button').forEach(b => b.onclick = () => { S[b.parentElement.dataset.seg] = b.dataset.v; sync(); render(); });
+addEventListener('resize', layout);
+$('#btnPrint').onclick = () => document.fonts.ready.then(() => { render(); setTimeout(() => window.print(), 300); });
+
+sync(); render(); document.fonts.ready.then(render);
+</script>
+</body>
+</html>
