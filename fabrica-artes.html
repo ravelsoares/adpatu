@@ -143,7 +143,8 @@
 
         .brand-seg { margin-bottom: 12px; }
         .brand-seg button { font-size: 15px; font-weight: 800; letter-spacing: .06em; padding: 12px 6px; }
-        .layout-seg button { padding: 10px 2px; font-size: 12.5px; }
+        .layout-seg { flex-wrap: wrap; }
+        .layout-seg button { flex: 1 0 22%; padding: 10px 2px; font-size: 12.5px; }
         details.sub-details { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
         details.sub-details summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--muted); }
         details.sub-details[open] summary { margin-bottom: 12px; }
@@ -644,6 +645,54 @@
         .art .lp-prog .it b { font-family: 'Anton', sans-serif; font-weight: 400; font-size: .55em; line-height: 1; text-transform: uppercase; }
         .art .lp-prog .it span { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: .3em; color: var(--accent); text-transform: uppercase; }
         .art .lp-prog .bar { width: 3px; background: rgba(var(--fg-rgb), .4); }
+
+        /* ===== FOTO CHEIA / LATERAL / CÍRCULO (cartaz de culto com um preletor) ===== */
+        .art .lx-ph { position: absolute; left: 0; top: 0; right: 0; bottom: 0; background-size: cover; background-position: center 18%; background-repeat: no-repeat; }
+        .art .lx-ph.cut { background-size: contain; background-position: center bottom; bottom: 30%; }
+        .art .lx-fade { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }
+        .art .lay-foto .lx-fade {
+            background:
+                linear-gradient(180deg, rgba(var(--bg-rgb), .7) 0%, rgba(var(--bg-rgb), 0) 13%, rgba(var(--bg-rgb), 0) 40%, rgba(var(--bg-rgb), .85) 58%, rgb(var(--bg-rgb)) 68%),
+                linear-gradient(90deg, rgba(var(--bg-rgb), .45) 0%, rgba(var(--bg-rgb), 0) 20%, rgba(var(--bg-rgb), 0) 80%, rgba(var(--bg-rgb), .45) 100%);
+        }
+        .art.fmt-story .lay-foto .lx-fade {
+            background:
+                linear-gradient(180deg, rgba(var(--bg-rgb), .7) 0%, rgba(var(--bg-rgb), 0) 12%, rgba(var(--bg-rgb), 0) 56%, rgba(var(--bg-rgb), .85) 68%, rgb(var(--bg-rgb)) 76%),
+                linear-gradient(90deg, rgba(var(--bg-rgb), .45) 0%, rgba(var(--bg-rgb), 0) 20%, rgba(var(--bg-rgb), 0) 80%, rgba(var(--bg-rgb), .45) 100%);
+        }
+        .art .lay-lateral .lx-ph { left: auto; width: 68%; }
+        .art .lay-lateral .lx-ph.cut { bottom: 0; background-position: right bottom; }
+        .art .lay-lateral .lx-fade {
+            background:
+                linear-gradient(90deg, rgb(var(--bg-rgb)) 0%, rgb(var(--bg-rgb)) 32%, rgba(var(--bg-rgb), .6) 44%, rgba(var(--bg-rgb), 0) 60%),
+                linear-gradient(180deg, rgba(var(--bg-rgb), 0) 70%, rgba(var(--bg-rgb), .85) 100%);
+        }
+        .art .lx-block { position: relative; z-index: 2; text-align: center; }
+        .art .lay-foto .lx-block { margin-top: auto; }
+        .art .lay-lateral .lx-block { margin: auto 0; text-align: left; max-width: 60%; }
+        .art .lay-lateral.nofoto .lx-block { max-width: 100%; }
+        .art .lx-kick { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: .36em; letter-spacing: .42em; text-transform: uppercase; color: var(--accent); }
+        .art .lx-big { font-family: 'Anton', sans-serif; font-size: 2.7em; line-height: .88; text-transform: uppercase; white-space: nowrap; margin-top: .04em; }
+        .art .lx-lab { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: .23em; letter-spacing: .42em; text-transform: uppercase; color: var(--accent); margin-top: 1.4em; }
+        .art .lx-name { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; font-size: 1.04em; line-height: 1.08; }
+        .art .lx-tema { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .25em; letter-spacing: .18em; line-height: 1.5; text-transform: uppercase; margin: .9em auto 0; max-width: 92%; color: rgba(var(--fg-rgb), .92); }
+        .art .lay-lateral .lx-tema { margin-left: 0; }
+        .art .lx-rule { height: 2px; width: 68%; margin: .3em auto 0; background: linear-gradient(90deg, rgba(var(--accent-rgb), 0), var(--accent), rgba(var(--accent-rgb), 0)); }
+        .art .lx-info { display: flex; align-items: center; justify-content: center; gap: .55em; font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: .48em; text-transform: uppercase; margin-top: .55em; white-space: nowrap; }
+        .art .lx-info i { font-style: normal; color: var(--accent); font-size: .6em; }
+        .art .lx-when { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: .44em; line-height: 1.2; text-transform: uppercase; margin-top: .7em; }
+        .art .lx-when .a { color: var(--accent); }
+        .art .lx-local { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: .2em; letter-spacing: .3em; text-transform: uppercase; color: rgba(var(--fg-rgb), .75); margin-top: 1em; }
+        .art .lx-stars { font-size: .22em; letter-spacing: .6em; color: var(--accent); margin-top: .9em; }
+        .art .lay-lateral .lx-stars { margin-top: 1.4em; }
+        .art .lay-circulo .lx-lab { margin-top: 0; }
+        .art .lay-circulo .lx-stars { margin: .5em 0 1.5em; }
+        .art .lx-circ { flex: 1 1 0; min-height: 22%; position: relative; margin: .3em 0 .45em; }
+        .art .lx-circ .ring, .art .lx-disc { position: absolute; left: 50%; top: 50%; aspect-ratio: 1 / 1; border-radius: 50%; transform: translate(-50%, -50%); }
+        .art .lx-circ .ring { border: 2px solid var(--accent); }
+        .art .lx-disc { height: 86%; border: 3px solid var(--accent); padding: 10px; }
+        .art .lx-disc i { display: block; width: 100%; height: 100%; border-radius: 50%; background-size: cover; background-position: center 22%; background-repeat: no-repeat; }
+        .art .lx-disc i.cut { background-size: contain; background-position: center bottom; background-color: rgba(var(--fg-rgb), .06); }
     </style>
 </head>
 
@@ -710,6 +759,9 @@
                         <button data-v="editorial">Editorial</button>
                         <button data-v="faixa">Faixa</button>
                         <button data-v="poster">Pôster</button>
+                        <button data-v="foto">Foto cheia</button>
+                        <button data-v="lateral">Lateral</button>
+                        <button data-v="circulo">Círculo</button>
                     </div>
                     <div class="hint" id="layoutHint"></div>
                 </div>
@@ -728,7 +780,7 @@
                     <div class="hint">Use <code>*palavra*</code> para deixar na cor de destaque. Enter quebra a linha.</div>
                 </div>
                 <div class="field">
-                    <label>Tema / subtítulo (opcional)</label>
+                    <label>Tema da mensagem / subtítulo (opcional)</label>
                     <textarea data-k="evento.sub" rows="2"></textarea>
                 </div>
                 <div class="row2">
@@ -1430,8 +1482,47 @@
                     ${d.wd ? `<div class="lp-wd">${esc(d.wd)}${!prog.length && e.hora ? ' · ' + esc(e.hora) : ''}</div>` : ''}
                     ${temas.length ? `<div class="lp-temas">${temas.map((x, i) => `<div class="lp-t"><b>${i + 1}º</b><span>${esc(x)}</span></div>`).join('')}</div>` : ''}
                     ${prog.length ? `<div class="lp-prog">${prog.map(p => `<div class="it"><b>${esc(p.n)}</b>${p.h ? `<span>${esc(p.h)}</span>` : ''}</div>`).join('<div class="bar"></div>')}</div>` : ''}`;
-            }
+            },
+            // Cartaz de culto com um preletor: foto ocupando a arte, texto embaixo
+            foto(s, logosHtml) { return lxCartaz(s, logosHtml, 'foto'); },
+            // Foto à direita com degradê, texto à esquerda
+            lateral(s, logosHtml) { return lxCartaz(s, logosHtml, 'lateral'); },
+            // Foto num círculo com anéis, nome em destaque
+            circulo(s, logosHtml) { return lxCartaz(s, logosHtml, 'circulo'); }
         };
+
+        function lxCartaz(s, logosHtml, kind) {
+            const e = s.evento, d = dataInfo(e), t = splitTitle(e.titulo);
+            const p = pessoas(e)[0] || {}, foto = p.foto, cut = isCut(foto);
+            const kick = t.small || e.kicker || '';
+            const wd = d.a ? (d.multi ? d.wd : SEMANA[d.a.getDay()]) : '';
+            const curto = d.a ? (d.multi ? d.curto.replace(' • ', ' ') : `${d.a.getDate()} ${MES_C[d.a.getMonth()]}`) : '';
+            const tema = e.sub ? `<div class="lx-tema">“${esc(plain(e.sub))}”</div>` : '';
+            const title = `${kick ? `<div class="lx-kick">${esc(kick)}</div>` : ''}<div class="lx-big" data-fitw>${esc(t.big)}</div>`;
+            const who = p.nome ? `<div class="lx-lab">${esc(p.label)}</div><div class="lx-name">${esc(p.nome)}</div>` : '';
+            const info = [wd, curto, e.hora].filter(Boolean).map(esc).join('<i>✦</i>');
+            const infoRow = info ? `<div class="lx-info">${info}</div>` : '';
+            const local = e.local ? `<div class="lx-local">${esc(e.local)}</div>` : '';
+            const ph = foto ? `<div class="lx-ph${cut ? ' cut' : ''}" style="background-image:url('${foto}')"></div><div class="lx-fade"></div>` : '';
+
+            if (kind === 'foto') return `${ph}
+                <div class="lhdr" style="position:relative;z-index:2">${logosHtml}</div>
+                <div class="lx-block">${title}${who}${tema}<div class="lx-rule"></div>${infoRow}${local}</div>`;
+
+            if (kind === 'lateral') {
+                const when = (wd || d.dia || e.hora) ? `<div class="lx-when">${wd ? `${esc(wd)}<br>` : ''}${d.dia ? `<span class="a">${esc(d.dia)}</span><br>` : ''}${e.hora ? `às ${esc(e.hora)}` : ''}</div>` : '';
+                return `${ph}
+                <div class="lhdr" style="position:relative;z-index:2">${logosHtml}</div>
+                <div class="lx-block">${title}<div class="lx-stars">✦ ✦ ✦</div>${who.replace('class="lx-lab"', 'class="lx-lab" style="margin-top:.9em"')}${tema}${when}${local}</div>`;
+            }
+
+            const rings = [118, 140, 162].map((h, i) => `<div class="ring" style="height:${h}%;opacity:${[.35, .18, .08][i]}"></div>`).join('');
+            return `
+                <div class="lhdr center">${logosHtml}</div>
+                ${foto ? `<div class="lx-circ">${rings}<div class="lx-disc"><i class="${cut ? 'cut' : ''}" style="background-image:url('${foto}')"></i></div></div>` : '<div style="flex:1"></div>'}
+                <div class="lx-block">${who}${who ? '<div class="lx-stars">✦ ✦ ✦</div>' : ''}${title}${tema}${infoRow}${local}</div>
+                ${foto ? '' : '<div style="flex:1"></div>'}`;
+        }
 
         // Referência bíblica nas laterais (layout Editorial)
         function sideRefs(fmt, ref) {
@@ -1635,7 +1726,7 @@
                 el.innerHTML = `${bgLayers}${wm}
                     <div class="layer grain" style="background-image:url('${GRAIN}')"></div>
                     ${layName === 'editorial' ? sideRefs(fmt, s.evento.refLat) : ''}
-                    <div class="lay lay-${layName}">${LAYOUTS[layName](s, logosHtml)}</div>`;
+                    <div class="lay lay-${layName}${pessoas(s.evento)[0]?.foto ? '' : ' nofoto'}">${LAYOUTS[layName](s, logosHtml)}</div>`;
                 return el;
             }
 
@@ -1886,7 +1977,10 @@
                 classico: 'Texto à esquerda, data em destaque. Foto pequena (círculo) ou grande.',
                 editorial: 'Palavra gigante com o começo do título na vertical, foto grande no alto e referência nas laterais. Fica ótimo com fundo branco.',
                 faixa: 'Colagem: fotos com etiquetas de nome e o título numa faixa colorida. Funciona com 1 a 3 pessoas.',
-                poster: 'Para eventos maiores: até 3 palestrantes, data grande, temas numerados e programação. A 2ª linha do título vira a faixa sobre o título.'
+                poster: 'Para eventos maiores: até 3 palestrantes, data grande, temas numerados e programação. A 2ª linha do título vira a faixa sobre o título.',
+                foto: 'Cartaz de culto: a foto do preletor ocupa a arte e o texto fica embaixo. No título, a 1ª linha fica pequena e a última gigante (ex.: Culto de / Jovens). O tema aparece entre aspas.',
+                lateral: 'Foto do preletor à direita com degradê, texto à esquerda. Ótimo no feed. O tema aparece entre aspas.',
+                circulo: 'Foto do preletor num círculo com anéis e o nome em destaque acima do título. Boa para foto de perfil. O tema aparece entre aspas.'
             }[state.evento.layout] || '';
             $('#diaHint').textContent = state.dia.layout === 'destaque'
                 ? 'A atividade marcada com * vira o título gigante (com horário e preletor); o resto aparece embaixo, menor.'

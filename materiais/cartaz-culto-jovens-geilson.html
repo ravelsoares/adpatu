@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Culto de Jovens · Geilson</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@600;700;800;900&family=Playfair+Display:ital,wght@1,600;1,700&display=swap" rel="stylesheet">
+<style>
+  :root { --gold:#CAAB5B; --gold2:#F0C747; --ink:#070707; --off:#F4EFE4; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#222; font-family:Montserrat, sans-serif; color:var(--off); }
+  .art { position:relative; overflow:hidden; background:var(--ink); margin:0 auto 40px; }
+  .story { width:1080px; height:1920px; }
+  .feed  { width:1080px; height:1350px; }
+  body.solo { background:var(--ink); }
+  body.solo .art { margin:0; display:none; }
+  body.solo .art.on { display:block; }
+
+  .grain::after { content:""; position:absolute; inset:0; pointer-events:none; opacity:.10; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  .photo { position:absolute; background-repeat:no-repeat; filter:saturate(.82) contrast(1.06) brightness(.97); }
+  .fade  { position:absolute; inset:0; }
+  .logo  { position:absolute; background:url(../images/djad/djad-fundo-escuro.png) center/contain no-repeat; }
+  .gold  { color:var(--gold); }
+  .goldtxt { background:linear-gradient(100deg,#9c7a34 0%,#F0C747 30%,#fde9a6 48%,#CAAB5B 62%,#8d6c2c 100%);
+             -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .kick { font-weight:800; letter-spacing:.42em; text-transform:uppercase; }
+  .big  { font-family:Anton, sans-serif; text-transform:uppercase; line-height:.86; }
+  .name { font-family:'Playfair Display', serif; font-style:italic; font-weight:700; }
+  .vert { position:absolute; transform-origin:left top; transform:rotate(-90deg); white-space:nowrap;
+          font-weight:700; letter-spacing:.5em; font-size:22px; color:var(--gold); }
+  .stars { letter-spacing:.6em; color:var(--gold); }
+  .rule { height:2px; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
+  .info { display:flex; align-items:center; justify-content:center; gap:30px; font-weight:900; text-transform:uppercase; }
+  .info i { font-style:normal; color:var(--gold); font-size:.6em; }
+
+  /* ===== A · Story com a guitarra ===== */
+  #a .photo { left:0; top:-190px; width:1080px; height:1921px;
+              background-image:url(../images/preletores/geilson-guitarra.jpg); background-size:1080px auto; background-position:0 0; }
+  #a .fade { background:
+      linear-gradient(180deg, rgba(7,7,7,.7) 0%, rgba(7,7,7,0) 12%, rgba(7,7,7,0) 58%, rgba(7,7,7,.8) 70%, #070707 77%),
+      linear-gradient(90deg, rgba(7,7,7,.55) 0%, rgba(7,7,7,0) 22%, rgba(7,7,7,0) 80%, rgba(7,7,7,.5) 100%); }
+  #a .logo { left:60px; top:56px; width:92px; height:116px; }
+  #a .vert.l { left:62px; top:1080px; }
+  #a .bottom { position:absolute; left:0; right:0; top:1255px; text-align:center; }
+
+  /* ===== B · Feed com a guitarra ===== */
+  #b .photo { right:-70px; top:0; width:760px; height:1352px;
+              background-image:url(../images/preletores/geilson-guitarra.jpg); background-size:760px auto; background-position:0 0; }
+  #b .fade { background:
+      linear-gradient(90deg, #070707 0%, #070707 30%, rgba(7,7,7,.6) 42%, rgba(7,7,7,0) 58%),
+      linear-gradient(180deg, rgba(7,7,7,0) 70%, rgba(7,7,7,.85) 100%); }
+  #b .logo { left:80px; top:80px; width:92px; height:116px; }
+  #b .txt { position:absolute; left:80px; top:290px; width:600px; }
+
+  /* ===== C · Story com a foto de perfil ===== */
+  #c { background:radial-gradient(circle at 50% 36%, #1b1710 0%, #0b0a08 45%, #070707 75%); }
+  #c .logo { left:50%; top:70px; width:110px; height:140px; transform:translateX(-50%); }
+  #c .ring { position:absolute; left:50%; top:700px; border-radius:50%; border:2px solid var(--gold); transform:translate(-50%,-50%); }
+  #c .disc { position:absolute; left:50%; top:700px; width:560px; height:560px; border-radius:50%; transform:translate(-50%,-50%);
+             background:url(../images/preletores/geilson-perfil.jpg) no-repeat; background-size:884px auto; background-position:-162px -702px;
+             box-shadow:0 0 0 10px #070707, 0 0 0 13px var(--gold), 0 30px 80px rgba(0,0,0,.6); filter:saturate(.9); }
+  #c .bottom { position:absolute; left:0; right:0; top:1065px; text-align:center; }
+</style>
+</head>
+<body>
+
+<!-- A -->
+<section class="art story grain" id="a">
+  <div class="photo"></div><div class="fade"></div>
+  <div class="logo"></div>
+  <div class="vert l">DOMINGO · 22 · 11 · 2026</div>
+  <div class="bottom">
+    <div class="kick goldtxt" style="font-size:38px">Culto de</div>
+    <div class="big" style="font-size:270px; margin-top:4px">Jovens</div>
+    <div class="kick gold" style="font-size:24px; margin-top:34px">Pregador</div>
+    <div class="name" style="font-size:108px; line-height:1.05">Geilson</div>
+    <div style="margin:26px auto 0; width:700px" class="rule"></div>
+    <div class="info" style="font-size:50px; margin-top:30px">Domingo <i>✦</i> 22 Nov <i>✦</i> 19h</div>
+    <div class="kick" style="font-size:21px; margin-top:20px; opacity:.75; letter-spacing:.3em">Templo Sede · AD Patu</div>
+  </div>
+</section>
+
+<!-- B -->
+<section class="art feed grain" id="b">
+  <div class="photo"></div><div class="fade"></div>
+  <div class="logo"></div>
+  <div class="txt">
+    <div class="kick goldtxt" style="font-size:34px">Culto de</div>
+    <div class="big" style="font-size:250px; margin-top:4px">Jovens</div>
+    <div class="stars" style="font-size:22px; margin-top:36px">✦ ✦ ✦</div>
+    <div class="kick gold" style="font-size:22px; margin-top:34px">Pregador</div>
+    <div class="name" style="font-size:104px; line-height:1.05">Geilson</div>
+    <div style="margin-top:60px; font-weight:900; font-size:46px; text-transform:uppercase; line-height:1.2">
+      Domingo<br><span class="goldtxt">22 de Novembro</span><br>às 19h
+    </div>
+    <div class="kick" style="font-size:19px; margin-top:34px; opacity:.75; letter-spacing:.3em">Templo Sede · AD Patu</div>
+  </div>
+</section>
+
+<!-- C -->
+<section class="art story grain" id="c">
+  <div class="logo"></div>
+  <div class="ring" style="width:760px;height:760px;opacity:.35"></div>
+  <div class="ring" style="width:900px;height:900px;opacity:.18"></div>
+  <div class="ring" style="width:1040px;height:1040px;opacity:.08"></div>
+  <div class="disc"></div>
+  <div class="bottom">
+    <div class="kick gold" style="font-size:26px">Pregador</div>
+    <div class="name" style="font-size:130px; line-height:1.05">Geilson</div>
+    <div class="stars" style="font-size:22px; margin-top:26px">✦ ✦ ✦</div>
+    <div class="kick goldtxt" style="font-size:40px; margin-top:40px">Culto de</div>
+    <div class="big" style="font-size:300px; margin-top:6px">Jovens</div>
+    <div class="info" style="font-size:50px; margin-top:44px">Domingo <i>✦</i> 22 Nov <i>✦</i> 19h</div>
+    <div class="kick" style="font-size:22px; margin-top:24px; opacity:.75; letter-spacing:.3em">Templo Sede · AD Patu</div>
+  </div>
+</section>
+
+<script>
+  const id = location.hash.slice(1);
+  if (id) { document.body.classList.add('solo'); document.getElementById(id).classList.add('on'); }
+</script>
+</body>
+</html>
