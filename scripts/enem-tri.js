@@ -3,7 +3,7 @@
    a = discriminação, b = dificuldade, c = chance de acertar no chute (5 alternativas → 0,2).
    Sem pré-teste, b parte da dificuldade marcada no banco (F/M/D). Com provas suficientes,
    b é recalibrado pelos próprios resultados (cada b fica perto do valor inicial, mas se move
-   conforme a taxa real de acerto). θ é estimado por EAP e a nota fica em 500 + 100·θ. */
+   conforme a taxa real de acerto). θ é estimado por EAP e a nota vai de 0 (errar tudo) a 1000 (acertar tudo). */
 (function () {
   const B0 = { F: -1.0, M: 0.1, D: 1.1 };
   const A = 1.3, C = 0.2, DK = 1.7;
@@ -46,7 +46,10 @@
   function notas(X, dif, calibrar) {
     const b0 = dif.map(d => B0[d] ?? 0);
     const r = calibrar && X.length ? calibra(X, b0) : { bs: b0, th: X.map(x => theta(x, b0)) };
-    return { notas: r.th.map(t => Math.round((500 + 100 * t) * 10) / 10), dificuldades: r.bs };
+    // escala 0–1000: errar tudo = 0, acertar tudo = 1000 (com as dificuldades atuais)
+    const tMin = theta(r.bs.map(() => 0), r.bs), tMax = theta(r.bs.map(() => 1), r.bs);
+    const esc = t => Math.max(0, Math.min(1000, 1000 * (t - tMin) / (tMax - tMin)));
+    return { notas: r.th.map(t => Math.round(esc(t) * 10) / 10), dificuldades: r.bs };
   }
 
   const api = { notas, theta, B0 };
