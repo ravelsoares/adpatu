@@ -610,10 +610,10 @@
         .art .lf-people { flex: 1 1 0; min-height: 26%; position: relative; margin: .1em 0 0; }
         .art .lf-paper { position: absolute; left: 7%; right: 7%; top: 5%; bottom: -3%; background: rgba(var(--fg-rgb), .9); transform: rotate(-2deg); }
         .art .lf-people .prow { position: absolute; left: 9%; right: 9%; top: 0; bottom: 0; min-height: 0; }
-        .art .lf-tag { position: absolute; z-index: 3; bottom: 22%; display: flex; flex-direction: column; align-items: flex-start; font-family: 'Montserrat', sans-serif; font-weight: 900; text-transform: uppercase; line-height: 1.05; }
+        .art .lf-tag { position: absolute; z-index: 3; bottom: 16%; display: flex; flex-direction: column; align-items: flex-start; font-family: 'Montserrat', sans-serif; font-weight: 900; text-transform: uppercase; line-height: 1.05; }
         .art .lf-tag.r { align-items: flex-end; }
-        .art .lf-tag small { font-size: .2em; padding: .14em .35em; background: rgb(var(--bg-rgb)); color: rgb(var(--fg-rgb)); letter-spacing: .06em; }
-        .art .lf-tag b { font-size: .3em; padding: .1em .3em; background: var(--accent); color: #0a0a0a; white-space: nowrap; }
+        .art .lf-tag small { font-size: .26em; padding: .14em .4em; background: rgb(var(--bg-rgb)); color: rgb(var(--fg-rgb)); letter-spacing: .06em; }
+        .art .lf-tag b { font-size: .5em; padding: .08em .3em; background: var(--accent); color: #0a0a0a; white-space: nowrap; }
         .art .lf-band { flex: none; position: relative; z-index: 4; display: flex; flex-direction: column; align-items: center; margin-top: -.45em; }
         .art .lf-pill { position: relative; z-index: 2; font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: .64em; line-height: 1.1; text-transform: uppercase; background: rgb(var(--fg-rgb)); color: var(--accent); padding: .06em .42em; transform: rotate(-3deg); margin-bottom: -.14em; }
         .art .lf-bar { align-self: stretch; background: var(--accent); padding: .04em .2em .14em; text-align: center; transform: rotate(-1deg); }
@@ -622,6 +622,8 @@
         .art .lf-date span { padding: .06em .38em; }
         .art .lf-date .a { background: var(--accent); color: #0a0a0a; }
         .art .lf-date .b { background: rgb(var(--fg-rgb)); color: rgb(var(--bg-rgb)); }
+        .art .lf-tema { position: relative; z-index: 4; align-self: center; max-width: 88%; text-align: center; margin-top: .55em; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: .27em; letter-spacing: .14em; line-height: 1.45; text-transform: uppercase; }
+        .art .lf-tema span { background: rgb(var(--fg-rgb)); color: rgb(var(--bg-rgb)); padding: .12em .45em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
         .art .lf-local { text-align: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .21em; letter-spacing: .3em; text-transform: uppercase; margin-top: .55em; color: rgba(var(--fg-rgb), .8); }
 
         /* PÔSTER: título enorme, vários palestrantes, data grande e programação */
@@ -1452,6 +1454,7 @@
                         ${t.small ? `<div class="lf-pill">${esc(t.small)}</div>` : ''}
                         <div class="lf-bar"><span data-fitw>${esc(t.big)}</span></div>
                     </div>
+                    ${e.sub ? `<div class="lf-tema"><span>“${esc(plain(e.sub))}”</span></div>` : ''}
                     ${semFoto.length ? `<div class="lf-local" style="margin-top:.45em">${semFoto.map(p => `${esc(p.label)}: ${esc(p.nome)}`).join(' · ')}</div>` : ''}
                     ${(d.curto || e.hora) ? `<div class="lf-date">${d.curto ? `<span class="a">${esc(d.curto)}</span>` : ''}${e.hora ? `<span class="b">${esc(e.hora)}</span>` : ''}</div>` : ''}
                     ${e.local ? `<div class="lf-local">${esc(e.local)}</div>` : ''}`;
@@ -1976,7 +1979,7 @@
             $('#layoutHint').textContent = {
                 classico: 'Texto à esquerda, data em destaque. Foto pequena (círculo) ou grande.',
                 editorial: 'Palavra gigante com o começo do título na vertical, foto grande no alto e referência nas laterais. Fica ótimo com fundo branco.',
-                faixa: 'Colagem: fotos com etiquetas de nome e o título numa faixa colorida. Funciona com 1 a 3 pessoas.',
+                faixa: 'Colagem: fotos com etiquetas de nome e o título numa faixa colorida e o tema numa tarja logo abaixo. Funciona com 1 a 3 pessoas.',
                 poster: 'Para eventos maiores: até 3 palestrantes, data grande, temas numerados e programação. A 2ª linha do título vira a faixa sobre o título.',
                 foto: 'Cartaz de culto: a foto do preletor ocupa a arte e o texto fica embaixo. No título, a 1ª linha fica pequena e a última gigante (ex.: Culto de / Jovens). O tema aparece entre aspas.',
                 lateral: 'Foto do preletor à direita com degradê, texto à esquerda. Ótimo no feed. O tema aparece entre aspas.',
