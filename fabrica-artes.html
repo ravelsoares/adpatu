@@ -1454,7 +1454,7 @@
                         ${t.small ? `<div class="lf-pill">${esc(t.small)}</div>` : ''}
                         <div class="lf-bar"><span data-fitw>${esc(t.big)}</span></div>
                     </div>
-                    ${e.sub ? `<div class="lf-tema"><span>“${esc(plain(e.sub))}”</span></div>` : ''}
+                    ${e.sub ? `<div class="lf-tema"><span>${esc(plain(e.sub).replace(/^["“”']+|["“”']+$/g, ''))}</span></div>` : ''}
                     ${semFoto.length ? `<div class="lf-local" style="margin-top:.45em">${semFoto.map(p => `${esc(p.label)}: ${esc(p.nome)}`).join(' · ')}</div>` : ''}
                     ${(d.curto || e.hora) ? `<div class="lf-date">${d.curto ? `<span class="a">${esc(d.curto)}</span>` : ''}${e.hora ? `<span class="b">${esc(e.hora)}</span>` : ''}</div>` : ''}
                     ${e.local ? `<div class="lf-local">${esc(e.local)}</div>` : ''}`;
@@ -1979,7 +1979,7 @@
             $('#layoutHint').textContent = {
                 classico: 'Texto à esquerda, data em destaque. Foto pequena (círculo) ou grande.',
                 editorial: 'Palavra gigante com o começo do título na vertical, foto grande no alto e referência nas laterais. Fica ótimo com fundo branco.',
-                faixa: 'Colagem: fotos com etiquetas de nome e o título numa faixa colorida e o tema numa tarja logo abaixo. Funciona com 1 a 3 pessoas.',
+                faixa: 'Colagem: fotos com etiquetas de nome e o título numa faixa colorida e o tema numa tarja logo abaixo (sem aspas). Funciona com 1 a 3 pessoas.',
                 poster: 'Para eventos maiores: até 3 palestrantes, data grande, temas numerados e programação. A 2ª linha do título vira a faixa sobre o título.',
                 foto: 'Cartaz de culto: a foto do preletor ocupa a arte e o texto fica embaixo. No título, a 1ª linha fica pequena e a última gigante (ex.: Culto de / Jovens). O tema aparece entre aspas.',
                 lateral: 'Foto do preletor à direita com degradê, texto à esquerda. Ótimo no feed. O tema aparece entre aspas.',
