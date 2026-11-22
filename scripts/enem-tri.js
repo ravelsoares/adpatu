@@ -49,7 +49,14 @@
     // escala 0–1000: errar tudo = 0, acertar tudo = 1000 (com as dificuldades atuais)
     const tMin = theta(r.bs.map(() => 0), r.bs), tMax = theta(r.bs.map(() => 1), r.bs);
     const esc = t => Math.max(0, Math.min(1000, 1000 * (t - tMin) / (tMax - tMin)));
-    return { notas: r.th.map(t => Math.round(esc(t) * 10) / 10), dificuldades: r.bs };
+    const nota = x => esc(theta(x, r.bs));
+    // valor de cada questão: quanto, em média, acertá-la somou à nota de quem acertou
+    const valor = r.bs.map((_, i) => {
+      let s = 0, n = 0;
+      X.forEach((x, j) => { if (!x[i]) return; const y = x.slice(); y[i] = 0; s += esc(r.th[j]) - nota(y); n++; });
+      return n ? Math.round(s / n * 10) / 10 : null;
+    });
+    return { notas: r.th.map(t => Math.round(esc(t) * 10) / 10), dificuldades: r.bs, valor };
   }
 
   const api = { notas, theta, B0 };

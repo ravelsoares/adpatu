@@ -15,7 +15,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="scripts/enem-banco.js?v=2"></script>
 <script src="scripts/enem-omr.js?v=2"></script>
-<script src="scripts/enem-tri.js?v=2"></script>
+<script src="scripts/enem-tri.js?v=3"></script>
 <style>
 :root { --gold: #CAAB5B; --bg: #0f0e0c; --panel: #191814; --line: #302d26; --muted: #a39d90; --err: #ff8a7a; --ok: #7bd88f; --warn: #ffb547; }
 * { box-sizing: border-box; }
@@ -37,7 +37,7 @@ main { max-width: 1100px; margin: 0 auto; padding: 14px 14px 60px; }
 .card h2 { margin: 0 0 10px; font: 900 14px Montserrat, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
 .center { text-align: center; padding: 40px 16px; }
 .muted { color: var(--muted); font-size: 13px; }
-.tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+.tabs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 12px; }
 .tabs button { font: 800 14px Inter, sans-serif; padding: 11px; border-radius: 10px; border: 1px solid #3a362d; background: #161511; color: #ccc; cursor: pointer; }
 .tabs button.on { border-color: var(--gold); background: rgba(202, 171, 91, .15); color: #fff; }
 .start { display: grid; grid-template-columns: 1fr; gap: 8px; }
@@ -107,6 +107,26 @@ tr.top td { background: rgba(202, 171, 91, .08); }
 .tri-info b { color: var(--gold); }
 .spin { display: inline-block; width: 16px; height: 16px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: g .8s linear infinite; vertical-align: -3px; }
 @keyframes g { to { transform: rotate(360deg); } }
+.qv { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; background: #141310; }
+.qv > summary { list-style: none; cursor: pointer; padding: 10px 12px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+.qv > summary::-webkit-details-marker { display: none; }
+.qv .nums { display: flex; gap: 4px; flex-wrap: wrap; max-width: 64px; }
+.qv .nums span { font: 800 12px Inter, sans-serif; min-width: 26px; text-align: center; padding: 2px 4px; border-radius: 6px; color: #000; }
+.qv .en { font-size: 14px; line-height: 1.35; overflow-wrap: anywhere; }
+.qv .det { overflow-wrap: anywhere; }
+.qv .en small { display: block; color: var(--muted); font-size: 12px; margin-top: 3px; }
+.qv .val { text-align: right; white-space: nowrap; }
+.qv .val b { font: 900 20px Montserrat, sans-serif; color: var(--gold); display: block; }
+.qv .val span { font-size: 11px; color: var(--muted); }
+.qv .bar { height: 6px; border-radius: 3px; background: #2a2720; margin-top: 6px; overflow: hidden; }
+.qv .bar i { display: block; height: 100%; background: var(--gold); }
+.qv .det { padding: 0 12px 12px; font-size: 14px; }
+.qv .det h4 { margin: 12px 0 6px; font-size: 12px; letter-spacing: .04em; color: var(--muted); }
+.qv .alt.ok { color: #7ee08a; font-weight: 700; }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chips span { background: #23211b; border: 1px solid #3a362d; border-radius: 99px; padding: 3px 9px; font-size: 13px; }
+.sel { background: #121110; color: #fff; border: 1px solid #3a362d; border-radius: 8px; padding: 8px; font: 600 14px Inter, sans-serif; }
+@media print { #vQuestoes .qv { break-inside: avoid; background: none; border-color: #ccc; } .qv .val b, .qv .alt.ok { color: #000; } .chips span { background: none; border-color: #ccc; color: #000; } }
 .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--gold); color: #000; font-weight: 700; padding: 11px 16px; border-radius: 10px; opacity: 0; transition: .25s; pointer-events: none; z-index: 50; max-width: calc(100% - 32px); }
 .toast.show { opacity: 1; }
 .toast.err { background: var(--err); }
@@ -140,7 +160,7 @@ tr.top td { background: rgba(202, 171, 91, .08); }
   </div>
 
   <div id="vApp" hidden>
-    <div class="tabs"><button data-tab="corrigir" class="on">📷 Corrigir</button><button data-tab="resultados">🏆 Resultados <span id="nRes"></span></button></div>
+    <div class="tabs"><button data-tab="corrigir" class="on">📷 Corrigir</button><button data-tab="resultados">🏆 Resultados <span id="nRes"></span></button><button data-tab="questoes">📊 Questões</button></div>
 
     <section id="vCorrigir">
       <div class="card" id="startCard">
@@ -212,6 +232,19 @@ tr.top td { background: rgba(202, 171, 91, .08); }
         </div>
       </div>
     </section>
+
+    <section id="vQuestoes" hidden>
+      <div class="card">
+        <div class="toolbar">
+          <select id="qOrd" class="sel noprint"><option value="num">Ordem do caderno</option><option value="valor">Quanto valeu (maior primeiro)</option><option value="pct">% de acerto (menor primeiro)</option></select>
+          <select id="qCad" class="sel noprint"></select>
+          <button class="btn small noprint" id="qAbre">Abrir todas</button>
+          <button class="btn small noprint" onclick="print()">🖨 Imprimir</button>
+        </div>
+        <div class="tri-info" id="qInfo" style="margin-bottom:12px"></div>
+        <div id="qLista"></div>
+      </div>
+    </section>
   </div>
 </main>
 <div class="toast" id="toast"></div>
@@ -260,7 +293,7 @@ auth.onAuthStateChanged(async u => {
     show('#vApp');
     carregaCV();
     db.collection('enem-inscricoes').onSnapshot(s => { INSC = s.docs.map(d => ({ id: d.id, ...d.data() })); if (R) idStatus(); }, e => console.error(e));
-    COR.onSnapshot(s => { CORR = s.docs.map(d => ({ id: d.id, ...d.data() })); $('#nRes').textContent = CORR.length ? `(${CORR.length})` : ''; renderRes(); if (R) idStatus(); }, e => { console.error(e); toast('Sem permissão para ler as correções (regras do Firestore).', 1); });
+    COR.onSnapshot(s => { CORR = s.docs.map(d => ({ id: d.id, ...d.data() })); $('#nRes').textContent = CORR.length ? `(${CORR.length})` : ''; renderRes(); renderQ(); if (R) idStatus(); }, e => { console.error(e); toast('Sem permissão para ler as correções (regras do Firestore).', 1); });
   } catch (e) { console.error(e); toast('Erro ao verificar acesso: ' + e.message, 1); }
 });
 
@@ -269,7 +302,9 @@ $$('.tabs button').forEach(b => b.onclick = () => {
   $$('.tabs button').forEach(x => x.classList.toggle('on', x === b));
   $('#vCorrigir').hidden = b.dataset.tab !== 'corrigir';
   $('#vResultados').hidden = b.dataset.tab !== 'resultados';
+  $('#vQuestoes').hidden = b.dataset.tab !== 'questoes';
   if (b.dataset.tab === 'resultados') renderRes();
+  if (b.dataset.tab === 'questoes') renderQ();
 });
 
 /* ---------------- OpenCV ---------------- */
@@ -463,12 +498,14 @@ function calcula() {
   const calib = $('#calib').checked;
   const t = EnemTRI.notas(linhas.map(l => l.r.x), Q.map(q => q.d), calib);
   linhas.forEach((l, i) => l.nota = t.notas[i]);
+  linhas.tri = t;
   linhas.sort((a, b) => b.nota - a.nota || b.r.acertos - a.r.acertos || a.c.nome.localeCompare(b.c.nome));
   let pos = 0; linhas.forEach((l, i) => { if (i === 0 || l.nota !== linhas[i - 1].nota || l.r.acertos !== linhas[i - 1].r.acertos) pos = i + 1; l.pos = pos; });
   return linhas;
 }
 let calibAuto = true;
 $('#calib').onchange = () => { calibAuto = false; renderRes(); };
+$('#calib').addEventListener('change', () => renderQ());
 function renderRes() {
   if ($('#vResultados').hidden) return;
   if (calibAuto) $('#calib').checked = CORR.length >= 15;
@@ -489,6 +526,45 @@ function renderRes() {
       : `<tr><td colspan="12" class="muted" style="text-align:center;padding:24px">Nenhuma prova corrigida ainda.</td></tr>`) + '</tbody>';
 }
 $('#busca').oninput = renderRes;
+
+/* ---------------- questões: quanto valeu cada uma e quem acertou ---------------- */
+$('#qCad').innerHTML = CADERNOS.map((c, i) => `<option value="${i}">Numeração do ${c.nome}</option>`).join('');
+$('#qOrd').onchange = $('#qCad').onchange = () => renderQ();
+$('#qAbre').onclick = () => { const ds = $$('#qLista details'), abrir = ds.some(d => !d.open); ds.forEach(d => d.open = abrir); $('#qAbre').textContent = abrir ? 'Fechar todas' : 'Abrir todas'; };
+const DIFN = { F: 'Fácil', M: 'Média', D: 'Difícil' };
+function renderQ() {
+  if ($('#vQuestoes').hidden) return;
+  if (calibAuto) $('#calib').checked = CORR.length >= 15;
+  const L = calcula(), t = L.tri, N = L.length, calib = $('#calib').checked;
+  const pos = MONTADOS.map(g => { const m = []; g.forEach((it, k) => m[it.qi] = k); return m; }); // posição de cada questão em cada caderno
+  const qs = Q.map((q, qi) => {
+    const acertou = [], marcou = {};
+    L.forEach(l => {
+      const k = pos[l.c.caderno - 1][qi], it = MONTADOS[l.c.caderno - 1][k], v = l.c.resp[k];
+      if (l.r.x[qi]) { acertou.push(l.c.nome); return; }
+      const chave = v === '-' ? 'Deixou em branco' : v === '*' ? 'Marcou mais de uma' : 'Marcou: ' + (it.alts[LETRAS.indexOf(v)] || v);
+      (marcou[chave] = marcou[chave] || []).push(l.c.nome);
+    });
+    return { q, qi, acertou, marcou, pct: N ? acertou.length / N : 0, valor: t ? t.valor[qi] : null, b: t ? t.dificuldades[qi] : null };
+  });
+  const cad = +$('#qCad').value, ord = $('#qOrd').value;
+  qs.sort(ord === 'valor' ? (a, b) => (b.valor ?? -1) - (a.valor ?? -1) : ord === 'pct' ? (a, b) => a.pct - b.pct : (a, b) => pos[cad][a.qi] - pos[cad][b.qi]);
+  $('#qInfo').innerHTML = !N ? 'Nenhuma prova corrigida ainda.'
+    : `<b>Quanto valeu</b>: quantos pontos, em média, acertar a questão somou à nota de quem acertou (comparado com a nota que a pessoa teria se tivesse errado só ela). No TRI isso não é fixo: errar uma fácil pesa muito, porque quem sabe não erra o básico; acertar uma difícil vale menos do que parece, porque pode ter sido chute. Os números coloridos são a posição da questão em cada caderno. ${calib ? 'Dificuldades calibradas pelos resultados.' : 'Dificuldades pela classificação do banco.'} ${N} prova${N > 1 ? 's' : ''}.`;
+  const nomes = a => a.length ? `<div class="chips">${a.slice().sort((x, y) => x.localeCompare(y)).map(n => `<span>${esc(n)}</span>`).join('')}</div>` : '<span class="muted">ninguém</span>';
+  $('#qLista').innerHTML = qs.map(o => {
+    const erros = Object.entries(o.marcou).sort((a, b) => b[1].length - a[1].length);
+    return `<details class="qv"><summary>
+      <div class="nums">${MONTADOS.map((g, c) => `<span style="background:${CADERNOS[c].cor};${c === 0 ? 'color:#fff' : ''}" title="Caderno ${CADERNOS[c].nome}">${pos[c][o.qi] + 1}</span>`).join('')}</div>
+      <div class="en">${o.q.e}<small>${AREA_CURTA[o.q.a]} · ${DIFN[o.q.d] || o.q.d}${o.b != null && calib ? ` (b ${o.b.toFixed(2).replace('.', ',')})` : ''} · acertaram ${o.acertou.length} de ${N} (${Math.round(o.pct * 100)}%)</small>
+        <div class="bar"><i style="width:${o.pct * 100}%"></i></div></div>
+      <div class="val"><b>${o.valor != null ? '+' + o.valor.toFixed(1).replace('.', ',') : '–'}</b><span>pontos</span></div>
+    </summary><div class="det">
+      <h4 class="alt ok">✓ Certa: ${o.q.c} · acertaram (${o.acertou.length})</h4>${nomes(o.acertou)}
+      ${erros.map(([alt, ns]) => `<h4>✗ ${alt} (${ns.length})</h4>${nomes(ns)}`).join('')}
+    </div></details>`;
+  }).join('');
+}
 $('#tbl').onclick = async e => {
   const ed = e.target.dataset.ed, rm = e.target.dataset.rm;
   if (rm) { const c = corrDe(rm); if (c && confirm(`Apagar a correção de ${c.nome}?`)) { try { await COR.doc(rm).delete(); toast('Correção apagada.'); } catch (er) { toast('Erro: ' + er.message, 1); } } }
