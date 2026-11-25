@@ -238,6 +238,10 @@
         "destination": "/ebd.html"
       },
       {
+        "source": "/projecao",
+        "destination": "/projecao.html"
+      },
+      {
         "source": "*",
         "destination": "/home-adpatu.html"
       }

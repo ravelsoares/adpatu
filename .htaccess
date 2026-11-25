@@ -67,6 +67,7 @@ RewriteRule ^amor/?$ central-do-amor.html [L]
 RewriteRule ^amor/stats/?$ admin-central-amor.html [L]
 RewriteRule ^umadcamp/amor-stats/?$ admin-central-amor.html [L]
 RewriteRule ^ebd/?$ ebd.html [L]
+RewriteRule ^projecao/?$ projecao.html [L]
 
 # Fallback for 404s (matches firebase "source": "*" behavior)
 ErrorDocument 404 /home-adpatu.html
