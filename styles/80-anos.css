@@ -1028,6 +1028,26 @@ h3 {
     color: var(--azul);
 }
 
+a.ph {
+    text-decoration: none;
+    transition: transform 0.2s;
+}
+
+a.ph:hover {
+    transform: translateY(-2px);
+}
+
+.ph.ph-foto {
+    background-size: cover;
+    background-position: center;
+}
+
+.galeria-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
 .ph-tall {
     grid-row: span 2;
 }
@@ -1107,7 +1127,7 @@ h3 {
     }
 
     .gallery {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         grid-auto-rows: 180px;
     }
 }

@@ -19,6 +19,40 @@ var DIAS_EBO_80 = [
     { dia: '28', rotulo: 'Sáb · 28/11', tema: 'Perseverar', inicio: '2026-11-28T00:00:00-03:00' }
 ];
 
+// Fotos do evento: pastas públicas do Google Drive (uma ou mais por dia).
+// Para publicar as fotos de um dia, cole o id da pasta (o final do link do Drive) em "pastas".
+var DRIVE_KEY_80 = 'AIzaSyCM05uKadKIX5xxtWt3FlyKp8nANwV4Kpc';
+var FOTOS_80 = [
+    { dia: '25', rotulo: 'Qua · 25/11', titulo: 'Abertura', pastas: ['1dHSz-mXnZn0Ep8eQXFjdj5XiSd0s0dGG'] },
+    { dia: '26', rotulo: 'Qui · 26/11', titulo: 'EBOCAMP', pastas: [] },
+    { dia: '27', rotulo: 'Sex · 27/11', titulo: 'EBOCAMP', pastas: [] },
+    { dia: '28', rotulo: 'Sáb · 28/11', titulo: 'Jubileu de Carvalho', pastas: [] }
+];
+
+// Lista fotos e vídeos das pastas, em ordem de nome
+function listarFotos80(pastas) {
+    var todos = [];
+    function pagina(pasta, token) {
+        var url = 'https://www.googleapis.com/drive/v3/files?q=' + encodeURIComponent("'" + pasta + "' in parents and trashed = false and (mimeType contains 'image/' or mimeType contains 'video/')")
+            + '&key=' + DRIVE_KEY_80 + '&fields=nextPageToken,files(id,name,mimeType)&pageSize=1000&orderBy=name'
+            + (token ? '&pageToken=' + token : '');
+        return fetch(url).then(function (r) {
+            if (!r.ok) throw new Error('Drive ' + r.status);
+            return r.json();
+        }).then(function (d) {
+            todos = todos.concat(d.files || []);
+            if (d.nextPageToken) return pagina(pasta, d.nextPageToken);
+        });
+    }
+    return pastas.reduce(function (p, pasta) {
+        return p.then(function () { return pagina(pasta); });
+    }, Promise.resolve()).then(function () { return todos; });
+}
+
+function miniaturaFoto80(id, largura) {
+    return 'https://lh3.googleusercontent.com/d/' + id + '=w' + largura;
+}
+
 // Valores padrão quando o documento de configuração ainda não existe
 var CONFIG_PADRAO_80 = {
     certificadoLiberado: false, // a recepção libera depois da última palestra

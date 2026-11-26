@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fotos · AD Patu 80 anos</title>
+    <meta name="description" content="Fotos do Jubileu de Carvalho: 80 anos da Assembleia de Deus em Patu/RN.">
+    <meta name="theme-color" content="#0f1f52">
+    <link rel="icon" href="/images/80anos/logo-80.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/80-anos.css?v=8">
+    <style>
+        body { background: var(--creme); color: var(--tinta); }
+        .fotos-top {
+            padding: 18px 16px 28px;
+            text-align: center;
+            color: #fff;
+            background: linear-gradient(180deg, var(--azul) 0%, var(--azul-noite) 100%);
+        }
+        .fotos-top-bar { max-width: 1100px; margin: 0 auto 8px; display: flex; justify-content: space-between; align-items: center; }
+        .fotos-top-bar a { color: rgba(255, 255, 255, .8); text-decoration: none; font-size: .9rem; }
+        .fotos-top-bar a:hover { color: #fff; }
+        .fotos-logo { display: block; width: min(56vw, 220px); height: auto; margin: 0 auto 6px; }
+        .fotos-top h1 { margin: 0; color: #fff; font-size: clamp(1.8rem, 6vw, 2.6rem); }
+        .fotos-top p { margin: 4px 0 0; color: var(--carvalho-palido); font-size: .9rem; letter-spacing: 2px; text-transform: uppercase; }
+
+        .fotos-main { max-width: 1100px; margin: 0 auto; padding: 22px 12px 60px; }
+        .dias { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 14px; }
+        .dias button {
+            padding: 10px 4px; border-radius: 14px; border: 1px solid rgba(22, 41, 107, .18);
+            background: #fff; color: var(--azul); font: inherit; font-weight: 700; font-size: .95rem; cursor: pointer;
+        }
+        .dias button small { display: block; font-weight: 500; font-size: .72rem; opacity: .75; }
+        .dias button[aria-pressed="true"] { background: linear-gradient(135deg, var(--carvalho-claro), var(--carvalho)); border-color: transparent; color: #fff; }
+        .dias button.vazio { opacity: .55; }
+        .resumo { text-align: center; color: var(--tinta-suave); font-size: .9rem; margin: 0 0 16px; min-height: 1.3em; }
+
+        .grade { columns: 2 160px; column-gap: 8px; }
+        .foto {
+            position: relative; display: block; width: 100%; margin: 0 0 8px; padding: 0; border: 0; border-radius: 10px;
+            overflow: hidden; break-inside: avoid; background: #e8dccb; cursor: zoom-in;
+        }
+        .foto img { display: block; width: 100%; height: auto; min-height: 120px; object-fit: cover; transition: transform .3s; }
+        .foto:hover img { transform: scale(1.03); }
+        .foto .play {
+            position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 2rem;
+            background: rgba(0, 0, 0, .25);
+        }
+        @media (min-width: 700px) { .grade { columns: 3 200px; } }
+        @media (min-width: 1000px) { .grade { columns: 4 220px; } }
+
+        .esqueleto { height: 180px; border-radius: 10px; margin-bottom: 8px; break-inside: avoid; background: linear-gradient(90deg, #eadfce, #f4ece0, #eadfce); background-size: 200% 100%; animation: brilho 1.2s infinite; }
+        .esqueleto:nth-child(3n) { height: 240px; }
+        .esqueleto:nth-child(4n) { height: 140px; }
+        @keyframes brilho { to { background-position: -200% 0; } }
+
+        .aviso { text-align: center; padding: 50px 16px; color: var(--tinta-suave); }
+        .aviso b { display: block; font-family: var(--serif); font-size: 1.6rem; color: var(--azul); margin-bottom: 6px; }
+
+        .lb {
+            position: fixed; inset: 0; z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(8, 12, 30, .96); padding: 56px 8px 16px;
+        }
+        .lb.aberto { display: flex; }
+        .lb img, .lb iframe { max-width: 100%; max-height: calc(100vh - 140px); border-radius: 8px; transition: opacity .2s; }
+        .lb iframe { width: min(92vw, 1000px); height: 70vh; border: 0; }
+        .lb-btn {
+            position: absolute; width: 46px; height: 46px; border-radius: 50%; border: 0; cursor: pointer;
+            background: rgba(255, 255, 255, .12); color: #fff; font-size: 1.6rem; line-height: 1;
+        }
+        .lb-btn:hover { background: rgba(255, 255, 255, .25); }
+        .lb-fechar { top: 10px; right: 10px; }
+        .lb-ant { left: 8px; top: 50%; transform: translateY(-50%); }
+        .lb-prox { right: 8px; top: 50%; transform: translateY(-50%); }
+        .lb-rodape { display: flex; align-items: center; gap: 14px; margin-top: 12px; color: rgba(255, 255, 255, .7); font-size: .85rem; }
+        .lb-rodape .btn { min-height: 40px; padding: 8px 18px; font-size: .85rem; }
+
+        .fotos-rodape { text-align: center; padding: 0 16px 40px; color: var(--tinta-suave); font-size: .85rem; }
+        .fotos-rodape a { color: var(--carvalho); }
+    </style>
+</head>
+
+<body>
+    <header class="fotos-top">
+        <div class="fotos-top-bar">
+            <a href="/80anos">← Site dos 80 anos</a>
+            <a href="https://instagram.com/adpatu" target="_blank" rel="noopener">@adpatu</a>
+        </div>
+        <img class="fotos-logo" src="/images/80anos/logo-jubileu.png?v=5" alt="80 anos · Jubileu de Carvalho" width="1000" height="838">
+        <h1>Fotos do jubileu</h1>
+        <p>Assembleia de Deus · Campo Eclesiástico de Patu-RN</p>
+    </header>
+
+    <main class="fotos-main">
+        <div class="dias" id="dias"></div>
+        <p class="resumo" id="resumo"></p>
+        <div class="grade" id="grade"></div>
+    </main>
+
+    <p class="fotos-rodape">Toque numa foto para ampliar e baixar. <a id="link-drive" href="#" target="_blank" rel="noopener" hidden>Abrir a pasta no Google Drive</a></p>
+
+    <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Foto ampliada">
+        <button class="lb-btn lb-fechar" id="lb-fechar" aria-label="Fechar">✕</button>
+        <button class="lb-btn lb-ant" id="lb-ant" aria-label="Foto anterior">‹</button>
+        <button class="lb-btn lb-prox" id="lb-prox" aria-label="Próxima foto">›</button>
+        <img id="lb-img" alt="">
+        <iframe id="lb-video" allow="autoplay; fullscreen" hidden></iframe>
+        <div class="lb-rodape">
+            <span id="lb-contador"></span>
+            <button type="button" class="btn btn-oak" id="lb-baixar">Baixar</button>
+        </div>
+    </div>
+
+    <script src="/scripts/80anos-comum.js?v=5"></script>
+    <script>
+        (function () {
+            var $ = function (id) { return document.getElementById(id); };
+            var fotos = [];
+            var atual = 0;
+            var cache = {};
+            var pedido = 0;
+
+            function ehVideo(f) { return f.mimeType.indexOf('video/') === 0; }
+            function nomeArquivo(f) { return ehVideo(f) ? f.name : f.name.replace(/\.(heic|heif)$/i, '.jpg'); }
+
+            // Dia inicial: ?dia=25 no link, senão o último dia que já tem fotos
+            var param = new URLSearchParams(location.search).get('dia');
+            var comFotos = FOTOS_80.filter(function (d) { return d.pastas.length; });
+            var diaAtual = (FOTOS_80.filter(function (d) { return d.dia === param; })[0]
+                || comFotos[comFotos.length - 1] || FOTOS_80[0]).dia;
+
+            function renderDias() {
+                $('dias').innerHTML = FOTOS_80.map(function (d) {
+                    return '<button type="button" data-dia="' + d.dia + '" aria-pressed="' + (d.dia === diaAtual) + '"'
+                        + (d.pastas.length ? '' : ' class="vazio"') + '>' + d.rotulo.split(' · ')[1]
+                        + '<small>' + (d.pastas.length ? d.titulo : 'Em breve') + '</small></button>';
+                }).join('');
+                $('dias').querySelectorAll('button').forEach(function (b) {
+                    b.onclick = function () {
+                        diaAtual = b.dataset.dia;
+                        history.replaceState(null, '', '?dia=' + diaAtual);
+                        renderDias();
+                        carregar();
+                    };
+                });
+            }
+
+            function carregar() {
+                var dia = FOTOS_80.filter(function (d) { return d.dia === diaAtual; })[0];
+                var meu = ++pedido;
+                var grade = $('grade');
+                $('link-drive').hidden = !dia.pastas.length;
+                if (dia.pastas.length) $('link-drive').href = 'https://drive.google.com/drive/folders/' + dia.pastas[0];
+
+                if (!dia.pastas.length) {
+                    fotos = [];
+                    $('resumo').textContent = '';
+                    grade.innerHTML = '<div class="aviso"><b>Em breve</b>As fotos de ' + dia.rotulo + ' serão publicadas aqui depois do culto.</div>';
+                    return;
+                }
+                $('resumo').textContent = 'Carregando fotos de ' + dia.rotulo + '…';
+                grade.innerHTML = new Array(12).join('<div class="esqueleto"></div>');
+
+                (cache[dia.dia] ? Promise.resolve(cache[dia.dia]) : listarFotos80(dia.pastas)).then(function (lista) {
+                    if (meu !== pedido) return;
+                    cache[dia.dia] = lista;
+                    fotos = lista;
+                    $('resumo').textContent = lista.length + ' fotos · ' + dia.rotulo + ' · ' + dia.titulo;
+                    if (!lista.length) {
+                        grade.innerHTML = '<div class="aviso"><b>Nenhuma foto ainda</b>Volte daqui a pouco.</div>';
+                        return;
+                    }
+                    grade.innerHTML = lista.map(function (f, i) {
+                        return '<button type="button" class="foto" data-i="' + i + '" aria-label="Ampliar ' + escaparHtml(f.name) + '">'
+                            + '<img src="' + miniaturaFoto80(f.id, 600) + '" alt="" loading="lazy" onerror="this.parentNode.remove()">'
+                            + (ehVideo(f) ? '<span class="play" aria-hidden="true">▶</span>' : '') + '</button>';
+                    }).join('');
+                    grade.querySelectorAll('.foto').forEach(function (b) {
+                        b.onclick = function () { abrir(Number(b.dataset.i)); };
+                    });
+                }).catch(function (err) {
+                    if (meu !== pedido) return;
+                    console.error(err);
+                    $('resumo').textContent = '';
+                    grade.innerHTML = '<div class="aviso"><b>Não foi possível carregar</b>Tente de novo ou '
+                        + '<a href="https://drive.google.com/drive/folders/' + dia.pastas[0] + '" target="_blank" rel="noopener">abra a pasta no Google Drive</a>.</div>';
+                });
+            }
+
+            // ===== Foto ampliada =====
+            function mostrar() {
+                var f = fotos[atual];
+                var img = $('lb-img'), video = $('lb-video');
+                if (ehVideo(f)) {
+                    img.hidden = true;
+                    video.hidden = false;
+                    video.src = 'https://drive.google.com/file/d/' + f.id + '/preview';
+                } else {
+                    video.hidden = true;
+                    video.src = '';
+                    img.hidden = false;
+                    img.style.opacity = 0;
+                    img.onload = function () { img.style.opacity = 1; };
+                    img.src = miniaturaFoto80(f.id, 1600);
+                }
+                $('lb-contador').textContent = (atual + 1) + ' / ' + fotos.length;
+                $('lb-baixar').textContent = 'Baixar';
+            }
+
+            function abrir(i) {
+                atual = i;
+                mostrar();
+                $('lb').classList.add('aberto');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function fechar() {
+                $('lb').classList.remove('aberto');
+                $('lb-video').src = '';
+                document.body.style.overflow = '';
+            }
+
+            function passar(n) {
+                atual = (atual + n + fotos.length) % fotos.length;
+                mostrar();
+            }
+
+            $('lb-fechar').onclick = fechar;
+            $('lb-ant').onclick = function () { passar(-1); };
+            $('lb-prox').onclick = function () { passar(1); };
+            $('lb').addEventListener('click', function (e) { if (e.target.id === 'lb') fechar(); });
+            document.addEventListener('keydown', function (e) {
+                if (!$('lb').classList.contains('aberto')) return;
+                if (e.key === 'Escape') fechar();
+                if (e.key === 'ArrowLeft') passar(-1);
+                if (e.key === 'ArrowRight') passar(1);
+            });
+
+            // Arrastar para o lado no celular
+            var toqueX = null;
+            $('lb').addEventListener('touchstart', function (e) { toqueX = e.touches[0].clientX; }, { passive: true });
+            $('lb').addEventListener('touchend', function (e) {
+                if (toqueX === null) return;
+                var dx = e.changedTouches[0].clientX - toqueX;
+                toqueX = null;
+                if (Math.abs(dx) > 50) passar(dx < 0 ? 1 : -1);
+            });
+
+            // Baixa a foto direto (no celular o link do Drive abre outra página)
+            $('lb-baixar').onclick = function () {
+                var f = fotos[atual];
+                var btn = this;
+                if (ehVideo(f)) return window.open('https://drive.google.com/uc?export=download&id=' + f.id, '_blank');
+                btn.textContent = 'Baixando…';
+                fetch(miniaturaFoto80(f.id, 0)).then(function (r) {
+                    if (!r.ok) throw new Error('download ' + r.status);
+                    return r.blob();
+                }).then(function (blob) {
+                    var a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = nomeArquivo(f);
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
+                }).catch(function (err) {
+                    console.error(err);
+                    window.open('https://drive.google.com/uc?export=download&id=' + f.id, '_blank');
+                }).then(function () { btn.textContent = 'Baixar'; });
+            };
+
+            renderDias();
+            carregar();
+        })();
+    </script>
+</body>
+
+</html>
