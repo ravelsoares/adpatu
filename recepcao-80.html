@@ -62,6 +62,7 @@
         .btn-perigo { background: none; border: 1px solid #ffb4a8; color: #ffb4a8; }
         .toolbar { display: flex; gap: 8px; margin-bottom: 10px; }
         .toolbar .campo { flex: 1; font-size: 1rem; letter-spacing: 0; min-height: 46px; }
+        .toolbar select.campo { flex: 0 1 auto; min-width: 0; }
         .btn-sm { min-height: 46px; padding: 8px 16px; font-size: .85rem; }
         .switch { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; }
         .switch input { width: 22px; height: 22px; accent-color: var(--carvalho); }
@@ -171,6 +172,11 @@
                     <div class="toolbar">
                         <input id="filtro" class="campo" type="search" placeholder="Filtrar por nome, CPF ou congregação">
                         <button type="button" class="btn btn-ghost btn-sm" id="btn-csv">CSV</button>
+                    </div>
+                    <div class="toolbar">
+                        <select id="filtro-data" class="campo" aria-label="Data da inscrição">
+                            <option value="">Todas as datas de inscrição</option>
+                        </select>
                     </div>
                     <p class="area-sub" id="lista-resumo"></p>
                     <div id="lista"></div>
@@ -442,23 +448,51 @@
             });
 
             // ===== Lista de inscritos =====
+            // Data da inscrição no fuso de Patu (dd/mm/aaaa); '' se ainda não gravada
+            function dataInscricao(i) {
+                return i.criadoEm && i.criadoEm.toDate
+                    ? i.criadoEm.toDate().toLocaleDateString('pt-BR', { timeZone: 'America/Fortaleza' }) : '';
+            }
+
+            function renderFiltroData() {
+                var sel = $('filtro-data');
+                var atual = sel.value;
+                var contagem = {};
+                inscritos.forEach(function (i) {
+                    var d = dataInscricao(i) || 'sem data';
+                    contagem[d] = (contagem[d] || 0) + 1;
+                });
+                var datas = Object.keys(contagem).sort(function (a, b) {
+                    if (a === 'sem data') return 1;
+                    if (b === 'sem data') return -1;
+                    return b.split('/').reverse().join('').localeCompare(a.split('/').reverse().join(''));
+                });
+                sel.innerHTML = '<option value="">Todas as datas de inscrição</option>' + datas.map(function (d) {
+                    return '<option value="' + d + '">' + (d === 'sem data' ? 'Sem data' : 'Inscritos em ' + d) + ' (' + contagem[d] + ')</option>';
+                }).join('');
+                sel.value = contagem[atual] ? atual : '';
+            }
+
             function filtrados() {
                 var t = normalizar($('filtro').value.trim());
                 var d = cpfSoNumeros(t);
-                if (!t) return inscritos;
+                var data = $('filtro-data').value;
                 return inscritos.filter(function (i) {
-                    return normalizar(i.nome + ' ' + i.congregacao + ' ' + i.funcao).indexOf(t) >= 0 || (d && i.cpf.indexOf(d) >= 0);
+                    if (data && (dataInscricao(i) || 'sem data') !== data) return false;
+                    return !t || normalizar(i.nome + ' ' + i.congregacao + ' ' + i.funcao).indexOf(t) >= 0 || (d && i.cpf.indexOf(d) >= 0);
                 });
             }
 
             function renderLista() {
+                renderFiltroData();
                 var l = filtrados();
                 $('lista-resumo').textContent = l.length + ' inscrito(s)';
                 $('lista').innerHTML = l.map(function (i) {
                     var p = i.presenca || {};
                     return '<div class="linha"><button type="button" class="linha-info" data-editar="' + i.cpf + '" title="Editar inscrição"><b>'
                         + escaparHtml(i.nome) + '</b><small>' + escaparHtml([cpfFormatar(i.cpf), i.funcao, i.congregacao].filter(Boolean).join(' · '))
-                        + (i.whatsapp ? ' · ' + escaparHtml(i.whatsapp) : '') + '</small></button>'
+                        + (i.whatsapp ? ' · ' + escaparHtml(i.whatsapp) : '')
+                        + (dataInscricao(i) ? ' · inscrito em ' + dataInscricao(i) : '') + '</small></button>'
                         + '<span class="presencas">' + DIAS_EBO_80.map(function (d) {
                             return '<button type="button" class="' + (p[d.dia] ? 'on' : '') + '" data-cpf="' + i.cpf + '" data-dia="' + d.dia + '" title="'
                                 + d.rotulo + (p[d.dia] ? ' · presente (clique para desfazer)' : ' · clique para fazer o check-in') + '">' + d.dia + '</button>';
@@ -478,6 +512,7 @@
                 });
             }
             $('filtro').addEventListener('input', renderLista);
+            $('filtro-data').addEventListener('change', renderLista);
 
             // ===== Editar / excluir inscrição =====
             function abrirEditor(cpf) {
@@ -563,11 +598,11 @@
             };
 
             $('btn-csv').onclick = function () {
-                var cab = ['CPF', 'Nome', 'Função', 'Congregação', 'WhatsApp', 'Origem']
+                var cab = ['CPF', 'Nome', 'Função', 'Congregação', 'WhatsApp', 'Origem', 'Data da inscrição']
                     .concat(DIAS_EBO_80.map(function (d) { return 'Presença ' + d.dia + '/11'; })).concat(['Total']);
-                var linhas = inscritos.map(function (i) {
+                var linhas = filtrados().map(function (i) {
                     var p = i.presenca || {};
-                    return [cpfFormatar(i.cpf), i.nome, i.funcao, i.congregacao, i.whatsapp, i.origem]
+                    return [cpfFormatar(i.cpf), i.nome, i.funcao, i.congregacao, i.whatsapp, i.origem, dataInscricao(i)]
                         .concat(DIAS_EBO_80.map(function (d) { return p[d.dia] ? 'sim' : ''; }))
                         .concat([contarPresencas(i)]);
                 });
