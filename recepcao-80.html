@@ -174,6 +174,7 @@
                 <section class="area-card">
                     <div class="toolbar">
                         <input id="filtro" class="campo" type="search" placeholder="Filtrar por nome, CPF ou congregação">
+                        <button type="button" class="btn btn-ghost btn-sm" id="btn-imprimir">Imprimir</button>
                         <button type="button" class="btn btn-ghost btn-sm" id="btn-csv">CSV</button>
                     </div>
                     <div class="ordem" id="ordem">
@@ -592,6 +593,69 @@
                     if (selecionado === i.cpf) { selecionado = null; $('ficha').hidden = true; }
                     fecharEditor();
                 }).catch(function (err) { toast('Erro: ' + err.message, true); });
+            };
+
+            // Lista impressa no mesmo visual da ficha de inscrição (A4 deitado)
+            $('btn-imprimir').onclick = function () {
+                var lista = filtrados();
+                if (!lista.length) { toast('Nenhum inscrito para imprimir', true); return; }
+                var POR_FOLHA = 15;
+                var folhas = Math.ceil(lista.length / POR_FOLHA);
+                var hoje = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Fortaleza' });
+                var filtro = $('filtro').value.trim();
+                var rotuloOrdem = { recentes: 'inscrição mais recente', antigas: 'inscrição mais antiga', nome: 'nome A–Z' }[ordem];
+                var logo = location.origin + '/images/80anos/logo-jubileu.jpg';
+                var paginas = [];
+                for (var f = 0; f < folhas; f++) {
+                    var linhas = '';
+                    for (var k = 0; k < POR_FOLHA; k++) {
+                        var n = f * POR_FOLHA + k;
+                        var i = lista[n];
+                        var p = (i && i.presenca) || {};
+                        linhas += '<tr><td class="n">' + (i ? n + 1 : '') + '</td>'
+                            + '<td class="nome">' + (i ? escaparHtml(i.nome) : '') + '</td>'
+                            + '<td>' + (i ? cpfFormatar(i.cpf) : '') + '</td>'
+                            + '<td>' + (i ? escaparHtml(i.whatsapp || '') : '') + '</td>'
+                            + '<td>' + (i ? escaparHtml(i.funcao || '') : '') + '</td>'
+                            + '<td>' + (i ? escaparHtml(i.congregacao || '') : '') + '</td>'
+                            + '<td class="c">' + (i ? dataInscricao(i) : '') + '</td>'
+                            + DIAS_EBO_80.map(function (d) {
+                                return '<td class="c"><span class="box">' + (i && p[d.dia] ? '✓' : '') + '</span></td>';
+                            }).join('') + '</tr>';
+                    }
+                    paginas.push('<section class="folha"><header>'
+                        + '<img src="' + logo + '" alt="">'
+                        + '<div class="tit"><h1>Lista de inscritos · EBOCAMP 2026</h1>'
+                        + '<p>Assembleia de Deus · Campo Eclesiástico de Patu-RN · Jubileu de Carvalho · 80 anos</p>'
+                        + '<p class="destaque">' + lista.length + ' inscrito' + (lista.length > 1 ? 's' : '')
+                        + ' · ordem: ' + rotuloOrdem + (filtro ? ' · filtro: “' + escaparHtml(filtro) + '”' : '') + '</p></div>'
+                        + '<div class="lado"><p>Impresso em ' + hoje + '</p><p>Folha ' + (f + 1) + ' de ' + folhas + '</p></div>'
+                        + '</header><table><thead><tr><th>Nº</th><th>Nome completo</th><th>CPF</th><th>WhatsApp</th><th>Função</th><th>Congregação / cidade</th><th>Inscrição</th>'
+                        + DIAS_EBO_80.map(function (d) { return '<th>' + d.dia + '/11</th>'; }).join('')
+                        + '</tr></thead><tbody>' + linhas + '</tbody></table>'
+                        + '<footer>Presença: ✓ = check-in feito no site · marque à mão quem chegar sem check-in e lance depois na recepção.</footer></section>');
+                }
+                var css = '@page{size:A4 landscape;margin:12mm}*{box-sizing:border-box}body{margin:0;font-family:Helvetica,Arial,sans-serif;color:#16296b;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+                    + '.folha{height:186mm;display:flex;flex-direction:column;page-break-after:always;break-after:page}.folha:last-child{page-break-after:auto;break-after:auto}'
+                    + 'header{display:flex;align-items:center;gap:8mm;margin-bottom:5mm}header img{height:26mm}.tit{flex:1}h1{margin:0 0 1.5mm;font-size:18pt}'
+                    + '.tit p{margin:0 0 1.2mm;font-size:10pt;color:#9a948e}.tit p.destaque{color:#8b5a2b;font-weight:700}.lado{text-align:right;font-size:9pt}.lado p{margin:0 0 2mm}'
+                    + 'table{width:100%;flex:1;border-collapse:collapse;border:1px solid #16296b;table-layout:fixed}'
+                    + 'th{background:#16296b;color:#fff;font-size:8.5pt;height:8mm;padding:0 2px}td{border:1px solid #c9c2b8;font-size:9pt;padding:0 5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}'
+                    + 'tbody tr:nth-child(even) td{background:#f7f1e8}td.n{text-align:center;color:#9a948e;font-size:8pt}td.nome{font-weight:700}td.c{text-align:center}'
+                    + '.box{display:inline-block;width:5mm;height:5mm;border:1px solid #9a948e;line-height:5mm;font-weight:700;color:#8b5a2b}'
+                    + 'col.n{width:4%}col.nome{width:25%}col.cpf{width:11%}col.w{width:11%}col.f{width:8%}col.cg{width:17%}col.d{width:8%}col.p{width:5.33%}'
+                    + 'footer{margin-top:3mm;font-size:8pt;color:#9a948e}';
+                var colgroup = '<colgroup><col class="n"><col class="nome"><col class="cpf"><col class="w"><col class="f"><col class="cg"><col class="d"><col class="p"><col class="p"><col class="p"></colgroup>';
+                var html = '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Inscritos EBOCAMP 2026</title><style>' + css + '</style></head><body>'
+                    + paginas.join('').replace(/<table>/g, '<table>' + colgroup) + '</body></html>';
+                var w = window.open('', '_blank');
+                if (!w) { toast('Libere pop-ups para imprimir', true); return; }
+                w.document.open();
+                w.document.write(html);
+                w.document.close();
+                var img = w.document.images[0];
+                var imprimir = function () { setTimeout(function () { w.focus(); w.print(); }, 150); };
+                if (img && !img.complete) { img.onload = imprimir; img.onerror = imprimir; } else imprimir();
             };
 
             $('btn-csv').onclick = function () {
