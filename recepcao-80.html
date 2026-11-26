@@ -62,7 +62,10 @@
         .btn-perigo { background: none; border: 1px solid #ffb4a8; color: #ffb4a8; }
         .toolbar { display: flex; gap: 8px; margin-bottom: 10px; }
         .toolbar .campo { flex: 1; font-size: 1rem; letter-spacing: 0; min-height: 46px; }
-        .toolbar select.campo { flex: 0 1 auto; min-width: 0; }
+        .ordem { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; font-size: .85rem; }
+        .ordem span { opacity: .7; }
+        .ordem button { padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.05); color: #fff; font: inherit; font-size: .85rem; font-weight: 700; cursor: pointer; }
+        .ordem button[aria-pressed="true"] { background: linear-gradient(135deg, var(--carvalho-claro), var(--carvalho)); border-color: transparent; }
         .btn-sm { min-height: 46px; padding: 8px 16px; font-size: .85rem; }
         .switch { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; }
         .switch input { width: 22px; height: 22px; accent-color: var(--carvalho); }
@@ -173,10 +176,11 @@
                         <input id="filtro" class="campo" type="search" placeholder="Filtrar por nome, CPF ou congregação">
                         <button type="button" class="btn btn-ghost btn-sm" id="btn-csv">CSV</button>
                     </div>
-                    <div class="toolbar">
-                        <select id="filtro-data" class="campo" aria-label="Data da inscrição">
-                            <option value="">Todas as datas de inscrição</option>
-                        </select>
+                    <div class="ordem" id="ordem">
+                        <span>Ordenar:</span>
+                        <button type="button" data-ordem="recentes" aria-pressed="true">Inscrição mais recente</button>
+                        <button type="button" data-ordem="antigas" aria-pressed="false">Mais antiga</button>
+                        <button type="button" data-ordem="nome" aria-pressed="false">Nome A–Z</button>
                     </div>
                     <p class="area-sub" id="lista-resumo"></p>
                     <div id="lista"></div>
@@ -454,37 +458,24 @@
                     ? i.criadoEm.toDate().toLocaleDateString('pt-BR', { timeZone: 'America/Fortaleza' }) : '';
             }
 
-            function renderFiltroData() {
-                var sel = $('filtro-data');
-                var atual = sel.value;
-                var contagem = {};
-                inscritos.forEach(function (i) {
-                    var d = dataInscricao(i) || 'sem data';
-                    contagem[d] = (contagem[d] || 0) + 1;
-                });
-                var datas = Object.keys(contagem).sort(function (a, b) {
-                    if (a === 'sem data') return 1;
-                    if (b === 'sem data') return -1;
-                    return b.split('/').reverse().join('').localeCompare(a.split('/').reverse().join(''));
-                });
-                sel.innerHTML = '<option value="">Todas as datas de inscrição</option>' + datas.map(function (d) {
-                    return '<option value="' + d + '">' + (d === 'sem data' ? 'Sem data' : 'Inscritos em ' + d) + ' (' + contagem[d] + ')</option>';
-                }).join('');
-                sel.value = contagem[atual] ? atual : '';
+            var ordem = 'recentes';
+            function quando(i) {
+                return i.criadoEm && i.criadoEm.toMillis ? i.criadoEm.toMillis() : Date.now(); // recém-criada sem hora do servidor
             }
 
             function filtrados() {
                 var t = normalizar($('filtro').value.trim());
                 var d = cpfSoNumeros(t);
-                var data = $('filtro-data').value;
-                return inscritos.filter(function (i) {
-                    if (data && (dataInscricao(i) || 'sem data') !== data) return false;
+                var l = inscritos.filter(function (i) {
                     return !t || normalizar(i.nome + ' ' + i.congregacao + ' ' + i.funcao).indexOf(t) >= 0 || (d && i.cpf.indexOf(d) >= 0);
                 });
+                if (ordem !== 'nome') {
+                    l = l.slice().sort(function (a, b) { return ordem === 'recentes' ? quando(b) - quando(a) : quando(a) - quando(b); });
+                }
+                return l;
             }
 
             function renderLista() {
-                renderFiltroData();
                 var l = filtrados();
                 $('lista-resumo').textContent = l.length + ' inscrito(s)';
                 $('lista').innerHTML = l.map(function (i) {
@@ -512,7 +503,13 @@
                 });
             }
             $('filtro').addEventListener('input', renderLista);
-            $('filtro-data').addEventListener('change', renderLista);
+            $('ordem').querySelectorAll('button').forEach(function (b) {
+                b.onclick = function () {
+                    ordem = b.dataset.ordem;
+                    $('ordem').querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); });
+                    renderLista();
+                };
+            });
 
             // ===== Editar / excluir inscrição =====
             function abrirEditor(cpf) {
