@@ -2,6 +2,12 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // 80 anos: o id da inscrição é o CPF (e o campo cpf igual a ele) ou um id automático sem CPF
+    function idValido80(id) {
+      return (id.matches('^[0-9]{11}$') && request.resource.data.cpf == id)
+          || (!id.matches('^[0-9]{11}$') && request.resource.data.cpf == '');
+    }
+
     // ============================================================
     //  PÁGINAS PÚBLICAS / EVENTOS (sem login) — leitura e escrita liberadas
     //  (mantém o comportamento que já funcionava antes)
@@ -36,9 +42,12 @@ service cloud.firestore {
     //  A recepção entra com uma senha conferida só na página (recepcao-80.html),
     //  então estas coleções ficam abertas para leitura e escrita sem login.
     // ============================================================
-    match /inscricoes-80anos/{cpf} {
+    // id = CPF (11 dígitos) ou id automático para quem foi cadastrado sem CPF (cpf == '').
+    // Inscrições pelo site estão encerradas: só a recepção cria (origem 'recepcao').
+    match /inscricoes-80anos/{id} {
       allow read: if true;
-      allow create, update: if cpf.matches('^[0-9]{11}$') && request.resource.data.cpf == cpf;
+      allow create: if idValido80(id) && request.resource.data.origem == 'recepcao';
+      allow update: if idValido80(id);
       allow delete: if true;
     }
 

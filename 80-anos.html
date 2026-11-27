@@ -33,7 +33,7 @@
             <a href="#preletores">Preletores</a>
             <a href="/80anos/fotos">Fotos</a>
             <a href="/80anos/obreiro">Área do Obreiro</a>
-            <a href="#inscricoes" class="nav-cta">Inscreva-se</a>
+            <a href="/80anos/fotos" class="nav-cta">Ver fotos</a>
         </nav>
     </header>
 
@@ -61,7 +61,7 @@
             </div>
 
             <div class="hero-actions">
-                <a href="#inscricoes" class="btn btn-oak">Fazer inscrição</a>
+                <a href="/80anos/fotos" class="btn btn-oak">Ver fotos</a>
                 <a href="#programacao" class="btn btn-ghost">Ver programação</a>
             </div>
         </div>
@@ -388,16 +388,17 @@
     <section class="section section-blue" id="inscricoes">
         <div class="wrap wrap-narrow">
             <p class="eyebrow">Inscrições</p>
-            <h2>Garanta sua vaga na EBOCAMP</h2>
-            <p class="lead">Os cultos são abertos a todos. A inscrição é para obreiros e líderes que vão participar
-                das aulas da Escola Bíblica.</p>
+            <h2>Inscrições encerradas</h2>
+            <p class="lead">Os cultos continuam abertos a todos. As inscrições da EBOCAMP pelo site foram encerradas.</p>
 
-            <div class="free-badge">
-                <b>100% gratuita</b>
-                <span>A EBOCAMP é totalmente de graça. A inscrição serve apenas para você acessar o seu material.</span>
+            <div class="form-done" id="insc-encerradas">
+                <p class="form-done-icon" aria-hidden="true">✓</p>
+                <h3>Obrigado a todos que se inscreveram!</h3>
+                <p>Ainda não se inscreveu? Procure a recepção no local do evento.</p>
             </div>
 
-            <form class="form" id="form-inscricao" novalidate>
+            <!-- Formulário desativado (inscrições encerradas); só a recepção cadastra -->
+            <form class="form" id="form-inscricao" novalidate hidden>
                 <label>CPF
                     <input type="text" name="cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" maxlength="14" required>
                 </label>

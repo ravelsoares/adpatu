@@ -129,9 +129,10 @@
 
                 <section class="area-card" id="novo" hidden>
                     <h2>Cadastrar na recepção</h2>
-                    <p class="area-sub">Nenhuma inscrição com o CPF <b id="novo-cpf"></b>. Cadastre e confirme a presença de uma vez.</p>
+                    <p class="area-sub">Nenhuma inscrição encontrada. Cadastre e confirme a presença de uma vez.</p>
                     <form class="grid-form" id="form-novo">
                         <label>Nome completo <input class="campo" name="nome" required minlength="3"></label>
+                        <label>CPF <small class="area-sub">(opcional)</small> <input class="campo" name="cpf" inputmode="numeric" maxlength="14"></label>
                         <label>Função
                             <select class="campo" name="funcao" required>
                                 <option value="">Selecione</option>
@@ -152,7 +153,7 @@
                     <h2>Editar inscrição</h2>
                     <form class="grid-form" id="form-editar">
                         <label>Nome completo <input class="campo" name="nome" required minlength="3"></label>
-                        <label>CPF <input class="campo" name="cpf" inputmode="numeric" maxlength="14" required></label>
+                        <label>CPF <small class="area-sub">(opcional)</small> <input class="campo" name="cpf" inputmode="numeric" maxlength="14"></label>
                         <label>Função
                             <select class="campo" name="funcao" required>
                                 <option value="">Selecione</option>
@@ -236,8 +237,8 @@
             var col = db.collection(COL_INSCRICOES_80);
             var inscritos = [];      // lista ao vivo
             var cancelar = null;     // onSnapshot
-            var selecionado = null;  // cpf da ficha aberta
-            var editando = null;     // cpf em edição na aba Inscritos
+            var selecionado = null;  // id da ficha aberta
+            var editando = null;     // id em edição na aba Inscritos
             var cfg = null;
             var $ = function (id) { return document.getElementById(id); };
 
@@ -305,7 +306,7 @@
             function iniciar() {
                 lerConfig80(db).then(function (c) { cfg = c; renderConfig(); });
                 cancelar = col.onSnapshot(function (snap) {
-                    inscritos = snap.docs.map(function (d) { return d.data(); })
+                    inscritos = snap.docs.map(function (d) { return Object.assign({ cpf: '' }, d.data(), { id: d.id }); })
                         .sort(function (a, b) { return a.nome.localeCompare(b.nome, 'pt-BR'); });
                     telas('tela-app');
                     renderKpis();
@@ -329,8 +330,15 @@
                 b.onclick = function () { irPara(b.dataset.aba); };
             });
 
-            function acharInscrito(cpf) {
-                return inscritos.filter(function (x) { return x.cpf === cpf; })[0];
+            // id do documento = CPF; quem se inscreve sem CPF ganha um id automático
+            function acharInscrito(id) {
+                return inscritos.filter(function (x) { return x.id === id; })[0];
+            }
+            function acharPorCpf(cpf) {
+                return cpf ? inscritos.filter(function (x) { return x.cpf === cpf; })[0] : null;
+            }
+            function cpfOuSem(i) {
+                return i.cpf ? cpfFormatar(i.cpf) : 'sem CPF';
             }
 
             // ===== Check-in =====
@@ -367,42 +375,51 @@
 
                 var achados;
                 if (/^[\d.\-\s]+$/.test(termo)) {
-                    achados = inscritos.filter(function (i) { return i.cpf.indexOf(digitos) === 0; });
+                    achados = digitos ? inscritos.filter(function (i) { return i.cpf.indexOf(digitos) === 0; }) : [];
                     // CPF completo e válido sem inscrição: oferece cadastro na hora
                     if (!achados.length && digitos.length === 11 && cpfValido(digitos)) {
-                        $('novo-cpf').textContent = cpfFormatar(digitos);
+                        $('form-novo').cpf.value = cpfFormatar(digitos);
                         $('novo').hidden = false;
                         $('ficha').hidden = true;
                     }
                 } else {
                     var n = normalizar(termo);
                     achados = inscritos.filter(function (i) { return normalizar(i.nome).indexOf(n) >= 0; });
+                    // Nome sem inscrição: oferece cadastro (CPF opcional)
+                    if (!achados.length && termo.length >= 3) {
+                        $('form-novo').nome.value = termo;
+                        $('form-novo').cpf.value = '';
+                        $('novo').hidden = false;
+                        $('ficha').hidden = true;
+                    }
                 }
                 ul.innerHTML = achados.slice(0, 8).map(function (i) {
                     var ok = i.presenca && i.presenca[diaAtual];
-                    return '<li><button type="button" data-cpf="' + i.cpf + '"><span>' + escaparHtml(i.nome)
-                        + '<small>' + cpfFormatar(i.cpf) + ' · ' + escaparHtml(i.congregacao || '') + '</small></span>'
+                    return '<li><button type="button" data-id="' + escaparHtml(i.id) + '"><span>' + escaparHtml(i.nome)
+                        + '<small>' + cpfOuSem(i) + ' · ' + escaparHtml(i.congregacao || '') + '</small></span>'
                         + (ok ? '<span class="tag-ok">Presente</span>' : '') + '</button></li>';
                 }).join('') || (($('novo').hidden) ? '<li class="area-sub">Nenhum inscrito encontrado.</li>' : '');
-                ul.querySelectorAll('button').forEach(function (b) { b.onclick = function () { abrirFicha(b.dataset.cpf); }; });
+                ul.querySelectorAll('button').forEach(function (b) { b.onclick = function () { abrirFicha(b.dataset.id); }; });
 
                 // Achou exatamente um CPF completo: abre direto
-                if (digitos.length === 11 && achados.length === 1 && selecionado !== achados[0].cpf) abrirFicha(achados[0].cpf);
+                if (/^[\d.\-\s]+$/.test(termo) && digitos.length === 11 && achados.length === 1 && selecionado !== achados[0].id) abrirFicha(achados[0].id);
             }
             $('busca').addEventListener('input', buscar);
+            cpfMascarar($('form-novo').cpf);
+            cpfMascarar($('form-editar').cpf);
 
-            function abrirFicha(cpf) {
-                var i = inscritos.filter(function (x) { return x.cpf === cpf; })[0];
+            function abrirFicha(id) {
+                var i = acharInscrito(id);
                 var ficha = $('ficha');
                 if (!i) { ficha.hidden = true; selecionado = null; return; }
-                selecionado = cpf;
+                selecionado = id;
                 var p = i.presenca || {};
                 var dia = DIAS_EBO_80.filter(function (d) { return d.dia === diaAtual; })[0];
                 var presente = !!p[diaAtual];
                 ficha.hidden = false;
                 ficha.innerHTML = '<p class="eyebrow">' + escaparHtml(i.funcao || '') + '</p>'
                     + '<h2>' + escaparHtml(i.nome) + '</h2>'
-                    + '<p class="area-sub">' + cpfFormatar(i.cpf) + ' · ' + escaparHtml(i.congregacao || '')
+                    + '<p class="area-sub">' + cpfOuSem(i) + ' · ' + escaparHtml(i.congregacao || '')
                     + '</p>'
                     + '<ul class="dias">' + DIAS_EBO_80.map(function (d) {
                         var ts = p[d.dia];
@@ -414,17 +431,17 @@
                         ? '<p class="area-msg ok">Presença de ' + dia.rotulo + ' já confirmada.</p><button type="button" class="btn-link" id="btn-desfazer">Desfazer check-in deste dia</button>'
                         : '<button type="button" class="btn btn-oak btn-block btn-grande" id="btn-checkin">Confirmar presença · ' + dia.rotulo + '</button>')
                     + '<button type="button" class="btn-link" id="btn-editar-ficha">Editar inscrição</button>';
-                $('btn-editar-ficha').onclick = function () { irPara('inscritos'); abrirEditor(cpf); };
-                if ($('btn-checkin')) $('btn-checkin').onclick = function () { marcar(cpf, true, this); };
+                $('btn-editar-ficha').onclick = function () { irPara('inscritos'); abrirEditor(id); };
+                if ($('btn-checkin')) $('btn-checkin').onclick = function () { marcar(id, true, this); };
                 if ($('btn-desfazer')) $('btn-desfazer').onclick = function () {
-                    if (confirm('Remover a presença de ' + i.nome + ' em ' + dia.rotulo + '?')) marcar(cpf, false, this);
+                    if (confirm('Remover a presença de ' + i.nome + ' em ' + dia.rotulo + '?')) marcar(id, false, this);
                 };
             }
 
-            function marcar(cpf, presente, botao, dia) {
+            function marcar(id, presente, botao, dia) {
                 botao.disabled = true;
                 var valor = presente ? firebase.firestore.FieldValue.serverTimestamp() : firebase.firestore.FieldValue.delete();
-                col.doc(cpf).update(new firebase.firestore.FieldPath('presenca', dia || diaAtual), valor).then(function () {
+                col.doc(id).update(new firebase.firestore.FieldPath('presenca', dia || diaAtual), valor).then(function () {
                     if (dia) return toast(presente ? 'Presença confirmada ✓' : 'Check-in removido');
                     toast(presente ? 'Presença confirmada ✓' : 'Check-in removido');
                     if (presente) { $('busca').value = ''; $('resultados').innerHTML = ''; $('busca').focus(); }
@@ -438,11 +455,12 @@
             $('form-novo').addEventListener('submit', function (e) {
                 e.preventDefault();
                 var f = e.target;
-                var cpf = cpfSoNumeros($('busca').value);
-                if (!cpfValido(cpf)) return toast('CPF inválido', true);
+                var cpf = cpfSoNumeros(f.cpf.value);
+                if (cpf && !cpfValido(cpf)) return toast('CPF inválido (ou deixe em branco)', true);
+                if (acharPorCpf(cpf)) return toast('Já existe inscrição com esse CPF', true);
                 var presenca = {};
                 presenca[diaAtual] = firebase.firestore.FieldValue.serverTimestamp();
-                col.doc(cpf).set({
+                (cpf ? col.doc(cpf) : col.doc()).set({
                     cpf: cpf,
                     nome: f.nome.value.trim().replace(/\s+/g, ' '),
                     funcao: f.funcao.value,
@@ -489,12 +507,12 @@
                 $('lista-resumo').textContent = l.length + ' inscrito(s)';
                 $('lista').innerHTML = l.map(function (i) {
                     var p = i.presenca || {};
-                    return '<div class="linha"><button type="button" class="linha-info" data-editar="' + i.cpf + '" title="Editar inscrição"><b>'
-                        + escaparHtml(i.nome) + '</b><small>' + escaparHtml([cpfFormatar(i.cpf), i.funcao, i.congregacao].filter(Boolean).join(' · '))
+                    return '<div class="linha"><button type="button" class="linha-info" data-editar="' + escaparHtml(i.id) + '" title="Editar inscrição"><b>'
+                        + escaparHtml(i.nome) + '</b><small>' + escaparHtml([cpfOuSem(i), i.funcao, i.congregacao].filter(Boolean).join(' · '))
                         + (i.whatsapp ? ' · ' + escaparHtml(i.whatsapp) : '')
                         + (dataInscricao(i) ? ' · inscrito em ' + dataInscricao(i) : '') + '</small></button>'
                         + '<span class="presencas">' + DIAS_EBO_80.map(function (d) {
-                            return '<button type="button" class="' + (p[d.dia] ? 'on' : '') + '" data-cpf="' + i.cpf + '" data-dia="' + d.dia + '" title="'
+                            return '<button type="button" class="' + (p[d.dia] ? 'on' : '') + '" data-id="' + escaparHtml(i.id) + '" data-dia="' + d.dia + '" title="'
                                 + d.rotulo + (p[d.dia] ? ' · presente (clique para desfazer)' : ' · clique para fazer o check-in') + '">' + d.dia + '</button>';
                         }).join('') + '</span></div>';
                 }).join('') || '<p class="area-sub">Nenhuma inscrição ainda.</p>';
@@ -503,11 +521,11 @@
                 });
                 $('lista').querySelectorAll('.presencas button').forEach(function (b) {
                     b.onclick = function () {
-                        var i = acharInscrito(b.dataset.cpf);
+                        var i = acharInscrito(b.dataset.id);
                         var dia = DIAS_EBO_80.filter(function (d) { return d.dia === b.dataset.dia; })[0];
                         var presente = !!(i.presenca && i.presenca[dia.dia]);
                         if (presente && !confirm('Remover a presença de ' + i.nome + ' em ' + dia.rotulo + '?')) return;
-                        marcar(i.cpf, !presente, b, dia.dia);
+                        marcar(i.id, !presente, b, dia.dia);
                     };
                 });
             }
@@ -521,10 +539,10 @@
             });
 
             // ===== Editar / excluir inscrição =====
-            function abrirEditor(cpf) {
-                var i = acharInscrito(cpf);
+            function abrirEditor(id) {
+                var i = acharInscrito(id);
                 if (!i) return;
-                editando = cpf;
+                editando = id;
                 var f = $('form-editar');
                 var p = i.presenca || {};
                 f.nome.value = i.nome || '';
@@ -557,8 +575,9 @@
                 if (!i) return fecharEditor();
                 var FV = firebase.firestore.FieldValue;
                 var novoCpf = cpfSoNumeros(f.cpf.value);
-                if (!cpfValido(novoCpf)) return toast('CPF inválido', true);
-                if (novoCpf !== i.cpf && acharInscrito(novoCpf)) return toast('Já existe inscrição com esse CPF', true);
+                if (novoCpf && !cpfValido(novoCpf)) return toast('CPF inválido (ou deixe em branco)', true);
+                var outro = acharPorCpf(novoCpf);
+                if (outro && outro.id !== i.id) return toast('Já existe inscrição com esse CPF', true);
 
                 var dados = {
                     nome: f.nome.value.trim().replace(/\s+/g, ' '),
@@ -574,20 +593,24 @@
                     if (f['dia-' + d.dia].checked) presenca[d.dia] = antiga[d.dia] || FV.serverTimestamp();
                 });
 
+                // O id do documento é o CPF (ou automático, sem CPF): se mudar, cria o novo e apaga o antigo
+                var novoRef = novoCpf ? col.doc(novoCpf) : (i.cpf ? col.doc() : col.doc(i.id));
                 var op;
-                if (novoCpf === i.cpf) {
+                if (novoRef.id === i.id) {
                     dados.presenca = presenca;
-                    op = col.doc(i.cpf).update(dados);
+                    dados.cpf = novoCpf;
+                    op = col.doc(i.id).update(dados);
                 } else {
-                    // O CPF é o id do documento: cria o novo e apaga o antigo
+                    var antigo = Object.assign({}, i);
+                    delete antigo.id;
                     var lote = db.batch();
-                    lote.set(col.doc(novoCpf), Object.assign({}, i, dados, { cpf: novoCpf, presenca: presenca }));
-                    lote.delete(col.doc(i.cpf));
+                    lote.set(novoRef, Object.assign(antigo, dados, { cpf: novoCpf, presenca: presenca }));
+                    lote.delete(col.doc(i.id));
                     op = lote.commit();
                 }
                 op.then(function () {
                     toast('Inscrição atualizada ✓');
-                    if (selecionado === i.cpf) selecionado = novoCpf;
+                    if (selecionado === i.id) selecionado = novoRef.id;
                     fecharEditor();
                 }).catch(function (err) { toast('Erro: ' + err.message, true); });
             });
@@ -596,9 +619,9 @@
                 var i = acharInscrito(editando);
                 if (!i) return fecharEditor();
                 if (!confirm('Excluir a inscrição de ' + i.nome + '? As presenças também serão apagadas.')) return;
-                col.doc(i.cpf).delete().then(function () {
+                col.doc(i.id).delete().then(function () {
                     toast('Inscrição excluída');
-                    if (selecionado === i.cpf) { selecionado = null; $('ficha').hidden = true; }
+                    if (selecionado === i.id) { selecionado = null; $('ficha').hidden = true; }
                     fecharEditor();
                 }).catch(function (err) { toast('Erro: ' + err.message, true); });
             };
