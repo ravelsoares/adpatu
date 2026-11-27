@@ -114,7 +114,7 @@
         </div>
     </div>
 
-    <script src="/scripts/80anos-comum.js?v=5"></script>
+    <script src="/scripts/80anos-comum.js?v=6"></script>
     <script>
         (function () {
             var $ = function (id) { return document.getElementById(id); };
@@ -128,9 +128,12 @@
 
             // Dia inicial: ?dia=25 no link, senão o último dia que já tem fotos
             var param = new URLSearchParams(location.search).get('dia');
-            var comFotos = FOTOS_80.filter(function (d) { return d.pastas.length; });
-            var diaAtual = (FOTOS_80.filter(function (d) { return d.dia === param; })[0]
-                || comFotos[comFotos.length - 1] || FOTOS_80[0]).dia;
+            var diaAtual;
+            function escolherDia() {
+                var comFotos = FOTOS_80.filter(function (d) { return d.pastas.length; });
+                diaAtual = (FOTOS_80.filter(function (d) { return d.dia === param; })[0]
+                    || comFotos[comFotos.length - 1] || FOTOS_80[0]).dia;
+            }
 
             function renderDias() {
                 $('dias').innerHTML = FOTOS_80.map(function (d) {
@@ -272,8 +275,12 @@
                 }).then(function () { btn.textContent = 'Baixar'; });
             };
 
-            renderDias();
-            carregar();
+            $('grade').innerHTML = new Array(12).join('<div class="esqueleto"></div>');
+            carregarFotos80().then(function () {
+                escolherDia();
+                renderDias();
+                carregar();
+            });
         })();
     </script>
 </body>

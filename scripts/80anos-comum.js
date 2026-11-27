@@ -20,11 +20,13 @@ var DIAS_EBO_80 = [
 ];
 
 // Fotos do evento: pastas públicas do Google Drive (uma ou mais por dia).
-// Para publicar as fotos de um dia, cole o id da pasta (o final do link do Drive) em "pastas".
+// A recepção publica os links em Configurações → Fotos (documento config-80anos/fotos);
+// as pastas abaixo são só o valor padrão caso o documento não exista.
 var DRIVE_KEY_80 = 'AIzaSyCM05uKadKIX5xxtWt3FlyKp8nANwV4Kpc';
+var DOC_FOTOS_80 = 'config-80anos/fotos';
 var FOTOS_80 = [
     { dia: '25', rotulo: 'Qua · 25/11', titulo: 'Abertura', pastas: ['1dHSz-mXnZn0Ep8eQXFjdj5XiSd0s0dGG'] },
-    { dia: '26', rotulo: 'Qui · 26/11', titulo: 'EBOCAMP', pastas: [] },
+    { dia: '26', rotulo: 'Qui · 26/11', titulo: 'EBOCAMP', pastas: ['1TcqIjA0q11uWQiZJKCF2sIduwr1wRmJI'] },
     { dia: '27', rotulo: 'Sex · 27/11', titulo: 'EBOCAMP', pastas: [] },
     { dia: '28', rotulo: 'Sáb · 28/11', titulo: 'Jubileu de Carvalho', pastas: [] }
 ];
@@ -47,6 +49,37 @@ function listarFotos80(pastas) {
     return pastas.reduce(function (p, pasta) {
         return p.then(function () { return pagina(pasta); });
     }, Promise.resolve()).then(function () { return todos; });
+}
+
+// Aceita o link da pasta do Drive (ou só o id) e devolve o id
+function idPastaDrive(texto) {
+    var t = String(texto || '').trim();
+    var m = t.match(/\/folders\/([\w-]{10,})/) || t.match(/[?&]id=([\w-]{10,})/) || t.match(/^([\w-]{10,})$/);
+    return m ? m[1] : '';
+}
+
+// Aplica em FOTOS_80 as pastas publicadas pela recepção ({ pastas: { '26': ['id', ...] } }).
+// Lê pela API REST do Firestore para não precisar carregar o SDK na página de fotos.
+function carregarFotos80() {
+    var url = 'https://firestore.googleapis.com/v1/projects/' + FIREBASE_CONFIG_80.projectId
+        + '/databases/(default)/documents/' + DOC_FOTOS_80 + '?key=' + FIREBASE_CONFIG_80.apiKey;
+    return fetch(url).then(function (r) {
+        if (r.status === 404) return null;
+        if (!r.ok) throw new Error('Firestore ' + r.status);
+        return r.json();
+    }).then(function (doc) {
+        var mapa = doc && doc.fields && doc.fields.pastas && doc.fields.pastas.mapValue && doc.fields.pastas.mapValue.fields;
+        if (!mapa) return FOTOS_80;
+        FOTOS_80.forEach(function (d) {
+            if (!mapa[d.dia]) return;
+            d.pastas = ((mapa[d.dia].arrayValue && mapa[d.dia].arrayValue.values) || [])
+                .map(function (v) { return v.stringValue; }).filter(Boolean);
+        });
+        return FOTOS_80;
+    }).catch(function (err) {
+        console.error(err);
+        return FOTOS_80;
+    });
 }
 
 function miniaturaFoto80(id, largura) {

@@ -212,13 +212,21 @@
                 </section>
 
                 <button type="button" class="btn btn-oak btn-block" id="btn-salvar-cfg">Salvar configurações</button>
+
+                <section class="area-card" style="margin-top:18px">
+                    <h2>Fotos do evento</h2>
+                    <p class="area-sub">Cole o link da pasta do Google Drive de cada dia e clique em Publicar. A pasta precisa estar compartilhada como “Qualquer pessoa com o link”. Pode colocar mais de uma pasta no mesmo dia, uma por linha.</p>
+                    <div id="cfg-fotos"></div>
+                    <button type="button" class="btn btn-oak btn-block" id="btn-salvar-fotos">Publicar fotos</button>
+                    <p class="area-sub" style="margin-top:10px"><a href="/80anos/fotos" target="_blank" rel="noopener">Abrir a página de fotos ↗</a></p>
+                </section>
             </div>
         </div>
     </main>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="/scripts/80anos-comum.js?v=5"></script>
+    <script src="/scripts/80anos-comum.js?v=6"></script>
     <script>
         // Senha da equipe da recepção (conferida só nesta página)
         var SENHA_RECEPCAO = '2610';
@@ -721,6 +729,61 @@
                     renderMateriais();
                     toast('Configurações salvas ✓');
                 }).catch(function (err) { toast('Erro: ' + err.message, true); });
+            };
+
+            // ===== Fotos do evento (links do Drive por dia) =====
+            function renderFotos() {
+                $('cfg-fotos').innerHTML = FOTOS_80.map(function (d) {
+                    return '<label style="display:block;margin-bottom:14px"><b>' + escaparHtml(d.rotulo) + '</b> · ' + escaparHtml(d.titulo)
+                        + '<textarea class="campo" rows="2" data-dia="' + d.dia + '" placeholder="https://drive.google.com/drive/folders/..." style="margin-top:6px;resize:vertical">'
+                        + escaparHtml(d.pastas.map(function (id) { return 'https://drive.google.com/drive/folders/' + id; }).join('\n'))
+                        + '</textarea><small class="area-sub" data-status="' + d.dia + '">' + (d.pastas.length ? '' : 'Sem fotos publicadas') + '</small></label>';
+                }).join('');
+                FOTOS_80.forEach(function (d) { if (d.pastas.length) conferirPastas(d.dia, d.pastas); });
+            }
+
+            function conferirPastas(dia, pastas) {
+                var st = $('cfg-fotos').querySelector('[data-status="' + dia + '"]');
+                st.textContent = 'Conferindo…';
+                return listarFotos80(pastas).then(function (l) {
+                    st.textContent = l.length ? '✓ ' + l.length + ' arquivo' + (l.length > 1 ? 's' : '') + ' na pasta' : 'A pasta está vazia';
+                    return true;
+                }).catch(function () {
+                    st.textContent = '⚠ Não consegui abrir a pasta. Confira o link e o compartilhamento.';
+                    return false;
+                });
+            }
+
+            carregarFotos80().then(renderFotos);
+
+            $('btn-salvar-fotos').onclick = function () {
+                var mapa = {};
+                var erro = null;
+                $('cfg-fotos').querySelectorAll('textarea').forEach(function (ta) {
+                    var linhas = ta.value.split(/\s+/).filter(Boolean);
+                    var ids = linhas.map(idPastaDrive);
+                    if (ids.indexOf('') >= 0 && !erro) erro = ta.dataset.dia;
+                    mapa[ta.dataset.dia] = ids.filter(function (id, n) { return id && ids.indexOf(id) === n; });
+                });
+                if (erro) return toast('Link inválido no dia ' + erro + '/11', true);
+                var botao = $('btn-salvar-fotos');
+                botao.disabled = true;
+                Promise.all(Object.keys(mapa).map(function (dia) {
+                    return mapa[dia].length ? conferirPastas(dia, mapa[dia]) : true;
+                })).then(function (oks) {
+                    if (oks.indexOf(false) >= 0) throw new Error('Alguma pasta não abriu, confira o link e o compartilhamento');
+                    return db.doc(DOC_FOTOS_80).set({
+                        pastas: mapa,
+                        atualizadoEm: firebase.firestore.FieldValue.serverTimestamp(),
+                        atualizadoPor: 'recepcao'
+                    });
+                }).then(function () {
+                    FOTOS_80.forEach(function (d) { d.pastas = mapa[d.dia] || []; });
+                    renderFotos();
+                    toast('Fotos publicadas ✓');
+                }).catch(function (err) {
+                    toast('Erro: ' + err.message, true);
+                }).then(function () { botao.disabled = false; });
             };
         })();
     </script>
